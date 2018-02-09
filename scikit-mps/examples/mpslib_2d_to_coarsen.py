@@ -1,5 +1,4 @@
-#
-
+# mpslib_2d_to_coarsen: Effect ofo corsening the training image
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec

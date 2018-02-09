@@ -2,6 +2,7 @@ import numpy as np
 import os
 import subprocess
 from . import eas as eas
+from . import trainingimages as trainingimages
 # from . import trainingimages
 import time
 
@@ -16,7 +17,7 @@ def is_exe(filename):
 # %% THE CLASS
 class mpslib:
 
-    def __init__(self, parameter_filename='mps.txt', method='mps_genesim', debug_level=1, n_real=1, rseed=1,
+    def __init__(self, parameter_filename='mps.txt', method='mps_genesim', debug_level=-1, n_real=1, rseed=1,
                  out_folder='.', ti_fnam='ti.dat', simulation_grid_size=np.array([80, 40, 1]),
                  origin=np.zeros(3), grid_cell_size=np.array([1, 1, 1]), hard_data_fnam='hard.dat',
                  shuffle_simulation_grid=2, entropyfactor_simulation_grid=4, shuffle_ti_grid=1,
@@ -262,6 +263,11 @@ class mpslib:
         import os
         success = False
 
+        # check if TI is set, if not, get the one
+        if (os.path.isfile(self.par['ti_fnam'])):
+            print('mpslib: Training image "%s" not found - USING DEFAULT!' % (self.par['ti_fnam']))
+            self.ti = trainingimages.strebelle()[0]
+
         # write training image if set
         if hasattr(self, 'ti'):
             if self.ti.shape[0] > 0:
@@ -270,14 +276,17 @@ class mpslib:
 
         # write soft data if set
         if hasattr(self, 'd_soft'):
+            self.delete_soft_data()
             eas.write(self.d_soft, self.par['soft_data_fnam'])
 
         # write hard data if set
         if hasattr(self, 'd_hard'):
+            self.delete_hard_data()
             eas.write(self.d_hard, self.par['hard_data_fnam'])
 
         # write parameter file
         self.par_write()
+
 
         exe_file = self.method
         if self.iswin:
@@ -410,8 +419,10 @@ class mpslib:
                                  (1) removed ALL GSLIB files.
         :return:
         '''
+
         import os
         import glob
+
         if (remove_all_gslib) == 1:
             file_list = glob.glob('*.gslib')
         else:
@@ -420,6 +431,26 @@ class mpslib:
             os.remove(os.path.join(self.par['out_folder'], file))
             if (self.verbose_level > 1):
                 print('Removing {0}'.format(os.path.join(self.par['out_folder'], file)))
+
+            # Delete hard data
+
+    def delete_hard_data(self):
+        import os
+        if (os.path.isfile(self.par['hard_data_fnam'])):
+            os.remove(self.par['hard_data_fnam'])
+
+    # Delete soft data
+    def delete_soft_data(self):
+        import os
+        if (os.path.isfile(self.par['soft_data_fnam'])):
+            os.remove(self.par['soft_data_fnam'])
+
+    # Delete locard filense
+    def delete_local_files(self):
+        self.delete_soft_data()
+        self.delete_hard_data()
+        self.delete_gslib()
+
 
     # plot realizations (only in 2D so far)
     def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals'):
