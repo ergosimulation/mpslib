@@ -264,7 +264,7 @@ class mpslib:
         success = False
 
         # check if TI is set, if not, get the one
-        if (os.path.isfile(self.par['ti_fnam'])):
+        if (os.path.isfile(self.par['ti_fnam'])) and (hasattr(self, 'ti') != 1):
             print('mpslib: Training image "%s" not found - USING DEFAULT!' % (self.par['ti_fnam']))
             self.ti = trainingimages.strebelle()[0]
 
@@ -451,6 +451,51 @@ class mpslib:
         self.delete_hard_data()
         self.delete_gslib()
 
+
+
+    # Select random set of hard data
+    def seq_gibbs_set_hard_data(self, step=0.1):
+        '''
+        Set hard data fro sequential GIbbs resimulation
+        Currenyly only works in 2D,
+        :param step: Percantage of parameters to resimulate
+        :return: d_hard
+        '''
+        if (hasattr(self, 'x') == 0):
+            self.x = np.arange(self.par['simulation_grid_size'][0]) * self.par['grid_cell_size'][0] + self.par['origin'][0]
+        if (hasattr(self, 'y') == 0):
+            self.y = np.arange(self.par['simulation_grid_size'][1]) * self.par['grid_cell_size'][1] + self.par['origin'][1]
+        if (hasattr(self, 'z') == 0):
+            self.z = np.arange(self.par['simulation_grid_size'][2]) * self.par['grid_cell_size'][2] + self.par['origin'][2]
+
+        if (hasattr(self, 'sim') == 0):
+            d_hard = np.arange(0)
+            return d_hard
+
+        D = self.sim[0]
+        D = D.ravel()
+
+        if (hasattr(self, 'xx') == 0):
+            self.yy, self.xx = np.meshgrid(self.y, self.x, sparse=False, indexing='ij')
+            self.xx = self.xx.ravel()
+            self.yy = self.yy.ravel()
+
+        N = self.xx.size
+
+        N_hard = np.int(np.ceil((1 - step) * N))
+
+        i_hard = np.random.choice(N, N_hard)
+
+        d_hard = np.zeros((N_hard, 4))
+        for i in np.arange(i_hard.size):
+            d_hard[i, 0] = self.xx[i_hard[i]]
+            d_hard[i, 1] = self.yy[i_hard[i]]
+            d_hard[i, 2] = self.z[0]
+            d_hard[i, 3] = D[i_hard[i]]
+            #print('i=%d, i_hard=%d' % (i, i_hard[i]))
+
+        self.d_hard = d_hard
+        return d_hard
 
     # plot realizations (only in 2D so far)
     def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals'):

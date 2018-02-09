@@ -1,57 +1,43 @@
 # mpslib_example.py
 # example of using mpslib.py
 
-import os
-import sys
-sys.path.append('mpslib')
-
-
 #%%
 import mpslib as mps;
 import mpslib.eas as eas;
 import matplotlib.pyplot as plt;
 import numpy as np;
 
-#%%  LOAD TI
-ti_file_remote = os.path.join('..','ti','ti_bangladesh_768_243_1.dat')
-ti_file1='ti_1.dat';
-Oti = eas.read(ti_file_remote);
-eas.write_dict(Oti,ti_file1);
 
-fig1 = plt.figure(1)
-plt.title('TI')
-plt.imshow(Oti['Dmat'])
-plt.show();
-#%% TRANSPOSE AND WRITE TI
-ti_file2 = 'ti_2.dat';
+O1 = mps.mpslib(method='mps_snesim_tree', n_real = 1)
+O2 = mps.mpslib(method='mps_snesim_tree', n_real = 1)
 
-Dmat=Oti['Dmat'];
-O = eas.write_mat(Dmat.transpose(),ti_file2)
+#%%  Load and set training image
+ti = mps.trainingimages.bangladesh()[0]
+ti2=np.transpose(ti)
 
-#%% READ WRITTEN TO AN PLOT
-Oti2 = eas.read(ti_file2);
-fig1 = plt.figure(2)
-plt.imshow(Oti2['Dmat'])
-plt.title('TI 2')
-plt.show();
+O1.ti=ti
+O2.ti=ti2
 
 #%% SIMULATE
-O1 = mps.mpslib(method='mps_snesim_tree', n_real = 1, verbose_level=0, ti_fnam=ti_file1)
 O1.run()
-
-O2 = mps.mpslib(method='mps_snesim_tree', n_real = 1, verbose_level=0, ti_fnam=ti_file2)
 O2.run()
 
-
-#%%
+#%% plot the TI's and simulation results
 plt.set_cmap('hot')
 fig1 = plt.figure(1)
 plt.subplot(2,2,1)
-plt.imshow(O1.sim[0], interpolation='none')
+plt.title('TI')
+plt.imshow(O1.ti)
 plt.subplot(2,2,2)
+plt.imshow(O2.ti)
+plt.title('TI 2')
+
+plt.subplot(2,2,3)
+plt.imshow(O1.sim[0], interpolation='none')
+plt.subplot(2,2,4)
 plt.imshow(O2.sim[0], interpolation='none')
 
 fig1.suptitle(O1.method, fontsize=16)
-plt.savefig('ex2.png', dpi=600)
+plt.savefig('mpslib_example_2_'+O1.method+'.png', dpi=600)
 plt.show();
 
