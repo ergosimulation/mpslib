@@ -107,7 +107,14 @@ class mpslib:
                     if is_exe(exe_file):
                         return exe_file
 
-                print("mpslib: " + program + " not found")
+                print("################################################################")
+                print("#")
+                print("# mpslib: " + program + " not found !!!!")
+                print("# PLEASE ADD THE MPSLIB PROGRAM TO THE SYSTEM PATH")
+                print("# OR ADD THE LOCATION OF THE MPSLIB PROGRAMS TO THE SYSTEM PATH")
+                print("#")
+                print("#################################################################")
+
                 return None
 
     # % Check parameter file setting using  GENESIM
@@ -294,13 +301,17 @@ class mpslib:
 
         exe_path = self.which(exe_file)
 
+        print("mpslib: trying to run '%s'  in folder '%s'"%(exe_file,exe_path))
+
         if exe_path is None:
             s = 'mpslib: The program {} does not exist or is not executable.'.format(exe_file)
             raise Exception(s)
+            return -1
         else:
             if not silent:
                 s = 'mpslib: Using the following executable to run the model: {}'.format(exe_path)
                 print(s)
+
 
         if not os.path.isfile(os.path.join(self.parameter_filename)):
             s = 'The the mpslib input file does not exists: {}'.format(self.parameter_filename)

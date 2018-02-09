@@ -1,6 +1,6 @@
 """Multiple Point Simulation (MPS) usins MPSlib
 See:
-https://github.com/ergosimulation/python
+https://github.com/ergosimulation/scikit-mps
 """
 
 # Always prefer setuptools over distutils

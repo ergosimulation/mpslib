@@ -1,6 +1,17 @@
 scikit-mps: A python interface to MPSlib 
 ========================================================================================
 
+
+.. image:: https://img.shields.io/pypi/v/scikit-mps.svg?style=flat-square
+    :target: https://pypi.org/project/scikit-mps
+
+.. image:: https://img.shields.io/pypi/pyversions/scikit-mps.svg?style=flat-square
+    :target: https://pypi.org/project/scikit-mps
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+    :target: https://en.wikipedia.org/wiki/MIT_License
+
+
 `scikit-mps` is a Python interface to MPSlib, https://github.com/ergosimulation/mpslib/,
 which is a C++ library for geostatistical multiple point simulation, with implementations
 of 'SNESIM', 'ENESIM', and 'GENESIM'
@@ -11,6 +22,7 @@ It contains three modules:
   * trainingimages: Access to a number of trainingimages
 
 .. code::
+
    import mpslib as mps
    O1=mps.mpslib(method='mps_snesim_tree')
    O.run()
