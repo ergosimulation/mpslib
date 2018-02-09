@@ -22,11 +22,11 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 from distutils.core import setup
 setup(
     name = 'scikit-mps',
-    version = '0.0.1',
+    version = '0.1.0',
     description = 'Multiple point statistical (MPS) simulation',
     author = 'Thomas Mejer Hansen',
     author_email = 'thomas.mejer.hansen@gmail.com',
-    url = 'https://github.com/cultpenguin/scikit-mps', # use the URL to the github repo
+    url = 'https://github.com/ergosimulation/mpslib/scikit-mps', # use the URL to the github repo
     download_url = 'https://github.com/cultpenguin/scikit-mps/master.zip', # I'll explain this in a second
     keywords = ['geostatistics', 'simulation', 'MPS'], # arbitrary keywords
     classifiers = [
@@ -36,6 +36,6 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     packages=find_packages(exclude=['contrib', 'docs', 'tests']), # Required
-    install_requires=['numpy >= 1.0.2'  ],
+    install_requires=['numpy >= 1.0.2', 'matplotlib >= 1.0.0"  ],
 )
 
