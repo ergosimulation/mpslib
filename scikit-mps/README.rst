@@ -44,9 +44,11 @@ Installing
 ~~~~~~~~~~~~~~
 * Via pip: pip3 install scikit-mps
 .. code::
+
    cd ROOT_OF_MPSLIB/python   
    pip3 install .
 
 If you wish to develop the scikit-mps package, then install it in editable developer mode using
 .. code::
-   pip3 install -e .
+
+    pip3 install -e .
