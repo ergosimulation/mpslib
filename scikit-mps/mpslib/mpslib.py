@@ -271,7 +271,7 @@ class mpslib:
         success = False
 
         # check if TI is set, if not, get the one
-        if (os.path.isfile(self.par['ti_fnam'])) and (hasattr(self, 'ti') != 1):
+        if (not os.path.isfile(self.par['ti_fnam'])) and (not hasattr(self, 'ti')):
             print('mpslib: Training image "%s" not found - USING DEFAULT!' % (self.par['ti_fnam']))
             self.ti = trainingimages.strebelle()[0]
 
