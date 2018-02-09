@@ -24,10 +24,10 @@ It contains three modules:
 .. code::
 
    import mpslib as mps
-   O1=mps.mpslib(method='mps_snesim_tree')
+   O=mps.mpslib(method='mps_snesim_tree')
    O.run()
-   O1.plot_reals()
-   O1.plot_etype()
+   O.plot_reals()
+   O.plot_etype()
 
 PyPI
 ~~~~~~~~~
