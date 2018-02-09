@@ -6,7 +6,6 @@ import mpslib as mps
 
 plt.ion()
 
-
 di=6 # Use every di'th data
 # NO coarsening --> 1 2D TI
 TI1, TI_filename1 = mps.trainingimages.strebelle(di, coarse3d=0)
