@@ -49,6 +49,7 @@ Installing
    pip3 install .
 
 If you wish to develop the scikit-mps package, then install it in editable developer mode using
+
 .. code::
 
     pip3 install -e .
