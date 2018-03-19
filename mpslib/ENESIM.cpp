@@ -112,6 +112,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_distance_power_order = 0;
 	}
+		
 	// Maximum search Radius
 	_readLineConfiguration_mul(file, ss, data, s, str);
 	_maxSearchRadius = stof(data[1]);
@@ -355,7 +356,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 		// Stop looking if we have reached the maximum number of allowed iterations in TI
 		if (i_ti_path>_maxIterations) {
-			if (_debugMode > 1) {
+			if (_debugMode > 2) {
 				std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations << std::endl;
 			}
 			break;
@@ -722,7 +723,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 
 		// Stop looking if we have reached the maximum number of allowed iterations in TI
 		if (i_ti_path>_maxIterations) {
-			if (_debugMode > 1) {
+			if (_debugMode > 2) {
 				std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations << std::endl;
 			}
 			break;
