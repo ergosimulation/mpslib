@@ -120,7 +120,8 @@ def write(D = np.empty([]), filename='eas.dat', title='eas title', header=[]):
         else:
             eas['header'].append('col%d' % i)
 
-    print("eas: writing data to %s, ncolumns=%d, ndata=%d." % (filename, ncols, ndata))
+    if (debug_level > 0):
+        print("eas: writing data to %s, ncolumns=%d, ndata=%d." % (filename, ncols, ndata))
     write_dict(eas,filename)
 
     return eas
@@ -154,12 +155,12 @@ def write_mat(D = np.empty([]), filename='eas.dat'):
             D2[:, :, iz] = np.transpose(D[:,:,iz])
 
         D=D2
-    
-    print("eas: writing matrix to %s " % filename)
-    print("eas: (nx,ny,nz)=(%d,%d,%d) " % (nx,ny,nz) )
 
     title = ("%d %d %d" % (nx,ny,nz) )
-    print("eas: title=%s"%title)
+    if (debug_level > 0):
+        print("eas: writing matrix to %s " % filename)
+        print("eas: (nx,ny,nz)=(%d,%d,%d) " % (nx,ny,nz) )
+        print("eas: title=%s"%title)
 
     eas={}
     eas['dim'] = {}

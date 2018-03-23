@@ -19,14 +19,17 @@ O1.par['n_real']=1
 O1.par['debug_level']=-1
 O1.par['simulation_grid_size'][0]=35
 O1.par['simulation_grid_size'][1]=30
+O1.par['shuffle_simulation_grid']=1
 O1.run()
 
 step=0.75;
 
 
-N_run = 9;
+N_run = 3;
 
 for i in range(0,N_run):
+
+    print("%d of %d iterations" % (i+1,N_run))
 
     D1 = O1.sim[0]
 

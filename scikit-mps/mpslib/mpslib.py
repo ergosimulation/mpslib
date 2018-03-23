@@ -36,6 +36,8 @@ class mpslib:
         self.parameter_filename = parameter_filename.lower()  # change string to lower case
         self.method = method.lower()  # change string to lower case
         self.verbose_level = verbose_level
+        self.verbose_level = debug_level
+
         self.remove_gslib_after_simulation = remove_gslib_after_simulation  # remove individual gslib fiels after simulation
         self.gslib_combine = gslib_combine  # combine realzations into one gslib file
 
@@ -79,6 +81,8 @@ class mpslib:
             self.par['n_cond'] = n_cond
             # self.exe = 'mps_mps_snesim_tree'
 
+        # Set verbose_level on eas as well
+        eas.debug_level = self.par['debug_level'];
         # Check if on windows
         self.iswin = 0
         if (os.name == 'nt'):
@@ -301,14 +305,16 @@ class mpslib:
 
         exe_path = self.which(exe_file)
 
-        print("mpslib: trying to run '%s'  in folder '%s'"%(exe_file,exe_path))
+        if (self.verbose_level > -1):
+            print(self.verbose_level)
+            print("mpslib: trying to run '%s'  in folder '%s'"%(exe_file,exe_path))
 
         if exe_path is None:
             s = 'mpslib: The program {} does not exist or is not executable.'.format(exe_file)
             raise Exception(s)
             return -1
         else:
-            if not silent:
+            if (self.verbose_level > -1):
                 s = 'mpslib: Using the following executable to run the model: {}'.format(exe_path)
                 print(s)
 
