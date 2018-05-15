@@ -516,6 +516,46 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	ti_shift = (std::rand() % (int)(_tiDimX*_tiDimY*_tiDimZ));
 	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
 
+	int StationaryLastDim = 1;
+	if (StationaryLastDim == 1) {
+		// Search throug TI but using only for data in the 
+		// For example if nDIM=3, and sgIdxZ=2, then only define a path layer 2 in the 3D TI
+		//    This way the simulated value MUST come from layer 2 in the 3D TI
+		// For example if nDIM=2, and sgIdxY=17, then only define a path through column 17  (second dim) in the 2D TI
+		//    This way the simulated value MUST come from column 17, and be conditional to the row value in the 2D TI
+
+
+		std::cout << "Search only TI for last dimension equal to the conditioning data!" << std::endl;
+		//std::cout << " SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
+		//MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
+
+		//Putting sequential indices
+		std::vector<int> ppath;
+		int node1DIdx;
+		int cnt = 0;
+		int z = sgIdxZ;
+		int x;
+		int y;
+		for (y = 0; y<_tiDimY; y++) {
+			for (x = 0; x<_tiDimX; x++) {
+				
+				//ppath[cnt] = cnt++;
+				//std::cout << ppath[cnt] << " ";
+				MPS::utility::treeDto1D(x, y, z, _tiDimX, _tiDimY, node1DIdx);
+				ppath.push_back(node1DIdx); // PROBABLY SLOW?? ALLOCATE TO START WITH
+
+				// SHUFFLE
+				// RANDOM START POINT
+
+			}
+			//std::cout << "x=" << x << " y=" << y << " z=" << z << "  node1DIdx=" << node1DIdx << std::endl;
+		}
+		
+
+
+	}
+
+
 	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
 	// to find the local conditional pdf f_TI(m_i | m_c)
 
