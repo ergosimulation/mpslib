@@ -65,7 +65,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	// Number of realizations
 	_readLineConfiguration(file, ss, data, s, str);
 	_realizationNumbers = stoi(data[1]);
-	// Initial value
+	// Seed value
 	_readLineConfiguration(file, ss, data, s, str);
 	_seed = stof(data[1]);
 	// Maximum number of counts for seeting up the conditional pdf
@@ -113,6 +113,10 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		_distance_power_order = 0;
 	}
 		
+	// ColocateDimension
+	_readLineConfiguration(file, ss, data, s, str);
+	_ColocatedDimension = stof(data[1]);
+
 	// Maximum search Radius
 	_readLineConfiguration_mul(file, ss, data, s, str);
 	_maxSearchRadius = stof(data[1]);
@@ -511,56 +515,55 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	}
 
 
-	// The path scanning the training image is shifted such that a random start location is chosen
-	int ti_shift;
-	ti_shift = (std::rand() % (int)(_tiDimX*_tiDimY*_tiDimZ));
-	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
+	// Setup the path through the training image
 
-	int StationaryLastDim = 1;
-	if (StationaryLastDim == 1) {
-		// Search throug TI but using only for data in the 
-		// For example if nDIM=3, and sgIdxZ=2, then only define a path layer 2 in the 3D TI
-		//    This way the simulated value MUST come from layer 2 in the 3D TI
-		// For example if nDIM=2, and sgIdxY=17, then only define a path through column 17  (second dim) in the 2D TI
-		//    This way the simulated value MUST come from column 17, and be conditional to the row value in the 2D TI
+	// Tirst check if the last dimension should be treated as individual types of random varibles
+	// Then the only the lower dimensional X-Y TI-grid shoudl be search for matches
+	// _StationaryLastDim
 
+	if (_ColocatedDimension > 0) {
+	
+		// Check if the current _tiPath is set of for full size, and if so, reduce the size
+		int smallTiSize = _tiDimX * _tiDimY; // size of the TI-grid to scan through
+		if (_tiPath.size() != smallTiSize) {
+			std::cout << "Using Co-located dimension = " << _ColocatedDimension << std::endl;
+			std::cout << _tiPath.size() << "<" << smallTiSize << std::endl;
+			_tiPath.resize(smallTiSize);
+			std::cout << "New reduced Ti path size = " << _tiPath.size() << std::endl;
+		}
+	
+		/*
+		std::cout << "START:" << std::endl;
+		std::cout << "  _tiPath[0]=" << _tiPath[0] << ", _tiPath[end]=" << _tiPath.back() << ", N=" << _tiPath.size() << std::endl;
+		*/
 
-		std::cout << "Search only TI for last dimension equal to the conditioning data!" << std::endl;
-		//std::cout << " SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
-		//MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
-
-		//Putting sequential indices
-		std::vector<int> ppath;
 		int node1DIdx;
 		int cnt = 0;
-		int z = sgIdxZ;
-		int x;
-		int y;
-		for (y = 0; y<_tiDimY; y++) {
-			for (x = 0; x<_tiDimX; x++) {
-				
-				//ppath[cnt] = cnt++;
-				//std::cout << ppath[cnt] << " ";
+		int z = sgIdxZ; // The current position in the simulation grid
+		for (int y = 0; y<_tiDimY; y++) {
+			for (int x = 0; x<_tiDimX; x++) {			
 				MPS::utility::treeDto1D(x, y, z, _tiDimX, _tiDimY, node1DIdx);
-				ppath.push_back(node1DIdx); // PROBABLY SLOW?? ALLOCATE TO START WITH
-
-				// SHUFFLE
-				// RANDOM START POINT
-
+				//_tiPath[cnt] = cnt + 1; // sequential path
+				_tiPath[cnt] = node1DIdx;
+				cnt++;
 			}
-			//std::cout << "x=" << x << " y=" << y << " z=" << z << "  node1DIdx=" << node1DIdx << std::endl;
 		}
-		
-
+		/*
+		std::cout << "z=" << z << std::endl;
+		std::cout << "  _tiPath[0]=" << _tiPath[0] << ", _tiPath[end]=" << _tiPath[_tiPath.size() - 1] <<  ", N=" << _tiPath.size()<< std::endl;
+		std::cout << "  _tiPath[0]=" << _tiPath[0] << ", _tiPath[end]=" << _tiPath.back() << std::endl;
+		*/
 
 	}
 
+	// The path scanning the training image is shifted such that a random start location is chosen
+	int ti_shift;
+	ti_shift = (std::rand() % (int)(_tiPath.size() ));
+	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
+	
 
 	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
 	// to find the local conditional pdf f_TI(m_i | m_c)
-
-
-	
 
 	// Loop over training image to find a close match to L_c and find ,V_c
 
