@@ -25,7 +25,8 @@ class mpslib:
                  soft_data_categories=np.arange(2), soft_data_fnam='soft.dat', n_threads=1, verbose_level=0,
                  template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_min_node_count=0,
                  n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
-                 max_search_radius=10000000, remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0)):
+                 max_search_radius=10000000, remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
+                 colocate_dimension=0):
         '''Initialize variables in Class'''
 
         mpslib_py_path, fn = os.path.split(__file__)
@@ -71,6 +72,7 @@ class mpslib:
             self.par['distance_measure'] = distance_measure
             self.par['distance_min'] = distance_min
             self.par['distance_pow'] = distance_pow
+            self.par['colocate_dimension'] = colocate_dimension
             self.par['max_search_radius'] = max_search_radius
             # self.par['exe'] = 'mps_genesim'
 
@@ -174,6 +176,7 @@ class mpslib:
         file.write('Max number of iterations # %d\n' % self.par['n_max_ite'])
         file.write("Distance measure [1:disc, 2:cont], minimum distance, power # %d %3.1f %3.1f\n" % (
         self.par['distance_measure'], self.par['distance_min'], self.par['distance_pow']))
+        file.write('Colocate Dimension # %d \n' % self.par['colocate_dimension'])
         file.write("Max Search Radius for conditional data # %f \n" % self.par['max_search_radius'])
         file.write('Simulation grid size X # %d\n' % self.par['simulation_grid_size'][0])
         file.write('Simulation grid size Y # %d\n' % self.par['simulation_grid_size'][1])
