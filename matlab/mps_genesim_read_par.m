@@ -45,6 +45,10 @@ O.distance_measure=dd(1);
 if length(dd)>1, O.distance_min=dd(2);end
 if length(dd)>2, O.distance_pow=dd(3);end
 
+% COLOCATED DIMENSION
+l=line_strip_char(fgetl(fid),'#');
+dd=str2num(l);;
+O.colocated_dimension=dd(1);
 
 % SIMULATION GRID SIZE
 for i=1:3;
