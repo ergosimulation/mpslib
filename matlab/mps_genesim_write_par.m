@@ -42,6 +42,8 @@ if ~isfield(O,'distance_measure');O.distance_measure=1;end
 if ~isfield(O,'distance_min');O.distance_min=0;end
 if ~isfield(O,'distance_pow');O.distance_pow=0;end
 
+if ~isfield(O,'colocated_dimension');O.colocated_dimension=0;end
+
 if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
 
 % multiple grids are not used by enesim
@@ -66,6 +68,10 @@ fprintf(fid,'Max number of iterations # %d\n',O.n_max_ite);
 %
 %Distance measure [1:disc, 2:cont], minimum distance # 1 0
 fprintf(fid,'Distance measure [1:disc, 2:cont], minimum distance, distance power # %d %f %f\n',O.distance_measure,O.distance_min,O.distance_pow);
+
+% Colocated Dimension
+fprintf(fid,'Colocated Dimension [0: no colocattion; >0: Colocated] # %d \n',O.colocated_dimension);
+
 
 % maximum search radius
 if (length(O.max_search_radius)==1)

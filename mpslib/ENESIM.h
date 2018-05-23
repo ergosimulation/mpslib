@@ -82,6 +82,12 @@ protected:
 
 
 	/**
+	* @brief Co-locate Dimension, if used
+	*/
+	int _ColocatedDimension = 0;
+
+
+	/**
 	* @brief Read configuration file
 	* @param fileName configuration filename
 	*/

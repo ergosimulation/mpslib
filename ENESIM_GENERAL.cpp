@@ -121,7 +121,7 @@ float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const
 		// Useful when _nMaxCountCpdf=1, or very small;
 		return _getRealizationFromCpdfTiEnesimRejection(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	} else {
-	       	// condition to soft data using p_cond = p_cond_ti * p_cond_soft.
+	    // condition to soft data using p_cond = p_cond_ti * p_cond_soft.
 		// Only usefull when _nMaxCountCpdf>>1;
 		return _getRealizationFromCpdfTiEnesim(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	}
