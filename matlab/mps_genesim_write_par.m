@@ -53,7 +53,7 @@ if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
 %end
     
 %% WRITE STRUCTURE TO PARAMETER FILE
-fid=fopen(O.parameter_filename,'w');
+fid=fopen_retry(O.parameter_filename,'w');
 
 fprintf(fid,'Number of realizations # %d\n',O.n_real);
 fprintf(fid,'Random Seed (0 `random` seed) # %d\n',O.rseed);
