@@ -23,32 +23,27 @@ O.n_max_cpdf_count=str2num(l);
 l=line_strip_char(fgetl(fid),'#');
 O.n_cond=str2num(l);
 
-% # max number of neighbors
+% # max number of iterations
 l=line_strip_char(fgetl(fid),'#');
-dd=str2num(l);;
-O.distance_measure=dd(1);
-if length(dd)>1
-    O.distance_min=dd(2);
-else
-    O.distance_min=0;
-end
+O.n_max_ite=str2num(l);
 
-% Maximum Search Radius
-l=line_strip_char(fgetl(fid),'#');
-dd=str2num(l);;
-O.max_search_radius=dd(1);
 
 % DISTANCE MEASURE
 l=line_strip_char(fgetl(fid),'#');
-dd=str2num(l);;
+dd=str2num(l);
 O.distance_measure=dd(1);
 if length(dd)>1, O.distance_min=dd(2);end
 if length(dd)>2, O.distance_pow=dd(3);end
 
 % COLOCATED DIMENSION
 l=line_strip_char(fgetl(fid),'#');
-dd=str2num(l);;
+dd=str2num(l);
 O.colocated_dimension=dd(1);
+
+% Maximum Search Radius
+l=line_strip_char(fgetl(fid),'#');
+dd=str2num(l);;
+O.max_search_radius=dd(1);
 
 % SIMULATION GRID SIZE
 for i=1:3;

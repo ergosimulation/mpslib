@@ -69,14 +69,20 @@ if ~isfield(O,'rseed');O.rseed=1;end
 if ~isfield(O,'output_folder');O.output_folder='.';end
 
 %% write ti
-doWriteTI=1;
-if doWriteTI==1;
+%if exist([pwd,filesep,O.ti_filename],'file')
+%    O.WriteTI=0;
+%else
+%    O.WriteTI=1;
+%end
+if ~isfield(O,'WriteTI')
+    O.WriteTI=1;
+end
+if O.WriteTI==1;
     if ~isfield(O,'ti_filename')
         O.ti_filename='ti.dat';
     end
-    
+    disp(sprintf('%s: writing ti %s',mfilename,O.ti_filename))
     write_eas_matrix(O.ti_filename,TI);
-    
 end
 
 %% write simulation grid
