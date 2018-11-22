@@ -102,6 +102,18 @@ private:
 	*/
 	void _searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V);
 
+	/**
+	* @brief Add the current node index to the simulation path and initialize the simulation grid using hard data if they are available
+	* @param x index X of the current node
+	* @param y index Y of the current node
+	* @param z index Z of the current node
+	* @param sg1DIdx X, Y, Z will be flatten to this 1D index
+	* @param level the current level of the multiple grid
+	* @param allocatedNodesFromHardData vector of coordinate of node which is used for the relocation of hard data, those node will be removed after the simulation is done for that level
+	* @param nodeToPutBack vector of coordinate of node to put back to NaN after doing the simulation of that level
+	*/
+	void _addIndexToSimulationPath(const int& x, const int& y, const int&z, int& sg1DIdx, const int& level, std::vector<MPS::Coords3D>& allocatedNodesFromHardData, std::vector<MPS::Coords3D>& nodeToPutBack);
+
 protected:
 	/**
 	* @brief The simulation grid
@@ -213,9 +225,9 @@ protected:
 	*/
 	bool _showPreview = 1;
 	/**
-	* @brief Save output as GRD3 files for GoeScene3D
+	* @brief Save output as GRD3 files for GeoScene3D
 	*/
-	bool _saveGrd3 = 0;
+	bool _saveGrd3 = 1;
 	/**
 	* @brief Initial value of the simulation
 	*/
@@ -262,13 +274,20 @@ protected:
 	*/
 	std::string _outputDirectory;
 	/**
-	* @brief Hard data filenames used for the simulation
+	* @brief Hard data filename used for the simulation
 	*/
 	std::string _hardDataFileNames;
 	/**
 	* @brief Soft data filenames used for the simulation
 	*/
 	std::vector<std::string> _softDataFileNames;
+	/**
+	* @brief Mask data filename used for the simulation
+	* the mask is used to limit the area used for the simulation
+	* when the grid node is initialize to 1 that mean the node will be simulated
+	* the mask grid has the same size as the simulation grid
+	*/
+	std::string _maskDataFileName;
 	/**
 	* @brief Soft data categories
 	*/
@@ -281,6 +300,14 @@ protected:
 	* @brief The training image
 	*/
 	std::vector<std::vector<std::vector<float>>> _TI;
+	/**
+	* @brief The mask grid
+	*/
+	std::vector<std::vector<std::vector<float>>> _maskDataGrid;
+	/**
+	* @brief Flag to know if the maskData is available
+	*/
+	bool _hasMaskData;
 	/**
 	* @brief Threads used for the simulation
 	*/
@@ -329,7 +356,10 @@ protected:
 	*/
 	void _readTIFromFiles(void);
 
-
+	/**
+	* @brief Read Mask data
+	*/
+	void _readMaskDataFromFile(void);
 
 	/**
 	* @brief Initialize a sequential simulation path
@@ -662,6 +692,5 @@ public:
 	* @param tiPath new value
 	*/
 	inline void setTiPath(const std::vector<int> &tiPath) {_tiPath = tiPath;}
-
 
 };

@@ -30,7 +30,22 @@
 * @brief Constructors
 */
 MPS::MPSAlgorithm::MPSAlgorithm(void) {
-
+	//Initialize parameters
+	_hdSearchRadius = 1;
+	_totalGridsLevel = 1;
+	_sgDimX = 0;
+	_sgDimY = 0;
+	_sgDimZ = 0;
+	_sgWorldMinX = 0;
+	_sgWorldMinY = 0;
+	_sgWorldMinZ = 0;
+	_sgCellSizeX = 0;
+	_sgCellSizeY = 0;
+	_sgCellSizeZ = 0;
+	_tiDimX = 0;
+	_tiDimY = 0;
+	_tiDimZ = 0;
+	_hasMaskData = false;
 }
 
 /**
@@ -326,6 +341,8 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	//Reading Soft conditional data
 	_readSoftDataFromFiles();
 
+	//Reading Mask data
+	_readMaskDataFromFile();
 }
 
 /**
@@ -383,13 +400,42 @@ void MPS::MPSAlgorithm::_readTIFromFiles(void) {
 	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_tiFilename, _TI);
 	if (!readSucessfull) {
-		std::cout << "Error reading TI " << _tiFilename << std::endl;
+		std::cerr << "Error reading TI " << _tiFilename << std::endl;
 		exit(-1);
 	}
 
 }
 
 
+/**
+* @brief Mask data
+*/
+void MPS::MPSAlgorithm::_readMaskDataFromFile(void) {
+	bool readSucessfull = false;
+	std::string fileExtension = MPS::utility::getExtension(_maskDataFileName);
+
+	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_maskDataFileName, _maskDataGrid);
+	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
+	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_maskDataFileName, _maskDataGrid);
+	if (!readSucessfull) {
+		std::cout << "Mask Data is missing" << _maskDataFileName << std::endl;
+	}
+
+	//Initialize the flag for mask data availibility
+	_hasMaskData = readSucessfull;
+
+	// Out of bound check
+	// The mask grid has to have the same dimension as the simulation grid, if there is any different then just ignore the mask grid and fire an error message
+	if (readSucessfull) {
+		int mdgDimX = (int)_maskDataGrid[0][0].size();
+		int mdgDimY = (int)_maskDataGrid[0].size();
+		int mdgDimZ = (int)_maskDataGrid.size();
+		if ((_sgDimX != mdgDimX) || (_sgDimY != mdgDimY) || (_sgDimZ != mdgDimZ)) {
+			std::cout << "The mask grid has to have the same dimension as the simulation grid " << _maskDataFileName << std::endl;
+			_hasMaskData = false;
+		}
+	}
+}
 
 
 /**
@@ -661,6 +707,27 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, s
 	return 1;
 }
 
+/**
+* @brief Add the current node index to the simulation path and initialize the simulation grid using hard data if they are available
+* @param x index X of the current node
+* @param y index Y of the current node
+* @param z index Z of the current node
+* @param sg1DIdx X, Y, Z will be flatten to this 1D index
+* @param level the current level of the multiple grid
+* @param allocatedNodesFromHardData vector of coordinate of node which is used for the relocation of hard data, those node will be removed after the simulation is done for that level
+* @param nodeToPutBack vector of coordinate of node to put back to NaN after doing the simulation of that level
+*/
+void MPS::MPSAlgorithm::_addIndexToSimulationPath(const int& x, const int& y, const int&z, int& sg1DIdx, const int& level, std::vector<MPS::Coords3D>& allocatedNodesFromHardData, std::vector<MPS::Coords3D>& nodeToPutBack) {
+	MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
+	_simulationPath.push_back(sg1DIdx);
+	//Fill the simulation node with the value from hard data grid
+	if (!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
+		_sg[z][y][x] = _hdg[z][y][x];
+	}
+	//The relocation process happens if the current simulation grid value is still NaN
+	//Moving hard data to grid node only on coarsed level
+	if (level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);	
+}
 
 /**
 * @brief Start the simulation
@@ -767,18 +834,20 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			for (int z=0; z<_sgDimZ; z+=offset) {
 				for (int y=0; y<_sgDimY; y+=offset) {
 					for (int x=0; x<_sgDimX; x+=offset) {
-						MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
-						_simulationPath.push_back(sg1DIdx);
-						//Fill the simulation node with the value from hard data grid
-						if(!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
-							_sg[z][y][x] = _hdg[z][y][x];
+						//Changing the simulation path based on a mask grid
+						//Doing the simulation within the mask grid
+						if (_hasMaskData) {
+							if (_maskDataGrid[z][y][x] == 1) { //Doing the simulation only if mask data is 1
+								_addIndexToSimulationPath(x, y, z, sg1DIdx, level, allocatedNodesFromHardData, nodeToPutBack);								
+							}
 						}
-						//The relocation process happens if the current simulation grid value is still NaN
-						//Moving hard data to grid node only on coarsed level
-						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);
+						else { //No mask data, just do the simulation like before
+							_addIndexToSimulationPath(x, y, z, sg1DIdx, level, allocatedNodesFromHardData, nodeToPutBack);
+						}
+
 						//Progression
 						if (_debugMode > -1 && !_hdg.empty()) {
-							nodeCnt ++;
+							nodeCnt++;
 							//Doing the progression
 							//Print progression on screen
 							int progress = (int)((nodeCnt / (float)totalNodes) * 100);
