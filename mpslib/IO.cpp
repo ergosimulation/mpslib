@@ -544,6 +544,7 @@ namespace MPS {
 		* @param sgDimZ dimension Z of SG
 		*/
 		void writeToGSLIBFile(const std::string& fileName, const std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ) {
+			int nanValGslib = -997799;
 			std::ofstream aFile (fileName);
 			// Header
 			aFile << sgDimX << " " << sgDimY << " " << sgDimZ << std::endl;
@@ -552,7 +553,12 @@ namespace MPS {
 			for (int z=0; z<sgDimZ; z++) {
 				for (int y=0; y<sgDimY; y++) {
 					for (int x=0; x<sgDimX; x++) {
-						aFile << sg[z][y][x] << std::endl;
+						if (MPS::utility::is_nan(sg[z][y][x])) {
+							aFile << nanValGslib << " ";
+						}
+						else {
+							aFile << sg[z][y][x] << " ";
+						}
 					}
 				}
 			}

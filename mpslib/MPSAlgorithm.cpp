@@ -45,7 +45,7 @@ MPS::MPSAlgorithm::MPSAlgorithm(void) {
 	_tiDimX = 0;
 	_tiDimY = 0;
 	_tiDimZ = 0;
-	_hasMaskData = false;
+	_hasMaskData = false;	
 }
 
 /**
@@ -415,7 +415,7 @@ void MPS::MPSAlgorithm::_readMaskDataFromFile(void) {
 	std::string fileExtension = MPS::utility::getExtension(_maskDataFileName);
 
 	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_maskDataFileName, _maskDataGrid);
-	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
+	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_maskDataFileName, _maskDataGrid);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_maskDataFileName, _maskDataGrid);
 	if (!readSucessfull) {
 		std::cout << "Mask Data is missing" << _maskDataFileName << std::endl;

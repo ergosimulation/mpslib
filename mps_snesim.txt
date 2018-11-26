@@ -15,7 +15,7 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # ti/ti_strebelle_125_125_1_da.dat
+Training image file (spaces not allowed) # ti/ti_strebelle_125_125_1.dat
 Output folder (spaces in name not allowed) # .
 Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential, EntropyFactor) # 1 4
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
@@ -24,5 +24,5 @@ HardData seach radius (world units) # 1
 Softdata categories (separated by ;) # 0;1
 Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft_dummy.dat
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
-Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1
-Mask grid # dummyMaskGrid.grd3
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 12
+Mask grid # dummyMaskGrid.dat

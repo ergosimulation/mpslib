@@ -13,9 +13,10 @@ O1 = mps.mpslib(method='mps_snesim_tree',
                     n_real = 4, verbose_level=-1)
 O1.parameter_filename = 'mps_snesim.txt'
 O1.par['debug_level']=-1
-O1.par['n_cond']=4
+O1.par['n_cond']=49
 O1.run()
 
+plt.figure(1)
 O1.plot_reals()
 plt.savefig(O1.method+'.png', dpi=600)
 plt.show()
@@ -24,6 +25,7 @@ plt.show()
 #%% Use the same modeling parameters, but change simulation methods
 O1.change_method('mps_snesim_list')
 O1.run()
+plt.figure(2)
 O1.plot_reals()
 plt.savefig(O1.method+'.png', dpi=600)
 
@@ -39,7 +41,7 @@ O2.par['shuffle_simulation_grid']=1;
 O2.parameter_filename = 'mps_genesim.txt'
 O2.run();
 
-
+plt.figure(3)
 O2.plot_reals()
 plt.savefig("mpslib_exmaple_1_" + O2.method+'.png', dpi=600)
 plt.show();

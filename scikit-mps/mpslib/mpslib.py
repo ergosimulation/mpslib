@@ -19,6 +19,7 @@ class mpslib:
 
     def __init__(self, parameter_filename='mps.txt', method='mps_genesim', debug_level=-1, n_real=1, rseed=1,
                  out_folder='.', ti_fnam='ti.dat', simulation_grid_size=np.array([80, 40, 1]),
+                 mask_fnam='mask.dat',
                  origin=np.zeros(3), grid_cell_size=np.array([1, 1, 1]), hard_data_fnam='hard.dat',
                  shuffle_simulation_grid=2, entropyfactor_simulation_grid=4, shuffle_ti_grid=1,
                  hard_data_search_radius=1,
@@ -54,6 +55,7 @@ class mpslib:
         self.par['simulation_grid_size'] = simulation_grid_size
         self.par['origin'] = origin
         self.par['grid_cell_size'] = grid_cell_size
+        self.par['mask_fnam'] = mask_fnam.lower() # change string to lower case
         self.par['hard_data_fnam'] = hard_data_fnam.lower()  # change string to lower case
         self.par['shuffle_simulation_grid'] = shuffle_simulation_grid
         self.par['entropyfactor_simulation_grid'] = entropyfactor_simulation_grid
@@ -63,6 +65,7 @@ class mpslib:
         self.par['soft_data_fnam'] = soft_data_fnam.lower()  # change string to lower case
         self.par['n_threads'] = n_threads
         self.par['debug_level'] = debug_level
+
 
         # if the method is GENSIM, add package specific parameters
         if self.method == 'mps_genesim':
@@ -206,6 +209,8 @@ class mpslib:
         file.write('Number of threads (not currently used) # %d\n' % self.par['n_threads'])
         file.write(
             'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
+        file.write('Mask grid filename (same size as the simulation grid)# %s\n' % self.par['mask_fnam'])
+
         file.close()
 
     def mps_snesim_par_write(self):
@@ -262,6 +267,7 @@ class mpslib:
         file.write('Number of threads (not currently used) # %d\n' % self.par['n_threads'])
         file.write(
             'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
+        file.write('Mask grid filename (same size as the simulation grid)# %s\n' % self.par['mask_fnam'])
         file.close()
 
     def run(self, normal_msg='Elapsed time (sec)', silent=False):
