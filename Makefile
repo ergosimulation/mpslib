@@ -1,8 +1,9 @@
-# COMPILER
-CC = g++
-
-# COMPILER FLAGS (run ./configure.sh to set next line - especially on OSX)
-CPPFLAGS = -static -O3 -std=c++11 -Wl,--no-as-needed
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+    export CPPFLAGS += -O3 -std=c++11
+else
+	export CPPFLAGS += -static -O3 -std=c++11 -Wl,--no-as-needed
+endif
 
 # NAME OF LIBRARY
 MPSLIB = mpslib/mpslib.a
