@@ -1,8 +1,7 @@
 UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-    export CPPFLAGS += -O3 -std=c++11
-else
-	export CPPFLAGS += -static -O3 -std=c++11 -Wl,--no-as-needed
+export CPPFLAGS+= -O3 -std=c++11
+ifeq ($(UNAME_S),Linux)
+	export CPPFLAGS += -static -Wl,--no-as-needed
 endif
 
 # NAME OF LIBRARY
