@@ -505,6 +505,7 @@ namespace MPS {
 						}
 					}
 
+
 					if (numberOfColumns > categories.size()) { //XYZD file
 						//Convert data read from world coordinate into local coordinate (start from 0, 0, 0 and cell size 1, 1, 1)
 						coordX = lineData[0];
@@ -513,9 +514,11 @@ namespace MPS {
 						idxX = (int)((coordX - minWorldX) / stepX);
 						idxY = (int)((coordY - minWorldY) / stepY);
 						idxZ = (int)((coordZ - minWorldZ) / stepZ);
+
 						for (unsigned int nbCats=0; nbCats<categories.size(); nbCats++) {
 							if ((idxX>-1)&(idxY>-1)&(idxZ>-1)&(idxX<dataSizeX)&(idxY<dataSizeY)&(idxZ<dataSizeZ)) {
 							  data[nbCats][idxZ][idxY][idxX] = lineData[nbCats + 3];
+								
 						  } else {
 								std::cout << "Soft data, "<< fileName << ": Data outside simualtion grid ix,iy,iz=" << idxX << " "<< idxY << " "<< idxZ  << std::endl;
 							}
@@ -524,6 +527,7 @@ namespace MPS {
 						MPS::utility::oneDTo3D(dataCnt++, dataSizeX, dataSizeY, idxX, idxY, idxZ);
 						for (unsigned int nbCats=0; nbCats<categories.size(); nbCats++) {
 							data[nbCats][idxZ][idxY][idxX] = lineData[nbCats];
+							//std::cout << nbCats << " "<< data[nbCats][idxZ][idxY][idxX] << std::endl;
 						}
 					}
 				}
@@ -540,6 +544,7 @@ namespace MPS {
 		* @param sgDimZ dimension Z of SG
 		*/
 		void writeToGSLIBFile(const std::string& fileName, const std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ) {
+			int nanValGslib = -997799;
 			std::ofstream aFile (fileName);
 			// Header
 			aFile << sgDimX << " " << sgDimY << " " << sgDimZ << std::endl;
@@ -548,7 +553,12 @@ namespace MPS {
 			for (int z=0; z<sgDimZ; z++) {
 				for (int y=0; y<sgDimY; y++) {
 					for (int x=0; x<sgDimX; x++) {
-						aFile << sg[z][y][x] << std::endl;
+						if (MPS::utility::is_nan(sg[z][y][x])) {
+							aFile << nanValGslib << " ";
+						}
+						else {
+							aFile << sg[z][y][x] << " ";
+						}
 					}
 				}
 			}
@@ -557,6 +567,46 @@ namespace MPS {
 			// Close the file stream explicitly
 			aFile.close();
 		}
+
+		/**
+		* @brief Write multiple simulation 3D grid (af 4D grid) result into a GSlib file
+		*
+		* @param fileName destination's file name
+		* @param sg the simulation grid which is a 4D float vector
+		* @param sgDimX dimension X of SG
+		* @param sgDimY dimension Y of SG
+		* @param sgDimZ dimension Z of SG
+		* @param sgN number of 3D realizations
+		*/
+		void writeToGSLIBFile(const std::string& fileName, const std::vector<std::vector<std::vector<std::vector<float>>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const int& sgN) {
+			int nanValGslib = -997799;
+			std::ofstream aFile(fileName);
+			// Header
+			aFile << sgDimX << " " << sgDimY << " " << sgDimZ << std::endl;
+			aFile << sgN << std::endl;
+			for (int ic = 0; ic < sgN; ic++) {
+				aFile << "v" << ic << std::endl;
+			}
+			for (int z = 0; z<sgDimZ; z++) {
+				for (int y = 0; y<sgDimY; y++) {
+					for (int x = 0; x<sgDimX; x++) {
+						for (int i = 0; i<sgN; i++) {
+							//std::cout << "i=" << i << "/"<< sgN << std::endl;
+							if (MPS::utility::is_nan(sg[i][z][y][x])) {
+								aFile << nanValGslib << " ";
+							}
+							else {
+								aFile << sg[i][z][y][x] << " ";
+							}
+						}
+						aFile << std::endl;
+					}
+				}
+			}
+			// Close the file stream explicitly
+			aFile.close();
+		}
+
 
 		/**
 		* @brief Write indices array into a file

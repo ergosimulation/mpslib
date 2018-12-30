@@ -3,7 +3,7 @@ ARCH=`uname -s`
 echo "Acrhitecture: $ARCH"
 if [ "$ARCH" = "Darwin" ]; then
     # NO STATIC BUILDING ON OSX
-    echo "Static building not allowed on OSX"
+    echo "Static building not allowed on OSX, using dynamic linking instead"
     # CPPFLAGS = "CPPFLAGS = -g -O3 -std=c++11 -Wl,--no-as-needed"
     CPPFLAGS="CPPFLAGS = -O3 -std=c++11 "
 

@@ -30,6 +30,7 @@ and compiled using
 	make
 
 # Documentation
+A manual for MPSlib can be found is hosted at gitbook : [https://www.gitbook.com/book/cultpenguin/mpslib/](https://www.gitbook.com/book/cultpenguin/mpslib/).
 MPSlib is documented through Doxygen.
 
 # Compilation

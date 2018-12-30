@@ -71,15 +71,35 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	//Max conditional count
 	_readLineConfiguration(file, ss, data, s, str);
 	_maxCondData = stoi(data[1]);
+	
 	// Template size x
-	_readLineConfiguration(file, ss, data, s, str);
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_templateSizeX = stoi(data[1]);
-	// Template size y
-	_readLineConfiguration(file, ss, data, s, str);
+	// optional. Template size x - base when n_mulgrid=0
+	if (data.size()>2) {
+		_templateSizeX_base = stoi(data[2]);
+	} else {
+		_templateSizeX_base = _templateSizeX;
+	}
+  // Template size y
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_templateSizeY = stoi(data[1]);
-	// Template size z
-	_readLineConfiguration(file, ss, data, s, str);
+	// optional. Template size y - base when n_mulgrid=0
+	if (data.size()>2) {
+		_templateSizeY_base = stoi(data[2]);
+	} else {
+		_templateSizeY_base = _templateSizeY;
+	}
+  // Template size z
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_templateSizeZ = stoi(data[1]);
+	// optional. Template size z - base when n_mulgrid=0
+	if (data.size()>2) {
+		_templateSizeZ_base = stoi(data[2]);
+	} else {
+		_templateSizeZ_base = _templateSizeZ;
+	}
+	
 	// Simulation Grid size X
 	_readLineConfiguration(file, ss, data, s, str);
 	_sgDimX = stoi(data[1]);
@@ -116,13 +136,14 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	data[1].erase(std::remove_if(data[1].begin(), data[1].end(), [](char x){return std::isspace(x);}), data[1].end()); //Removing spaces
 	_outputDirectory = data[1];
 	// Shuffle SGPATH
-	_readLineConfiguration(file, ss, data, s, str);
-	//_shuffleSgPath = (stoi(data[1]) != 0); // TMH:Update to make use of _ShuffleSgPath=2
-	_shuffleSgPath = stoi(data[1]);
-	// Shuffle Entropy Factor
-	// _readLineConfiguration(file, ss, data, s, str);
-	//_shuffleEntropyFactor = (stoi(data[1]));
-	_shuffleEntropyFactor = 4;
+	_readLineConfiguration_mul(file, ss, data, s, str);
+	_shuffleSgPath = (stoi(data[1]));
+	if (data.size()>2) {
+		// EntropyFactor is the second value, if it exists
+		_shuffleEntropyFactor = stof(data[2]);
+	} else {
+		_shuffleEntropyFactor = 4;
+	}
 	// Shuffle TI Path
 	_readLineConfiguration(file, ss, data, s, str);
 	_shuffleTiPath = (stoi(data[1]) != 0);
@@ -167,6 +188,11 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	// DEBUG MODE
 	_readLineConfiguration(file, ss, data, s, str);
 	_debugMode = stoi(data[1]);
+	// Mask data grid
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		data[1].erase(std::remove_if(data[1].begin(), data[1].end(), [](char x) {return std::isspace(x); }), data[1].end()); //Removing spaces
+		_maskDataFileName = data[1];
+	}
 }
 
 /**
@@ -245,7 +271,7 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 	float totalCounter = 0;
 	for(std::map<float,int>::iterator iter = conditionalPoints.begin(); iter != conditionalPoints.end(); ++iter) {
 		totalCounter += iter->second;
-		// std::cout << "cpdf ti1: " << iter->first << " " << iter->second << std::endl;
+		//std::cout << "cpdf ti1: " << iter->first << " " << iter->second << std::endl;
 	}
 	//std::cout << "totalCounter " << totalCounter << std::endl;
 
@@ -286,6 +312,9 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 		probabilitiesFromSoftData.insert(std::pair<float, float>(_softDataCategories[lastIndex], 1 - sumProbability));
 		//std::cout << "cpdf sd: " << _softDataCategories[lastIndex] << " " << 1 - sumProbability << std::endl;
 		//Compute the combined probabilities from TI and Softdata
+		
+		// totalValue is the sum of the prodict fo P_TI and P_SOFT, IF THIS IS ZERO, THE the two are conflict
+		// Then rge soft data wins..
 		float totalValue = 0;
 		std::map<float,float>::iterator searchIter;
 		for(std::map<float,float>::iterator iter = probabilitiesFromSoftData.begin(); iter != probabilitiesFromSoftData.end(); ++iter) {
@@ -294,15 +323,58 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 			if (searchIter != probabilitiesFromTI.end()) totalValue += iter->second * probabilitiesFromTI[iter->first];
 			else totalValue += 0; //iter->second; //If probability from TI has less elements than sd then ignore it
 		}
+
+
 		//Normalize and compute cummulated value
 		float cumulateValue = 0;
 		for(std::map<float,float>::iterator iter = probabilitiesFromSoftData.begin(); iter != probabilitiesFromSoftData.end(); ++iter) {
 			//Size check
 			searchIter = probabilitiesFromTI.find(iter->first);
-			if (searchIter != probabilitiesFromTI.end()) cumulateValue += (iter->second * probabilitiesFromTI[iter->first]) / totalValue;
-			else cumulateValue += 0; //(iter->second) / totalValue;  //If probability from TI has less elements than sd then ignore it
+			if (searchIter != probabilitiesFromTI.end()) {
+				//std::cout << "P_soft=" << iter->second << " P_TI=" << probabilitiesFromTI[iter->first] << " TOT=" << totalValue << std::endl;
+				cumulateValue += (iter->second * probabilitiesFromTI[iter->first]) / totalValue;
+			} else {
+				cumulateValue += 0; //(iter->second) / totalValue;  //If probability from TI has less elements than sd then ignore it
+			}
+			//std::cout << "  cumulateValue=" << cumulateValue << std::endl;
+
 			probabilitiesCombined.insert(std::pair<float, float>(cumulateValue, iter->first));
 		}
+
+		if (totalValue == 0) {
+			// This means there is inconsistentcy between probabilitiesFromTI and probabilitiesFromSoftData
+			// In this case the 'data' takes precedence of the conditional pdf from TI
+			probabilitiesCombined.clear();
+			probabilitiesCombined.insert(probabilitiesFromSoftData.begin(), probabilitiesFromSoftData.end());
+		}
+
+
+		if (_debugMode > 2) {
+			std::cout << "totalCounter " << totalCounter << std::endl;
+			// PRINT SOFT CONDITIONAL AND LCOAL SOFT PROB
+			std::cout << "TI  : ";
+			for (std::map<float, float>::iterator iter = probabilitiesFromTI.begin(); iter != probabilitiesFromTI.end(); ++iter) {
+				std::cout << " P[" << iter->first << "]=";
+				std::cout << iter->second;
+			}
+			std::cout << std::endl;
+			std::cout << "SOFT: ";
+			for (std::map<float, float>::iterator iter = probabilitiesFromSoftData.begin(); iter != probabilitiesFromSoftData.end(); ++iter) {
+				std::cout << " P[" << iter->first << "]=";
+				std::cout << iter->second;
+			}
+			std::cout << std::endl;
+			std::cout << "COMB: ";
+			for (std::map<float, float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {
+				std::cout << " P[" << iter->first << "]=";
+				std::cout << iter->second;
+			}
+			std::cout << std::endl;
+			std::cout << std::endl;
+		}
+
+
+
 	} else {
 		//Only from TI
 		float cumulateValue = 0;

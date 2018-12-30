@@ -52,12 +52,12 @@ protected:
 			int idx1X, idx1Y, idx1Z, idx2X, idx2Y, idx2Z;
 			int templateCenterX = (int)floor(_templateSizeX / 2);
 			int templateCenterY = (int)floor(_templateSizeY / 2);
-			int templateCenterZ = (int)floor(_templateSizeZ / 2);	
+			int templateCenterZ = (int)floor(_templateSizeZ / 2);
 			MPS::utility::oneDTo3D(idx1, _templateSizeX, _templateSizeY, idx1X, idx1Y, idx1Z);
 			MPS::utility::oneDTo3D(idx2, _templateSizeX, _templateSizeY, idx2X, idx2Y, idx2Z);
 			return (pow(idx1X - templateCenterX, 2) + pow(idx1Y - templateCenterY, 2) + pow(idx1Z - templateCenterZ, 2)) < (pow(idx2X - templateCenterX, 2) + pow(idx2Y - templateCenterY, 2) + pow(idx2Z - templateCenterZ, 2));
 		}
-	};	
+	};
 
 	/**
 	* @brief Read configuration file
@@ -68,8 +68,8 @@ protected:
 	/**
 	* @brief Construct templatefaces and sort them around template center
 	* @param sizeX template size X
-	* @param sizeX template size Y
-	* @param sizeX template size Z
+	* @param sizeY template size Y
+	* @param sizeZ template size Z
 	*/
 	void _constructTemplateFaces(const int& sizeX, const int& sizeY, const int& sizeZ);
 
@@ -92,6 +92,7 @@ protected:
 	*/
 	int _templateSizeX;
 
+
 	/**
 	* @brief template size y
 	*/
@@ -100,15 +101,24 @@ protected:
 	/**
 	* @brief template size z
 	*/
-	int _templateSizeZ;	
+	int _templateSizeZ;
+
+	/**
+	* @brief template size X (mulgrid 0)
+	* @brief template size Y (mulgrid 0)
+	* @brief template size Z (mulgrid 0)
+	*/
+	int _templateSizeX_base;
+	int _templateSizeY_base;
+	int _templateSizeZ_base;
 
 	/**
 	* @brief Min node count allowed
 	*/
-	int _minNodeCount;
+	int _minNodeCount = 0;
 
 	/**
-	* @brief List of available faces in the template 
+	* @brief List of available faces in the template
 	*/
 	std::vector<MPS::Coords3D> _templateFaces;
 public:
@@ -121,4 +131,3 @@ public:
 	*/
 	virtual ~SNESIM(void);
 };
-

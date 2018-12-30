@@ -166,7 +166,7 @@ O.n_real=n_real;
 
 %% CONDIIONAL SOFT DATA
 O.hard_data_filename = 'mps_2d_hard_data.dat';
-O.soft_data_filename = 'mps_2d_soft_data.dat';
+O.soft_data_fnam = 'mps_2d_soft_data.dat';
 O.soft_data_categories='0;1;2;3';
 
 % MPS_SNESIM_TREE

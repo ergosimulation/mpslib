@@ -36,17 +36,55 @@ class MPS::ENESIM :
 private:
 
 protected:
+
 	/**
 	* @brief maximum number of counts setting up conditional pdf
 	*/
-	int _nMaxCountCpdf;
-
+	int _nMaxCountCpdf = 1;
+	
 	/**
 	* @brief Select whether to use Metropolis style soft data conditioning
 	*/
-	int _MetropolisSoftData; // = 0;
-	//_MetropolisSoftData = 1;
+	int _RejectionSoftData; // = 0;
+	//_RejectionSoftData = 1;
 
+	/**
+	* @brief Distance measure comparing a template in TI and simulation grid
+	*/
+	int _distance_measure=1; // PIXEL distance
+	// int _distance_measure=1; // EUCLIDEANS
+
+	/**
+	* @brief Distance threshold to accept a matching template
+	*/
+	float _distance_threshold=0.01;//0.01;
+
+	/**
+	* @brief Distance power order
+	*/
+	float _distance_power_order=0; // power order
+
+	/**
+	* @brief Maximum Search Radius HARD data
+	*/
+	float _maxSearchRadius=0; 
+
+		
+	/**
+	* @brief Maximum Search Radius SOFT data
+	*/
+    float _maxSearchRadius_soft = 1e+9;
+	
+	/**
+	* @brief Maximum number conditioning SOFT data
+	*/
+	int _maxNeighbours_soft = 3;
+
+
+	/**
+	* @brief Co-locate Dimension, if used
+	*/
+	int _ColocatedDimension = 0;
 
 
 	/**
@@ -65,6 +103,7 @@ protected:
 	* @return true if found a value
 	*/
 	bool _getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF);
+	bool _getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF, float& SoftProbability);
 
 	/**
 	* @brief Compbine two PDFs assuming independence
@@ -93,8 +132,29 @@ protected:
 	* @param iterationCnt Iterations counter
 	* @return simulated value
 	*/
-	float _getRealizationFromCpdfTiEnesimMetropolis(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
-	
+	float _getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
+
+	/**
+	* @brief Compute realization using cpdf obtained using ENESIM and Metropolis with NON-colocated soft data
+	* @param sgIdxX coordinate X of the current node
+	* @param sgIdxY coordinate Y of the current node
+	* @param sgIdxZ coordinate Z of the current node
+	* @param iterationCnt Iterations counter
+	* @return simulated value
+	*/
+	float _getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
+
+	/**
+	* @brief Compute distance between conditional data in TI and template L
+	* @param TIi_dxX coordinate X of the current node in TI
+	* @param TIi_dxY coordinate Y of the current node in TI
+	* @param TIi_dxZ coordinate Z of the current node in TI
+	* @param L_dist : Precomputed distance
+	* @return distance
+	*/
+	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ,  std::vector<float>& L_dist);
+	//float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
+
 public:
 	/**
 	* @brief Constructors default and empty parameters

@@ -18,6 +18,7 @@
 #include "Utility.h"
 
 #include <algorithm> 
+#include <random>
 
 namespace MPS {
 	namespace utility {

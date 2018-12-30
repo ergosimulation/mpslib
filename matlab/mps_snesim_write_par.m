@@ -41,7 +41,7 @@ if ~isfield(O,'shuffle_ti_grid');O.shuffle_ti_grid=1;end
 if ~isfield(O,'hard_data_filename');O.hard_data_filename='conditional.dat';end
 if ~isfield(O,'hard_data_search_radius');O.hard_data_search_radius=1;end
 if ~isfield(O,'soft_data_categories');O.soft_data_categories='0;1';end
-if ~isfield(O,'soft_data_filename');O.soft_data_filename='soft.dat';end
+if ~isfield(O,'soft_data_fnam');O.soft_data_fnam='soft.dat';end
 if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
   
@@ -56,8 +56,14 @@ fprintf(fid,'Number of mulitple grids (start from 0) # %d\n',O.n_multiple_grids)
 fprintf(fid,'Min Node count (0 if not set any limit)# %d\n',O.n_min_node_count);
 fprintf(fid,'Maximum number condtitional data (0: all) # %d\n',O.n_cond);
 for i=1:3;
-  fprintf(fid,'Search template size %s # %d\n',char(87+i),O.template_size(i));
-end
+    if prod(size(O.template_size))==6;
+        % VARYING TEMPLATE
+        fprintf(fid,'Search template size %s # %d %d\n',char(87+i),O.template_size(i,:));
+    else
+        % CONSTANT TEMPLATE
+        fprintf(fid,'Search template size %s # %d\n',char(87+i),O.template_size(i));
+    end
+    end
 % SIMULATION GRID SUZE
 for i=1:3;
   fprintf(fid,'Simulation grid size %s # %d\n',char(87+i),O.simulation_grid_size(i));
@@ -73,7 +79,7 @@ end
 
 fprintf(fid,'Training image file (spaces not allowed) # %s\n',O.ti_filename);
 fprintf(fid,'Output folder (spaces in name not allowed) # %s\n',O.output_folder);
-fprintf(fid,'Shuffle Simulation Grid path (1 : random, 0 : sequential) # %d\n',O.shuffle_simulation_grid);
+fprintf(fid,'Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential, EF) # %d %g\n',O.shuffle_simulation_grid,O.entropyfactor_simulation_grid);
 % fprintf(fid,'Preferential Entropy Factor  (0: No random) # %d\n',O.entropyfactor_simulation_grid);
 fprintf(fid,'Shuffle Training Image path (1 : random, 0 : sequential) # %d\n',O.shuffle_ti_grid);
 % HARD DATA
@@ -81,7 +87,7 @@ fprintf(fid,'HardData filename  (same size as the simulation grid)# %s\n',O.hard
 fprintf(fid,'HardData seach radius (world units) # %g\n',O.hard_data_search_radius);
 % SOFT DATA
 fprintf(fid,'Softdata categories (separated by ;) # %s\n',O.soft_data_categories);
-fprintf(fid,'Soft datafilenames (separated by ; only need (number_categories - 1) grids) # %s\n',O.soft_data_filename);
+fprintf(fid,'Soft datafilenames (separated by ; only need (number_categories - 1) grids) # %s\n',O.soft_data_fnam);
 
 fprintf(fid,'Number of threads (minimum 1, maximum 8 - depend on your CPU) # %d\n',O.n_threads);
 fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n',O.debug);

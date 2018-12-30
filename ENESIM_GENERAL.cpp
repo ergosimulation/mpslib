@@ -28,7 +28,9 @@
 * @brief Constructors from a configuration file
 */
 MPS::ENESIM_GENERAL::ENESIM_GENERAL(const std::string& configurationFile) : MPS::ENESIM(){
+	std::cout << "Initialize start" << std::endl;
 	initialize(configurationFile);
+	std::cout << "Initialize stop" << std::endl;
 }
 
 /**
@@ -69,6 +71,16 @@ void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
 		std::cout << "Conditional points: " << _maxNeighbours << std::endl;
 		std::cout << "Max iterations: " << _maxIterations << std::endl;
+		if (_shuffleSgPath==0) {
+			std::cout << "Path type: unilateral"<< std::endl;
+		} else if (_shuffleSgPath==1) {
+			std::cout << "Path type: random"<< std::endl;
+		} else if (_shuffleSgPath==2) {
+			std::cout << "Path type: Preferential, Entropy Factor: " << _shuffleEntropyFactor << std::endl;
+		}
+		std::cout << "Distance measure: " << _distance_measure;
+		std::cout << ", threshold:" << _distance_threshold;
+		std::cout << ", power order: " << _distance_power_order  << std::endl;
 		std::cout << "SG: " << _sgDimX << " " << _sgDimY << " " << _sgDimZ << std::endl;
 		std::cout << "TI: " << _tiFilename << " " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << " " << _TI[0][0][0]<< std::endl;
 	}
@@ -81,31 +93,39 @@ void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 void MPS::ENESIM_GENERAL::startSimulation(void) {
 	//Call parent function
 	MPS::MPSAlgorithm::startSimulation();
+
 }
 
 /**
 * @brief MPS dsim simulation algorithm main function
-* @param sgIdxX index X of a node inside the simulation grind
+* @param sgIdxX index X ojf a node inside the simulation grind
 * @param sgIdxY index Y of a node inside the simulation grind
 * @param sgIdxZ index Z of a node inside the simulation grind
 * @param level multigrid level
 * @return found node's value
 */
 float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
-	_MetropolisSoftData=0;
-	// Soft data Metropolis integration not tested yet
+	// By default do not use rejection sampler to account for soft data
+
+	float real;
+	real = _getRealizationFromCpdfTiEnesimRejectionNonCo(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
+	return real;
+
+
+	_RejectionSoftData=0;
 	if (_nMaxCountCpdf==1) {
-			_MetropolisSoftData=1;
+			_RejectionSoftData=1;
 	}
-	if ( _MetropolisSoftData == 1) {
-		// conidition to soft data using Metropolis style acceptance
-		// Usefull when _nMaxCountCpdf=1, or very small;
-		return _getRealizationFromCpdfTiEnesimMetropolis(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
+	if ( _RejectionSoftData == 1) {
+		// condition to soft data using Metropolis style acceptance
+		// Useful when _nMaxCountCpdf=1, or very small;
+		return _getRealizationFromCpdfTiEnesimRejection(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	} else {
-	       	// condition to soft data using p_cond = p_cond_ti * p_cond_soft.
+	    // condition to soft data using p_cond = p_cond_ti * p_cond_soft.
 		// Only usefull when _nMaxCountCpdf>>1;
 		return _getRealizationFromCpdfTiEnesim(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	}
+
 
 }
 
@@ -115,4 +135,8 @@ float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const
 */
 void MPS::ENESIM_GENERAL::_InitStartSimulationEachMultipleGrid(const int& level) {
 	//Empty for now
+	if (_debugMode > 1) {
+		std::cout << "Reloading soft data from files" << std::endl;
+	}
+	_readSoftDataFromFiles();
 }

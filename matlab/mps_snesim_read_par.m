@@ -15,7 +15,7 @@ O.n_real=str2num(l);
 
 % random seed
 l=line_strip_char(fgetl(fid),'#');
-O.seed=str2num(l);
+O.rseed=str2num(l);
 
 % # multiple grids
 l=line_strip_char(fgetl(fid),'#');
@@ -30,7 +30,7 @@ O.n_cond=str2num(l);
 
 for i=1:3
   l=line_strip_char(fgetl(fid),'#');
-  O.template_size(i)=str2num(l);
+  O.template_size(i,:)=str2num(l);
 end
 
 % SIMULATION GRID SIZE
@@ -57,13 +57,17 @@ O.ti_filename=strip_space(l);
 l=line_strip_char(fgetl(fid),'#');
 O.output_folder=strip_space(l);
 
+% shuffle simulation grid - random path
 l=line_strip_char(fgetl(fid),'#');
-O.shuffle_simulation_grid=str2num(l);
+dum=str2num(l);
+O.shuffle_simulation_grid=dum(1);
+if length(dum)>1
+    O.entropyfactor_simulation_grid=dum(2);
+else
+    O.entropyfactor_simulation_grid=4;
+end
 
-% l=line_strip_char(fgetl(fid),'#');
-% O.entropyfactor_simulation_grid=str2num(l);
-O.entropyfactor_simulation_grid=4;
-
+% shuffle TI grid -
 l=line_strip_char(fgetl(fid),'#');
 O.shuffle_ti_grid=str2num(l);
 
@@ -80,7 +84,7 @@ l=line_strip_char(fgetl(fid),'#');
 O.soft_data_categories=strip_space(l);
 
 l=line_strip_char(fgetl(fid),'#');
-O.soft_data_filename=strip_space(l);
+O.soft_data_fnam=strip_space(l);
 
 
 

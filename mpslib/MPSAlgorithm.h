@@ -20,6 +20,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <cmath>
 #include <algorithm>
 #include <atomic>
 #include <thread>
@@ -101,6 +102,18 @@ private:
 	*/
 	void _searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V);
 
+	/**
+	* @brief Add the current node index to the simulation path and initialize the simulation grid using hard data if they are available
+	* @param x index X of the current node
+	* @param y index Y of the current node
+	* @param z index Z of the current node
+	* @param sg1DIdx X, Y, Z will be flatten to this 1D index
+	* @param level the current level of the multiple grid
+	* @param allocatedNodesFromHardData vector of coordinate of node which is used for the relocation of hard data, those node will be removed after the simulation is done for that level
+	* @param nodeToPutBack vector of coordinate of node to put back to NaN after doing the simulation of that level
+	*/
+	void _addIndexToSimulationPath(const int& x, const int& y, const int&z, int& sg1DIdx, const int& level, std::vector<MPS::Coords3D>& allocatedNodesFromHardData, std::vector<MPS::Coords3D>& nodeToPutBack);
+
 protected:
 	/**
 	* @brief The simulation grid
@@ -118,6 +131,18 @@ protected:
 	* @brief Temporary grid 2 - meaning define by type of sim-algorithm (same size as simulation grid)
 	*/
 	std::vector<std::vector<std::vector<float>>> _tg2;
+	/**
+	* @brief Temporary grid 3 - meaning define by type of sim-algorithm (same size as simulation grid)
+	*/
+	std::vector<std::vector<std::vector<float>>> _tg3;
+	/**
+	* @brief Temporary grid 4 - meaning define by type of sim-algorithm (same size as simulation grid)
+	*/
+	std::vector<std::vector<std::vector<float>>> _tg4;
+	/**
+	* @brief Temporary grid 4 - meaning define by type of sim-algorithm (same size as simulation grid)
+	*/
+	std::vector<std::vector<std::vector<float>>> _tg5;
 	/**
 	* @brief hard data search radius for multiple grids
 	*/
@@ -194,19 +219,24 @@ protected:
 	* 1 : with grid preview on console
 	* 2 : extra files are exported (iteration counter) to output folder
 	*/
-	int _debugMode;
+	int _debugMode = 0;
 	/**
 	* @brief Show the simulation grid result in the console
 	*/
-	bool _showPreview;
+	bool _showPreview = 1;
+	/**
+	* @brief Save output as GRD3 files for GeoScene3D
+	*/
+	bool _saveGrd3 = 1;
 	/**
 	* @brief Initial value of the simulation
 	*/
-	float _seed;
+	float _seed = 0;
 	/**
 	* @brief Maximum number of iterations
 	*/
-	int _maxIterations;
+	unsigned int _maxIterations = std::numeric_limits<unsigned int>::max();
+	
 	/**
 	* @brief Dimension X of the training image
 	*/
@@ -222,7 +252,7 @@ protected:
 	/**
 	* @brief Maximum neighbour allowed when doing the neighbour search function
 	*/
-	int _maxNeighbours;
+	int _maxNeighbours = std::numeric_limits<int>::max();
 	/**
 	* @brief Make a random training image path
 	*/
@@ -244,13 +274,20 @@ protected:
 	*/
 	std::string _outputDirectory;
 	/**
-	* @brief Hard data filenames used for the simulation
+	* @brief Hard data filename used for the simulation
 	*/
 	std::string _hardDataFileNames;
 	/**
 	* @brief Soft data filenames used for the simulation
 	*/
 	std::vector<std::string> _softDataFileNames;
+	/**
+	* @brief Mask data filename used for the simulation
+	* the mask is used to limit the area used for the simulation
+	* when the grid node is initialize to 1 that mean the node will be simulated
+	* the mask grid has the same size as the simulation grid
+	*/
+	std::string _maskDataFileName;
 	/**
 	* @brief Soft data categories
 	*/
@@ -263,6 +300,14 @@ protected:
 	* @brief The training image
 	*/
 	std::vector<std::vector<std::vector<float>>> _TI;
+	/**
+	* @brief The mask grid
+	*/
+	std::vector<std::vector<std::vector<float>>> _maskDataGrid;
+	/**
+	* @brief Flag to know if the maskData is available
+	*/
+	bool _hasMaskData;
 	/**
 	* @brief Threads used for the simulation
 	*/
@@ -282,9 +327,40 @@ protected:
 	*/
 	bool _readLineConfiguration(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str);
 	/**
+	* @brief Read a line of configuration file and put the result inside a vector data
+	* @param file filestream
+	* @param ss string stream
+	* @param data output data
+	* @param s string represents each data
+	* @param str string represents the line
+	* @return true if the line contains data
+	*/
+	bool _readLineConfiguration_mul(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str);
+	/**
 	* @brief Read different data (TI, hard and softdata from files)
 	*/
 	void _readDataFromFiles(void);
+	
+	/**
+	* @param Read hard data
+	*/
+	void _readHardDataFromFiles(void);
+	
+	/**
+	* @param Read soft data
+	*/
+	void _readSoftDataFromFiles(void);
+
+	/**
+	* @brief Read TI data
+	*/
+	void _readTIFromFiles(void);
+
+	/**
+	* @brief Read Mask data
+	*/
+	void _readMaskDataFromFile(void);
+
 	/**
 	* @brief Initialize a sequential simulation path
 	* @param sgDimX dimension X of the path
@@ -292,7 +368,7 @@ protected:
 	* @param sgDimZ dimension Z of the path
 	* @param path output simulation path
 	*/
-	void _initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path);
+		void _initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path);
 	/**
 	* @brief Initialize the Simulation Grid with a value, default is NaN
 	* @param sg the simulation GRID
@@ -337,7 +413,7 @@ protected:
 	* @brief Shuffle the simulation grid path based preferential to soft data
 	* @param level current multi grid level
 	*/
-	bool _shuffleSgPathPreferentialToSoftData(const int& level);
+	bool _shuffleSgPathPreferentialToSoftData(const int& level, std::list<MPS::Coords3D>& allocatedNodesFromSoftData);
 	/**
 	* @brief Generate a realization from a PDF defined as a map
 	* @param the pdf as a std::map
@@ -381,7 +457,7 @@ protected:
 	* @brief Abstract function allow acces to the beginning of each simulation of each multiple grid
 	* @param level the current grid level
 	*/
-	virtual void _InitStartSimulationEachMultipleGrid(const int& level) = 0; 
+	virtual void _InitStartSimulationEachMultipleGrid(const int& level) = 0;
 
 public:
 	/**
@@ -616,6 +692,5 @@ public:
 	* @param tiPath new value
 	*/
 	inline void setTiPath(const std::vector<int> &tiPath) {_tiPath = tiPath;}
-
 
 };

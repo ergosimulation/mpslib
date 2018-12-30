@@ -169,7 +169,7 @@ for io=1:length(Oc);
     Oc{io}.n_real=Oorg.n_real;
     Oc{io}.hard_data_filename=f_cond;
     Oc{io}.hard_data_search_radius=1;
-    Oc{io}.soft_data_filename='no_soft.dat';
+    Oc{io}.soft_data_fnam='no_soft.dat';
     tic
     [reals_cond{io},Oc{io}]=mps_cpp_thread(TI,SIM,Oc{io});
     %[reals_cond{io},Oc{io}]=mps_cpp(TI,SIM,Oc{io});
@@ -182,7 +182,7 @@ Oc_s=Oc;
 for io=1:length(Oc_s);
     if use_soft_data==1;
         Oc_s{io}.d_soft=d_soft;
-        Oc_s{io}.soft_data_filename=f_soft;
+        Oc_s{io}.soft_data_fnam=f_soft;
     end
     tic
     
