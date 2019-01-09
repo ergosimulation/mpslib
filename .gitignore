@@ -1,0 +1,6 @@
+
+*.o
+mps_genesim
+mps_snesim_list
+mps_snesim_tree
+*.a

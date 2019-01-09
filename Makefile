@@ -1,8 +1,8 @@
-# COMPILER
-CC = g++
-
-# COMPILER FLAGS (run ./configure.sh to set next line - especially on OSX)
-CPPFLAGS = -static -O3 -std=c++11 -Wl,--no-as-needed
+UNAME_S := $(shell uname -s)
+export CPPFLAGS+= -O3 -std=c++11
+ifeq ($(UNAME_S),Linux)
+	export CPPFLAGS += -static -Wl,--no-as-needed
+endif
 
 # NAME OF LIBRARY
 MPSLIB = mpslib/mpslib.a
@@ -17,13 +17,13 @@ mpslib:
 	make -C mpslib
 
 mps_genesim: mpslib
-	$(CC) $(CPPFLAGS) mps_genesim.cpp ENESIM_GENERAL.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
+	$(CXX) $(CPPFLAGS) mps_genesim.cpp ENESIM_GENERAL.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
 
 mps_snesim_tree: mpslib
-	$(CC) $(CPPFLAGS) mps_snesim_tree.cpp SNESIMTree.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
+	$(CXX) $(CPPFLAGS) mps_snesim_tree.cpp SNESIMTree.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
 
 mps_snesim_list: mpslib
-	$(CC) $(CPPFLAGS) mps_snesim_list.cpp SNESIMList.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
+	$(CXX) $(CPPFLAGS) mps_snesim_list.cpp SNESIMList.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
 
 
 .PHONY: clean

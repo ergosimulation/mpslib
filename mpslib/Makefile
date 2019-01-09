@@ -1,15 +1,10 @@
-CC=g++
-CPPFLAGS = -g -static -O3 -std=c++11 -Wl,--no-as-needed 
 INCLUDES = -I.
 SRC_DIR = .
 
-# variant 1
-SRCS ?= $(shell find $(SRC_DIR) -name '*.cpp' | sed "s/[^\/]*\/[^\/]*\///")
-# variant 2
-# SRCS = Utility.cpp IO.cpp Coords3D.cpp Coords4D.cpp MPSAlgorithm.cpp SNESIM.cpp ENESIM.cpp
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 
 %.o : $(SRC_DIR)/%.cpp
-	$(CC) -o $@ $(INCLUDES) $(CPPFLAGS) -c $^
+	$(CXX) -o $@ $(INCLUDES) $(CPPFLAGS) -c $^
 
 all : mpslib.a
 
