@@ -1,0 +1,15 @@
+Summary
+=======
+
+-  `Preface <README.md>`__
+-  `Installation/compilation <chapInstall.md>`__
+-  `MPS algorithms <Algorithms/README.md>`__
+-  `GENESIM <Algorithms/chapGenesim.md>`__
+-  `SNESIM <Algorithms/chapSnesim.md>`__
+
+   -  `ex: Varying
+      template <Algorithms/chapSnesim/mps_snesim_tree-with-varying-template.md>`__
+
+-  `Training image format <training-image-format.md>`__
+-  `Matlab Interface <Matlab/README.md>`__
+-  `Python Interface <python-interface.md>`__
