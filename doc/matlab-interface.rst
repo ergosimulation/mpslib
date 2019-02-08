@@ -6,22 +6,22 @@ developed. It consist of the following m-files:
 
 Running MPSlib algorithms:
 
--  `mps\_cpp.m <>`__: Run MPSlib algorithms
--  `mps\_cpp\_thread.m <>`__: Split MPSlib simulation on multiple
+-  `mps_cpp.m <>`__: Run MPSlib algorithms
+-  `mps_cpp_thread.m <>`__: Split MPSlib simulation on multiple
    threads
--  `mps\_cpp\_clean.m <>`__: Clean up files after running MPSlib.
+-  `mps_cpp_clean.m <>`__: Clean up files after running MPSlib.
 
 Reading and writing parameter files:
 
--  mps\_snesim\_read\_par.m
--  mps\_snesim\_write\_par.m
--  mps\_enesim\_read\_par.m
--  mps\_enesim\_write\_par.m
+-  mps_snesim_read_par.m
+-  mps_snesim_write_par.m
+-  mps_enesim_read_par.m
+-  mps_enesim_write_par.m
 
 Examples:
 
--  mps\_example\_softwarex.m
--  mps\_cpp\_demo.m
+-  mps_example_softwarex.m
+-  mps_cpp_demo.m
 
 These m-files requires no special toolboxes, and are compatible with GNU
 Octave. However, the examples below requires the
