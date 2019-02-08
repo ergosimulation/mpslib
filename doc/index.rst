@@ -15,7 +15,7 @@ As example the following algorithms has been implemented
 -  :doc:`mps_genesim <../Algorithms/chapGenesim>` 
 -  :doc:`mps_snesim <../Algorithms/chapSnesim>` 
 
-A `Matlab/Octave interface <matlab-interface>`__ to these algorithms, is
+A `Matlab/Octave interface <matlab-interface.rst>`__ to these algorithms, is
 available, from which all parameters can be set.
 
 The latest stable code can be downloaded from
