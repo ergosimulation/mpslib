@@ -7,7 +7,7 @@ developed. It consist of the following m-files:
 Running MPSlib algorithms:
 
 -  `mps_cpp.m <https://github.com/ergosimulation/mpslib/blob/master/matlab/mps_cpp.m>`_: Run MPSlib algorithms
--  `mps_cpp_thread.m <https://github.com/ergosimulation/mpslib/blob/master/matlab/mps_cpp.m>`_: Split MPSlib simulation on multiple
+-  `mps_cpp_thread.m <https://github.com/ergosimulation/mpslib/blob/master/matlab/mps_cpp_thread.m>`_: Split MPSlib simulation on multiple
    threads
 -  `mps_cpp_clean.m <https://github.com/ergosimulation/mpslib/blob/master/matlab/mps_cpp_clean.m>`_: Clean up files after running MPSlib.
 
