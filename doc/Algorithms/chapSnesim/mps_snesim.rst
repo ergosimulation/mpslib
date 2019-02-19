@@ -1,9 +1,9 @@
+.. _ref-snesim:
+
 SNESIM: Single normal equation simulation
 =========================================
 
-| The ``mps_snesim_tree`` and ``mps_snesim_list`` differ only in the way
-  conditional data are stored in memory
-| (using either a tree or a list structure).
+The ``mps_snesim_tree`` and ``mps_snesim_list`` differ only in the way conditional data are stored in memory (using either a tree like [STREBELLE2002]_ or a list structure as [STRAUBHAAR2011]_). 
 
 Both algorithms share the same format for the required parameter file:
 
@@ -103,3 +103,6 @@ is equivalent to
     Search template size X # 5  
     Search template size Y # 5  
     Search template size Z # 5 
+
+ 		    
+   

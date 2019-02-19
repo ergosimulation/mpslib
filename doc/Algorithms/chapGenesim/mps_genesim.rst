@@ -1,6 +1,14 @@
 GENESIM: Generalized ENESIM
 ===========================
 
+GENESIM (``mps_genesim``) [HANSEN2016]_ is a generalized version of the ENESIM algorithm [GUARDIANO]_, in which the conditional distribtion computed from a finite set of conditional events. 
+
+In one extreme, the full conditional distribution is obtained by scanning the whole training image at each iteration, in which case GENESIM is identical to the ENESIM algorithm [GUARDIANO]_.
+
+In another extreme, the conditional distribution is constructed from only one conditional event. In this case GENESIM acts similar to the direct sampling algorithm [MARIETHOZ2010]_, with the practical difference that the local conditional distribution is in fact computed, and a realization is drawn from. In the direct sampling algorithm the conditional distribution is never realized, instead a new pixel value is chosen from the first matching conditional event.
+
+
+
 An example of a parameter file for ``mps_genesim``:
 
 ::
@@ -34,7 +42,8 @@ An example of a parameter file for ``mps_genesim``:
     Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # -2
 
 A description of the options that apply to all MPS algorithms can be
-seen here: `MPS algorithms </Algorithms/README.md>`__.
+seen :doc:`here <../running>`.
+
 
 The following lines in the parameter files are specific to the GENESIM
 type algorithm:

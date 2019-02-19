@@ -12,11 +12,15 @@ a training image.
 
 As example the following algorithms has been implemented
 
--  :doc:`mps_genesim <../Algorithms/chapGenesim>` 
--  :doc:`mps_snesim <../Algorithms/chapSnesim>` 
+-  :doc:`mps_genesim <Algorithms/chapGenesim/mps_genesim>` 
+-  :doc:`mps_snesim_tree <Algorithms/chapSnesim/mps_snesim>` 
+-  :doc:`mps_snesim_list <Algorithms/chapSnesim/mps_snesim>` 
 
-A `Matlab/Octave interface <matlab-interface.rst>`__ to these algorithms, is
-available, from which all parameters can be set.
+
+
+.. see :ref:`ref-snesim`.
+
+Interfaces to :doc:`Matlab/Octave interface <../matlab-interface>` and :doc:`Pyhton <../python-interface>` are available.
 
 The latest stable code can be downloaded from
 http://ergosimulation.github.io/mpslib/.
@@ -49,11 +53,11 @@ Referencing
 Along with the first version of MPSlib a manuscript was published in
 SoftwareX. Please use this for referencing MPSlib:
 
-Hansen, T.M., Vu. L.T., and Bach, T. 2016. MPSLIB: A C++ class for
-sequential simulation of multiple-point statistical models, in
-*SoftwareX*,
-doi:\ `10.1016/j.softx.2016.07.001 <https://doi.org/10.1016/j.softx.2016.07.001>`__.
-[`pdf <http://www.sciencedirect.com/science/article/pii/S2352711016300164/pdfft?md5=b3663280b22a5d06a2e931ca534ef1b5&pid=1-s2.0-S2352711016300164-main.pdf>`__,\ `www <http://www.sciencedirect.com/science/article/pii/S2352711016300164>`__]
+	Hansen, T.M., Vu. L.T., and Bach, T. 2016. MPSLIB: A C++ class for sequential simulation of multiple-point statistical models, in *SoftwareX*, doi:`10.1016/j.softx.2016.07.001 <https://doi.org/10.1016/j.softx.2016.07.001>`_. [`pdf <http://www.sciencedirect.com/science/article/pii/S2352711016300164/pdfft?md5=b3663280b22a5d06a2e931ca534ef1b5&pid=1-s2.0-S2352711016300164-main.pdf>`_,\ `www <http://www.sciencedirect.com/science/article/pii/S2352711016300164>`_].
+
+To cite the use of soft data and the preferential path, please use:
+
+	Hansen, T. M., Mosegaard, K., & Cordua, K. S. (2018). Multiple point statistical simulation using uncertain (soft) conditional data. *Computers & geosciences*, 114, 1-10. doi:`10.1016/j.cageo.2018.01.017 <https://doi.org/10.1016/j.cageo.2018.01.017>`_.
 
 
 License (LGPL)
@@ -76,13 +80,9 @@ How is it organized?
    :maxdepth: 3
 	      
    chapInstall
-   chapDesign
-   Algorithms/README
-   Algorithms/chapGenesim
-   Algorithms/chapSnesim
-   Algorithms/chapSnesim/mps_snesim_tree-with-varying-template
+   Algorithms/index
    training-image-format
    matlab-interface
    python-interface
-	     
+   references
 

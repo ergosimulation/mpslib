@@ -1,27 +1,3 @@
-MPS algorithms
-==============
-
-Running MPS algorithms
-----------------------
-
-| The MPS algorithms are run from the commandline using a parameter
-  filename as an argument.
-| If no argument is given, the default parameter file is assumed to the
-  be name of the simulation
-| algorithm appended with '.txt'.
-
-Therefore
-
-::
-
-    mps_genesim
-
-will be equivalent to
-
-::
-
-    mps_genesim mps_genesim.txt
-
 General options
 ---------------
 
@@ -129,3 +105,14 @@ Debug mode
 -  [ 2]: + Extra information is written to disk (Random path, ...)
 -  [ 3]: + Debug information written to screen (in general not useful
    for an end-user)
+
+
+.. toctree::
+   :maxdepth: 3
+	      
+   chapGenesim/mps_genesim
+   chapSnesim/mps_snesim
+   chapSnesim/mps_snesim_tree-with-varying-template.rst
+   	     
+
+
