@@ -30,8 +30,7 @@ and compiled using
 	make
 
 # Documentation
-A manual for MPSlib can be found is hosted at gitbook : [https://www.gitbook.com/book/cultpenguin/mpslib/](https://www.gitbook.com/book/cultpenguin/mpslib/).
-MPSlib is documented through Doxygen.
+Documentation is available through [https://mpslib.readthedocs.io/en/latest/](https://mpslib.readthedocs.io/en/latest/).
 
 # Compilation
 The MPSlib codes are written in standard [C++11](https://www.wikiwand.com/en/C%2B%2B11).
