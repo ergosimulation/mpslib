@@ -37,7 +37,6 @@ figure(2);
 imagesc(x,y,reals);axis image
 print('-dpng',sprintf('%s_ex1_single',mfilename))
 
-return
 %% Example 2. Two regsions, with mask from simulation
 Os=O;
 Os.parameter_filename='mps_snesim_2d_mask_b.txt';
