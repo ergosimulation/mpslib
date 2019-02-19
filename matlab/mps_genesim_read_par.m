@@ -108,6 +108,13 @@ O.n_threads=str2num(l);
 l=line_strip_char(fgetl(fid),'#');
 O.debug=str2num(l);
 
+
+try
+    l=line_strip_char(fgetl(fid),'#');
+    O.mask_filename=strip_space(l);
+end
+
+%%
 % set x,y, and z parameters
 O.x=[0:(O.simulation_grid_size(1)-1)].*O.grid_cell_size(1)+O.origin(1);
 O.y=[0:(O.simulation_grid_size(2)-1)].*O.grid_cell_size(2)+O.origin(2);

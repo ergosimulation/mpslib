@@ -708,28 +708,6 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, s
 }
 
 /**
-* @brief Add the current node index to the simulation path and initialize the simulation grid using hard data if they are available
-* @param x index X of the current node
-* @param y index Y of the current node
-* @param z index Z of the current node
-* @param sg1DIdx X, Y, Z will be flatten to this 1D index
-* @param level the current level of the multiple grid
-* @param allocatedNodesFromHardData vector of coordinate of node which is used for the relocation of hard data, those node will be removed after the simulation is done for that level
-* @param nodeToPutBack vector of coordinate of node to put back to NaN after doing the simulation of that level
-*/
-void MPS::MPSAlgorithm::_addIndexToSimulationPath(const int& x, const int& y, const int&z, int& sg1DIdx, const int& level, std::vector<MPS::Coords3D>& allocatedNodesFromHardData, std::vector<MPS::Coords3D>& nodeToPutBack) {
-	MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
-	_simulationPath.push_back(sg1DIdx);
-	//Fill the simulation node with the value from hard data grid
-	if (!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
-		_sg[z][y][x] = _hdg[z][y][x];
-	}
-	//The relocation process happens if the current simulation grid value is still NaN
-	//Moving hard data to grid node only on coarsed level
-	if (level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);	
-}
-
-/**
 * @brief Start the simulation
 * Virtual function implemented from MPSAlgorithm
 */
@@ -834,16 +812,26 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			for (int z=0; z<_sgDimZ; z+=offset) {
 				for (int y=0; y<_sgDimY; y+=offset) {
 					for (int x=0; x<_sgDimX; x+=offset) {
+						//Fill the simulation node with the value from hard data grid
+						if (!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
+							_sg[z][y][x] = _hdg[z][y][x];
+						}
 						//Changing the simulation path based on a mask grid
 						//Doing the simulation within the mask grid
 						if (_hasMaskData) {
 							if (_maskDataGrid[z][y][x] == 1) { //Doing the simulation only if mask data is 1
-								_addIndexToSimulationPath(x, y, z, sg1DIdx, level, allocatedNodesFromHardData, nodeToPutBack);								
+								MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
+								_simulationPath.push_back(sg1DIdx);
 							}
 						}
 						else { //No mask data, just do the simulation like before
-							_addIndexToSimulationPath(x, y, z, sg1DIdx, level, allocatedNodesFromHardData, nodeToPutBack);
+							MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
+							_simulationPath.push_back(sg1DIdx);
 						}
+
+						//The relocation process happens if the current simulation grid value is still NaN
+						//Moving hard data to grid node only on coarsed level
+						if (level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);
 
 						//Progression
 						if (_debugMode > -1 && !_hdg.empty()) {

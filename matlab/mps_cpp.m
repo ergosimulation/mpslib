@@ -100,10 +100,22 @@ if doSetSIM==1;
     end
 end
 
+%% Clean mask filename if it exist
+if ~isfield(O,'mask_filename');
+    O.mask_filename = 'mask.dat';
+    if exist(O.mask_filename,'file')
+        delete(O.mask_filename); % delete if not set
+    end
+end
+
 %%
 % WRITE HARD DATA IF SET AS VARIABLE
 if ~isfield(O,'hard_data_filename');
     O.hard_data_filename='d_hard.dat';
+    if exist(O.hard_data_filename,'file')
+        delete(O.hard_data_filename); % delete if not set
+    end
+    
 end
 if isfield(O,'d_hard');
     write_eas(O.hard_data_filename,O.d_hard);

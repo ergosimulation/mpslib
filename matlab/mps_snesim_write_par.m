@@ -32,6 +32,7 @@ if ~isfield(O,'origin'); O.origin=[0 0 0]; end
 if ~isfield(O,'grid_cell_size'); O.grid_cell_size=[1 1 1]; end
 %if ~isfield(O,'ti_filename');O.ti_filename='snesim.ti';end 
 if ~isfield(O,'ti_filename');O.ti_filename='TI/ti_strebelle_250_250_1.sgems';end 
+if ~isfield(O,'mask_filename');O.mask_filename='mask.dat';end 
 if ~isfield(O,'output_folder');O.output_folder='.';end 
 if ~isfield(O,'shuffle_simulation_grid');O.shuffle_simulation_grid=1;end
 if ~isfield(O,'entropyfactor_simulation_grid');O.entropyfactor_simulation_grid=4;end
@@ -91,4 +92,8 @@ fprintf(fid,'Soft datafilenames (separated by ; only need (number_categories - 1
 
 fprintf(fid,'Number of threads (minimum 1, maximum 8 - depend on your CPU) # %d\n',O.n_threads);
 fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n',O.debug);
+% mask
+fprintf(fid,'Mask grid # %s\n',O.mask_filename);
+
+
 fclose(fid);

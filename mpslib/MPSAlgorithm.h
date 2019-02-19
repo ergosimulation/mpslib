@@ -102,18 +102,6 @@ private:
 	*/
 	void _searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V);
 
-	/**
-	* @brief Add the current node index to the simulation path and initialize the simulation grid using hard data if they are available
-	* @param x index X of the current node
-	* @param y index Y of the current node
-	* @param z index Z of the current node
-	* @param sg1DIdx X, Y, Z will be flatten to this 1D index
-	* @param level the current level of the multiple grid
-	* @param allocatedNodesFromHardData vector of coordinate of node which is used for the relocation of hard data, those node will be removed after the simulation is done for that level
-	* @param nodeToPutBack vector of coordinate of node to put back to NaN after doing the simulation of that level
-	*/
-	void _addIndexToSimulationPath(const int& x, const int& y, const int&z, int& sg1DIdx, const int& level, std::vector<MPS::Coords3D>& allocatedNodesFromHardData, std::vector<MPS::Coords3D>& nodeToPutBack);
-
 protected:
 	/**
 	* @brief The simulation grid
