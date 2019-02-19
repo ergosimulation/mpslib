@@ -107,12 +107,4 @@ Debug mode
    for an end-user)
 
 
-.. toctree::
-   :maxdepth: 3
-	      
-   chapGenesim/mps_genesim
-   chapSnesim/mps_snesim
-   chapSnesim/mps_snesim_tree-with-varying-template.rst
-   	     
-
 
