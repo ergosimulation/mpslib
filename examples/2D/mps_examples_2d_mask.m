@@ -11,6 +11,7 @@ O.debug=-1;
 O.n_cond=16;
 O.template_size=[20 20 1];
 O.method='mps_snesim_tree'; 
+%O.method='mps_snesim_list'; 
 %O.method='mps_genesim'; 
 
 % load TI
