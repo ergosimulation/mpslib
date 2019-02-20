@@ -230,6 +230,9 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 * @return true if found a value
 */
 bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf) {
+
+	std::cout << "WE SHOULD NOT BE HERE!!!!!" << std::endl;
+
 	int maxCpdfCount = _nMaxCountCpdf;
 
 	// map containing the count of conditional data values
@@ -260,7 +263,6 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		std::cout << "circularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
 
 	}
-
 	// Compute relative distance for each conditional data
 	std::vector<float> L_dist(L_c.size());
 	for (unsigned int i=0; i<L_c.size(); i++) {
@@ -304,8 +306,9 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
 
 		// Get the distance between the conditional data in TI and SIM grid
+		std::cout << "1";
 		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_dist);
-		
+
 
 
 		// Check if current L,T in TI match conditional observations better
@@ -455,6 +458,9 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	// MAKE SURE TO COUNT THE NUMBER OF SOFT CONDTIONING DATA ONCE, SUCH THAT WE DO NOT NEED
 	// TO LOOK FOR SOFT DATA ONCE THEY HAVE BEEN SIMULATED!
 	// COULD SPEED UP SNESIM AS WELL
+	if (_debugMode>2) {
+		std::cout << " -- _getCpdfTiEnesimNew TOP --" << std::endl; 
+	}
 
 	int maxCpdfCount = _nMaxCountCpdf;
 
@@ -486,37 +492,33 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	}
 						
 	// Find (_maxNeighbours) the closest data in simulation grid (_sg)
-	// and store the relive locatoin in L_h, and the values in V_h
+	// and store the relative locatoin in L_h, and the values in V_h
 	std::vector<MPS::Coords3D> L_c;
 	std::vector<float> V_c;
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
 
 	if (_debugMode>2) {
-		std::cout << "_getCpdfTiEnesimNew: -- ENESIM TOP --"; 
-		std::cout << " SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")";
-		std::cout << " nLxyz=" << L_c.size() << "(of max " << _maxNeighbours << ")";
-		std::cout << " CircularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
+		std::cout << "  location in sim grid, Gxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
+		std::cout << "  Found conditional data=" << L_c.size() << " (_maxNeighbours =" << _maxNeighbours;
+		std::cout << ", _maxSearchRadius=" << _maxSearchRadius << ")" << std::endl;
 	}
 
-//	std::cout << "START" << std::endl;
-//	std::cout << "f(m_i|m_c)=[" << conditionalCount[_softDataCategories[0]] << "," << conditionalCount[_softDataCategories[1]] << "]";
-//	std::cout << "  f_soft(m_i)=[" << conditionalSoftProb[_softDataCategories[0]] << "," << conditionalSoftProb[_softDataCategories[1]] << "]" << std::endl;
-
-
 	// Compute relative distance for each conditional data
-	std::vector<float> L_dist(L_c.size());
+	std::vector<float> L_weight(L_c.size());
 	for (unsigned int i = 0; i<L_c.size(); i++) {
-		if (_debugMode>3) {
-			std::cout << "  Lxyz=(" << L_c[i].getX() << "," << L_c[i].getY() << "," << L_c[i].getZ() << ")" << " V=" << V_c[i] << std::endl;
-		}
 		if (_distance_power_order != 0) {
-			L_dist[i] = sqrt(L_c[i].getX()*L_c[i].getX() + L_c[i].getY()*L_c[i].getY() + L_c[i].getZ()*L_c[i].getZ());
-			L_dist[i] = pow(L_dist[i], -1 * _distance_power_order);
+			L_weight[i] = sqrt(L_c[i].getX()*L_c[i].getX() + L_c[i].getY()*L_c[i].getY() + L_c[i].getZ()*L_c[i].getZ());
+			L_weight[i] = pow(L_weight[i], -1 * _distance_power_order);
 
 		}
 		else {
-			L_dist[i] = 1;
+			L_weight[i] = 1;
 		}
+		if (_debugMode>2) {
+			std::cout << "  Lxyz=(" << L_c[i].getX() << "," << L_c[i].getY() << "," << L_c[i].getZ() << ")" << " V=" << V_c[i];
+			std::cout << " - weight  = " << L_weight[i] << std::endl;
+		}
+		
 	}
 
 
@@ -584,7 +586,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
 
 		// Get the distance between the conditional data in TI and SIM grid
-		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_dist);
+		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_weight);
 
 
 
@@ -883,18 +885,18 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 * @param TIi_dxX coordinate X of the current node in TI
 * @param TIi_dxY coordinate Y of the current node in TI
 * @param TIi_dxZ coordinate Z of the current node in TI
-* @param L_dist Precompute Distance!
+* @param L_weight precomputed (distance) weight!
 * @return distance
 */
-float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ, std::vector<float>& L_dist) {
+float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ, std::vector<float>& L_weight) {
 
-	float h_dist=0;
-	float h_dist_cum=0;
-	float LC_dist;
+	//float h_dist=0;
+	float L_weight_cum=0;
+	float LC_dist=0;
 	float V_ti;
 	int TI_x, TI_y, TI_z;
 
-	LC_dist=0;
+	//LC_dist=0;
 	//h_dist_cum=0;
 
 	if (L.size()>0) {
@@ -904,8 +906,8 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 			TI_y = TI_idxY + L[i].getY();
 			TI_z = TI_idxZ + L[i].getZ();
 
-		  h_dist = L_dist[i];
-			h_dist_cum = h_dist_cum + h_dist;
+		    //h_weight = L_weight[i];
+			L_weight_cum = L_weight_cum + L_weight[i];
 
 			// Check wgether the current conditional point
 			// is located within the training image limits
@@ -916,107 +918,36 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 					// Discrete measure: no matching pixel means added distance of 1
 					if (V_ti!=V[i]) {
 						// add a distance of 1, if case of no matching pixels
-						LC_dist=LC_dist+1*h_dist;
+						LC_dist=LC_dist+1*L_weight[i];
 					}
 				}	else if (_distance_measure==2){
-					LC_dist = LC_dist + ((V_ti-V[i])*(V_ti-V[i]))/(256*256)*h_dist;
+					LC_dist = LC_dist + abs(V_ti-V[i])*L_weight[i];
 				}
 			} else {
 				// The conditioning location of the point to compare to is located outside
 				// the traning image, and will be treated not a match
 				if (_distance_measure==1) {
-					LC_dist = LC_dist+1*h_dist;
+					LC_dist = LC_dist+1*L_weight[i];
 				} else if (_distance_measure==2) {
-					LC_dist = 1e+9*h_dist;
+					LC_dist = 1e+9*L_weight[i];
 				}
 			}
+			//std::cout << ">>LC_dist = " << LC_dist << std::endl;
 		}
+		
 		if (_distance_measure==1) {
 			// Normaize LC_dist
-			//LC_dist = LC_dist / h_dist_cum;
+			LC_dist = LC_dist / L_weight_cum;
 		} else if (_distance_measure==2) {
-			LC_dist = LC_dist / L.size();
+			LC_dist = LC_dist / L_weight_cum;
 		}
 	} else {
 		// No conditional points --> distance zero
 		LC_dist=0;
 	}
-
+	//std::cout << "  ----> LC_dist = " << LC_dist << std::endl;
 	return LC_dist;
 }
-
-/**
-* @brief Compute distance between conditional data in TI and template L.
-* @brief Much slower than using Precomputed distance
-* @param TIi_dxX coordinate X of the current node in TI
-* @param TIi_dxY coordinate Y of the current node in TI
-* @param TIi_dxZ coordinate Z of the current node in TI
-* @return distance
-*/
-/*
-float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ) {
-
-	float h_dist;
-	float h_dist_cum;
-	float LC_dist;
-	float V_ti;
-	int TI_x, TI_y, TI_z;
-
-	LC_dist=0;
-	h_dist_cum=0;
-
-	if (L.size()>0) {
-		for (unsigned int i=0; i<L.size(); i++) {
-			//For each pixel relatively to the current pixel based on vector L
-			TI_x = TI_idxX + L[i].getX();
-			TI_y = TI_idxY + L[i].getY();
-			TI_z = TI_idxZ + L[i].getZ();
-			if (_distance_power_order!=0) {
-				h_dist = sqrt(L[i].getX()*L[i].getX() + L[i].getY()*L[i].getY() + L[i].getZ()*L[i].getZ());
-				h_dist = pow(h_dist,-1*_distance_power_order) ;
-			} else {
-				h_dist=1;
-			}
-			h_dist_cum = h_dist_cum + h_dist;
-
-			// Check wgether the current conditional point
-			// is located within the training image limits
-			if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
-				V_ti = _TI[TI_z][TI_y][TI_x];
-
-				if (_distance_measure==1) {
-					// Discrete measure: no matching picel means added distance of 1
-					if (V_ti!=V[i]) {
-						// add a distance of 1, if case of no matching pixels
-						LC_dist=LC_dist+1*h_dist;
-					}
-				}	else if (_distance_measure==2){
-					LC_dist = LC_dist + ((V_ti-V[i])*(V_ti-V[i]))*h_dist;
-				}
-			} else {
-				// The conditioning location of the point to compare to is located outside
-				// the traning image, and will be treated not a match
-				if (_distance_measure==1) {
-					LC_dist = LC_dist+1*h_dist;
-				} else if (_distance_measure==2) {
-					LC_dist = 1000000*h_dist;
-				}
-			}
-		}
-		if (_distance_measure==1) {
-			// Normaize LC_dist
-			LC_dist = LC_dist / h_dist_cum;
-		}
-	} else {
-		// No conditional points --> distance zero
-		LC_dist=0;
-	}
-
-	return LC_dist;
-}
-
-*/
-
 
 
 /**
@@ -1073,32 +1004,32 @@ bool MPS::ENESIM::_combinePdf(std::map<float, float>& cPdf, std::map<float, floa
 * @param iterationCnt Iterations counter
 * @return simulated value
 */
-float MPS::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
+// float MPS::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
 
-	// Get cPdf from training image using ENESIM style
-	std::map<float, float> conditionalPdfFromTi;
-	_getCpdfTiEnesim(sgIdxX, sgIdxY,sgIdxZ, conditionalPdfFromTi);
+// 	// Get cPdf from training image using ENESIM style
+// 	std::map<float, float> conditionalPdfFromTi;
+// 	_getCpdfTiEnesim(sgIdxX, sgIdxY,sgIdxZ, conditionalPdfFromTi);
 
-	// Check if any SoftData are available?
-	//std::multimap<float, float> softPdf;
-	std::map<float, float> softPdf;
-	MPS::Coords3D closestCoords;
-	if (_getCpdfFromSoftData(sgIdxX, sgIdxY, sgIdxZ, 0, softPdf, closestCoords)) {
-		// Combine with conditional pdf from TI
-		_combinePdf(conditionalPdfFromTi,softPdf);
-	}
+// 	// Check if any SoftData are available?
+// 	//std::multimap<float, float> softPdf;
+// 	std::map<float, float> softPdf;
+// 	MPS::Coords3D closestCoords;
+// 	if (_getCpdfFromSoftData(sgIdxX, sgIdxY, sgIdxZ, 0, softPdf, closestCoords)) {
+// 		// Combine with conditional pdf from TI
+// 		_combinePdf(conditionalPdfFromTi,softPdf);
+// 	}
 
-	// sample from conditional pdf
-	float simulatedValue;
-	simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
+// 	// sample from conditional pdf
+// 	float simulatedValue;
+// 	simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 
-	// DONE SIMULATING
-	if (_debugMode > 2) {
-		// std::cout << "Simulated value="<< simulatedValue << ", LC_dist_min=" << LC_dist_min << " " << std::endl ;
-		std::cout << "Simulated value="<< simulatedValue << " " << std::endl ;
-	}
-	return simulatedValue;
-}
+// 	// DONE SIMULATING
+// 	if (_debugMode > 2) {
+// 		// std::cout << "Simulated value="<< simulatedValue << ", LC_dist_min=" << LC_dist_min << " " << std::endl ;
+// 		std::cout << "Simulated value="<< simulatedValue << " " << std::endl ;
+// 	}
+// 	return simulatedValue;
+// }
 
 /**
 * @brief get realization from Cpdf and Soft data using a metropolis sampler when soft data is available
@@ -1108,70 +1039,70 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int&
 * @param iterationCnt Iterations counter
 * @return simulated value
 */                 
-float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
+// float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
 
-	std::map<float, float> conditionalPdfFromTi;
-	// Check if any SoftData are available?
-	//std::multimap<float, float> softPdf;
-	float simulatedValue;
-	float randomValue	;
-	float pAcc;
+// 	std::map<float, float> conditionalPdfFromTi;
+// 	// Check if any SoftData are available?
+// 	//std::multimap<float, float> softPdf;
+// 	float simulatedValue;
+// 	float randomValue	;
+// 	float pAcc;
 
-	std::map<float, float> softPdf;
-	int i=0;;
-	int maxIterations = 100;  // decide whether soft or ti cpdf takes preference..
-	bool isAccepted = false;
-	MPS::Coords3D closestCoords;
-	if (_getCpdfFromSoftData(sgIdxX, sgIdxY, sgIdxZ, 0, softPdf, closestCoords)) {
+// 	std::map<float, float> softPdf;
+// 	int i=0;;
+// 	int maxIterations = 100;  // decide whether soft or ti cpdf takes preference..
+// 	bool isAccepted = false;
+// 	MPS::Coords3D closestCoords;
+// 	if (_getCpdfFromSoftData(sgIdxX, sgIdxY, sgIdxZ, 0, softPdf, closestCoords)) {
 
-		do {
-			// MAKE SURE THAT conditionalPdfFromTi IS OBTAINED INDEPENDENTLTY EACH TIME!!!
-			// ESPECIELLY WHEN BASED ON ONLY ONE COUNT
+// 		do {
+// 			// MAKE SURE THAT conditionalPdfFromTi IS OBTAINED INDEPENDENTLTY EACH TIME!!!
+// 			// ESPECIELLY WHEN BASED ON ONLY ONE COUNT
 
-			conditionalPdfFromTi.clear();
-			_getCpdfTiEnesim(sgIdxX, sgIdxY,sgIdxZ, conditionalPdfFromTi);
-			simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
+// 			conditionalPdfFromTi.clear();
+// 			_getCpdfTiEnesim(sgIdxX, sgIdxY,sgIdxZ, conditionalPdfFromTi);
+// 			simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 
-			randomValue = ((float) rand() / (RAND_MAX));
-			pAcc = softPdf[simulatedValue];
+// 			randomValue = ((float) rand() / (RAND_MAX));
+// 			pAcc = softPdf[simulatedValue];
 
-			if(_debugMode > 2 ) {
-				std::cout << "i= " << i << " maxIterations=" << maxIterations;
-				std::cout << "   p_ti = [" <<  conditionalPdfFromTi[0] << "," << conditionalPdfFromTi[1] << "]";
-				std::cout << " simval = " << simulatedValue;
-				std::cout << "   p_soft = [" <<  softPdf[0] << "," << softPdf[1] << "]";
-				std::cout << " - pAcc = " << pAcc << std::endl;
-			}
+// 			if(_debugMode > 2 ) {
+// 				std::cout << "i= " << i << " maxIterations=" << maxIterations;
+// 				std::cout << "   p_ti = [" <<  conditionalPdfFromTi[0] << "," << conditionalPdfFromTi[1] << "]";
+// 				std::cout << " simval = " << simulatedValue;
+// 				std::cout << "   p_soft = [" <<  softPdf[0] << "," << softPdf[1] << "]";
+// 				std::cout << " - pAcc = " << pAcc << std::endl;
+// 			}
 
-			// accept simulatedValue with probabilty from soft data
-			if (randomValue<pAcc) {
-				isAccepted=true;
-			}
-			i++;
-		} while ((i<maxIterations)&(!isAccepted));
-		if(_debugMode > 2 ) {
-			std::cout << " simval = " << simulatedValue << " - randomValue = " << randomValue << std::endl;
-			std::cout << "________________________________" << std::endl;
-		}
-
-
-	} else {
-		// obtain conditional and generate a realization wihtout soft data
-		_getCpdfTiEnesim(sgIdxX, sgIdxY,sgIdxZ, conditionalPdfFromTi);
-
-		// sample from conditional pdf
-		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
-	}
+// 			// accept simulatedValue with probabilty from soft data
+// 			if (randomValue<pAcc) {
+// 				isAccepted=true;
+// 			}
+// 			i++;
+// 		} while ((i<maxIterations)&(!isAccepted));
+// 		if(_debugMode > 2 ) {
+// 			std::cout << " simval = " << simulatedValue << " - randomValue = " << randomValue << std::endl;
+// 			std::cout << "________________________________" << std::endl;
+// 		}
 
 
+// 	} else {
+// 		// obtain conditional and generate a realization wihtout soft data
+// 		_getCpdfTiEnesim(sgIdxX, sgIdxY,sgIdxZ, conditionalPdfFromTi);
 
-	// DONE SIMULATING
-	if (_debugMode > 2) {
-		// std::cout << "Simulated value="<< simulatedValue << ", LC_dist_min=" << LC_dist_min << " " << std::endl ;
-		std::cout << "Simulated value="<< simulatedValue << " " << std::endl ;
-	}
-	return simulatedValue;
-}
+// 		// sample from conditional pdf
+// 		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
+// 	}
+
+
+
+// 	// DONE SIMULATING
+// 	if (_debugMode > 2) {
+// 		// std::cout << "Simulated value="<< simulatedValue << ", LC_dist_min=" << LC_dist_min << " " << std::endl ;
+// 		std::cout << "Simulated value="<< simulatedValue << " " << std::endl ;
+// 	}
+// 	return simulatedValue;
+// }
 
 
 
@@ -1185,7 +1116,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, c
 */
 float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
 
-
+	
 	std::map<float, float> conditionalPdfFromTi;
 	// Check if any SoftData are available?
 	//std::multimap<float, float> softPdf;
@@ -1254,8 +1185,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 		} while ((i<maxIterations)&(!isAccepted));
 		simulatedValue = simulatedValueOpt;
 
-	}
-	else {
+	} else {
 		// SIMULTATE DIRECTLY FROM CONDITIONAL
 		// obtain conditional and generate a realization wihtout soft data
 		_getCpdfTiEnesimNew(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);

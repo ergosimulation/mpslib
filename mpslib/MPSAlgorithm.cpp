@@ -893,8 +893,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			int totalNodes = (int)_simulationPath.size();
 
 			int SG_idxX, SG_idxY, SG_idxZ;
-			if (_debugMode > -1) {
-				std::cout << "Simulating " << std::endl;
+			if (_debugMode > 1) {
+				std::cout << "________________________________________" << std::endl;
+				std::cout << "_______ START SIMULATION _______________" << std::endl; 
 			}
 
 			////Cleaning the allocated data from the SG
@@ -908,7 +909,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				MPS::utility::oneDTo3D(_simulationPath[ii], _sgDimX, _sgDimY, SG_idxX, SG_idxY, SG_idxZ);
 
 				if (_debugMode > 2) {
-					std::cout << "i="<< ii <<"/"<< _simulationPath.size()<< std::endl;
+					std::cout << " " << std::endl;
+					std::cout << "at node = "<< ii <<"/"<< _simulationPath.size()<< std::endl;
 				}
 
 				//Performing simulation for non NaN value ...

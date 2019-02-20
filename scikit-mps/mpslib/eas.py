@@ -211,7 +211,7 @@ def write_dict(eas,filename='eas.dat'):
         
     if n_cols == 1:
         for ii in np.arange(n_data):
-            file.write('%d\n' % eas['D'][ii])
+            file.write('%g\n' % eas['D'][ii])
     else:
         #for ii in np.arange(nreal):
         #    f.write('%s%d\n' % ('real', ii))

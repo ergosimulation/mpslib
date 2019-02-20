@@ -369,6 +369,7 @@ class mpslib:
         self.sim = []
         for i in range(0, self.par['n_real']):
             filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
+            time.sleep(.1) # SOMETIMES NEEEDED WHEN FILES IS NOT YET ACCESSIBLE
             OUT = eas.read(filename)
             if (self.verbose_level > 0):
                 print('mpslib: Reading: %s' % (filename))

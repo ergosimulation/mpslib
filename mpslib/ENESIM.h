@@ -122,7 +122,7 @@ protected:
 	* @param iterationCnt Iterations counter
 	* @return simulated value
 	*/
-	float _getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
+	//float _getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
 
 	/**
 	* @brief Compute realization using cpdf obtained using ENESIM and Metropolis with soft data
@@ -132,7 +132,7 @@ protected:
 	* @param iterationCnt Iterations counter
 	* @return simulated value
 	*/
-	float _getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
+	//float _getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
 
 	/**
 	* @brief Compute realization using cpdf obtained using ENESIM and Metropolis with NON-colocated soft data
