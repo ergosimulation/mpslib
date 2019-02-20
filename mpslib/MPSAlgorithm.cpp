@@ -418,7 +418,9 @@ void MPS::MPSAlgorithm::_readMaskDataFromFile(void) {
 	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_maskDataFileName, _maskDataGrid);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_maskDataFileName, _maskDataGrid);
 	if (!readSucessfull) {
-		std::cout << "Mask Data is missing" << _maskDataFileName << std::endl;
+		if (_debugMode>-1) {
+			std::cout << "Mask Data is missing" << _maskDataFileName << std::endl;
+		}
 	}
 
 	//Initialize the flag for mask data availibility
@@ -867,8 +869,10 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 			//Back to random path if no soft data
 			if (_softDataGrids.empty() && _shuffleSgPath == 2) {
-				std::cout << "WARNING: no soft data found, switch to random path" << std::endl;
-				_shuffleSgPath = 1;
+				if (_debugMode > 2) {
+					std::cout << "WARNING: no soft data found, switch to random path" << std::endl;
+				}
+				_shuffleSgPath = 1;				
 			}
 			//Shuffling
 			if (_shuffleSgPath==1) {

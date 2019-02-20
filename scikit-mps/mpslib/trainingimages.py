@@ -46,9 +46,9 @@ def coarsen_2d_ti(Dmat,di=2):
 
 
 def strebelle(di=1, coarse3d=0):
-    local_file = 'ti_strebelle.dat';
     url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_strebelle.sgems';
-    Deas = get_remote(url,local_file)
+    Deas = get_remote(url,'ti_strebelle.dat')
+    local_file = 'ti_strebelle_%d.dat' % (di);
     TI = Deas['Dmat']
     if di>1:
         if coarse3d==0:
@@ -57,6 +57,8 @@ def strebelle(di=1, coarse3d=0):
         else:
             Dmat = TI
             TI = coarsen_2d_ti(Dmat, di)
+    
+    eas.write_mat(TI,local_file)
 
     return TI, local_file
 

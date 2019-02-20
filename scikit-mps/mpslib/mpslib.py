@@ -283,6 +283,16 @@ class mpslib:
         import os
         success = False
 
+        # update self.x, self.y, self.z
+        if (hasattr(self, 'x') == 0):
+            self.x = np.arange(self.par['simulation_grid_size'][0]) * self.par['grid_cell_size'][0] + self.par['origin'][0]
+        if (hasattr(self, 'y') == 0):
+            self.y = np.arange(self.par['simulation_grid_size'][1]) * self.par['grid_cell_size'][1] + self.par['origin'][1]
+        if (hasattr(self, 'z') == 0):
+            self.z = np.arange(self.par['simulation_grid_size'][2]) * self.par['grid_cell_size'][2] + self.par['origin'][2]
+
+
+
         # check if TI is set, if not, get the one
         if (not os.path.isfile(self.par['ti_fnam'])) and (not hasattr(self, 'ti')):
             print('mpslib: Training image "%s" not found - USING DEFAULT!' % (self.par['ti_fnam']))
@@ -523,8 +533,35 @@ class mpslib:
         self.d_hard = d_hard
         return d_hard
 
+    def hard_data_from_sim(self, i=0, nanval=-997799):
+        #i_use = [self.sim[i]==nanval] 
+        #np.isnan(O1.sim[0])
+        iz=0
+        n=0
+        d_hard = np.array([[0,0,0,0]])
+        for ix in range(self.par['simulation_grid_size'][0]):
+            for iy in range(self.par['simulation_grid_size'][1]):
+                for iz in range(self.par['simulation_grid_size'][2]):
+                    if (len(self.sim[0].shape)==1):
+                        val = self.sim[i][ix]
+                    elif (len(self.sim[0].shape)==2):
+                        val = self.sim[i][iy,ix]
+                        d = np.array([[self.x[ix],self.y[iy],self.z[iz],val]])                        
+                    else:
+                        val = self.sim[i][iy,ix,iz]
+                        
+                    if not np.isnan(val):
+                        #d = np.array([[self.x(ix), self.y(iy), self.z(ix), self.sim(iy.ix)]])
+                        if n==0:
+                            d_hard = d                        
+                        else:
+                            d_hard=np.append(d_hard,d,axis=0)
+                        n=n+1
+        return d_hard
+                
+
     # plot realizations (only in 2D so far)
-    def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals'):
+    def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals', nanval=-997799, filternan=1):
         import matplotlib.pyplot as plt
         import matplotlib.gridspec as gridspec
         import numpy as np
@@ -538,6 +575,8 @@ class mpslib:
         for i in range(0, nr):
             ax1 = plt.Subplot(fig, sp[i])
             fig.add_subplot(ax1)
+            if filternan==1:
+                self.sim[i][self.sim[i]==nanval] = np.nan
             plt.imshow(self.sim[i], interpolation='none')
             plt.title("Real %d" % (i + 1))
 

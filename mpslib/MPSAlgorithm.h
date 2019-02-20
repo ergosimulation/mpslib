@@ -215,7 +215,7 @@ protected:
 	/**
 	* @brief Save output as GRD3 files for GeoScene3D
 	*/
-	bool _saveGrd3 = 1;
+	bool _saveGrd3 = 0;
 	/**
 	* @brief Initial value of the simulation
 	*/
