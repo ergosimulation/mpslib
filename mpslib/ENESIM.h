@@ -102,7 +102,7 @@ protected:
 	* @param z coordinate Z of the current node
 	* @return true if found a value
 	*/
-	bool _getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF);
+	//bool _getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF);
 	bool _getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF, float& SoftProbability);
 
 	/**

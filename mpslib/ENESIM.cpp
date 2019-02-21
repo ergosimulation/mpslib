@@ -229,219 +229,219 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 * @param map with conditional pdf
 * @return true if found a value
 */
-bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf) {
-
-	std::cout << "WE SHOULD NOT BE HERE!!!!!" << std::endl;
-
-	int maxCpdfCount = _nMaxCountCpdf;
-
-	// map containing the count of conditional data values
-	std::map<float, int> conditionalCount;
-
-	int CpdfCount = 0; // the number of matches found, hence the number of counts used to construct the condtitional
-	float valueFromTI; 
-	float LC_dist_current; // the 'current' distance'
-	float LC_dist_min; // The minimal distance found
-	float TI_x_min, TI_y_min, TI_z_min; // The position in the TI associated with the minimal distance
-	int TI_idxX, TI_idxY, TI_idxZ;
-	float V_center_ti = -1; // value of the central node in the TI
-	int node1DIdx; // Integer to hold 1d index from 3D point
-	std::vector<MPS::Coords3D> L_s; // relative location in soft grid
-	std::vector<float> V_s; // value at realtive location in soft grid
-
-
-	// Find (_maxNeighbours) the closest data in simulation grid (_sg)
-	// and store the relive locatoin in L_h, and the values in V_h
-	std::vector<MPS::Coords3D> L_c;
-	std::vector<float> V_c;
-	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
-	
-	if (_debugMode>2) {
-		std::cout << "_getCpdfTiEnesim: -- ENESIM TOP --"<< std::endl;
-		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY <<  "," << sgIdxZ <<")" << std::endl;
-		std::cout << "nLxyz=" << L_c.size() << "(of max "<< _maxNeighbours << ")" << std::endl;
-		std::cout << "circularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
-
-	}
-	// Compute relative distance for each conditional data
-	std::vector<float> L_dist(L_c.size());
-	for (unsigned int i=0; i<L_c.size(); i++) {
-		 if (_debugMode>3) {
-			std::cout << "  Lxyz=("<<L_c[i].getX() << ","<<L_c[i].getY() <<  ","<<L_c[i].getZ() << ")"<< " V="<<V_c[i]<< std::endl;
-		}
-		if (_distance_power_order!=0) {
-			L_dist[i] = sqrt(L_c[i].getX()*L_c[i].getX() + L_c[i].getY()*L_c[i].getY() + L_c[i].getZ()*L_c[i].getZ());
-			L_dist[i]  = pow(L_dist[i],-1*_distance_power_order) ;
-
-		} else {
-			L_dist[i]=1;
-		}
-	}
-
-	
-	// The path scanning the training image is shifted such that a random start location is chosen
-	int ti_shift;
-	ti_shift = (std::rand() % (int)(_tiDimX*_tiDimY*_tiDimZ));
-	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
-
-	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
-	// to find the local conditional pdf f_TI(m_i | m_c)
-
-	
-	// For SOFT DATA
-	std::map<float, std::vector<float>> conditionalSoftProb;
-
-	
-	// Loop over training image to find a close match to L_c and find ,V_c
-	
-	CpdfCount = 0; // Set number of count in Cpdf to zero
-	LC_dist_min = std::numeric_limits<float>::max(); // set the current 'minimum' distance to a very high number
-	float LC_dist; // distance of L,V to value in TI
-	unsigned int i_ti_path;
-	
-	for (i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
-		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
-
-		// Get the centered value in the TI
-		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
-
-		// Get the distance between the conditional data in TI and SIM grid
-		std::cout << "1";
-		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_dist);
-
-
-
-		// Check if current L,T in TI match conditional observations better
-		if (LC_dist<LC_dist_min) {
-			
-			// We have a new MIN distance, update the found conditional values 
-			//   as well as the minimum distance and the associated location in the TI
-			valueFromTI = V_center_ti; 
-			LC_dist_current = LC_dist; // needed?
-			LC_dist_min = LC_dist;
-			TI_x_min = TI_idxX;
-			TI_y_min = TI_idxY;
-			TI_z_min = TI_idxZ;
-			  
-			
-			// Add a count to the Cpdf if the current node match L,V according to some threshold..
-			if (LC_dist<=_distance_threshold) {
-				CpdfCount++;
-				// Update conditionalCount Counter (from which the local cPdf can be computed)
-				if (conditionalCount.find(valueFromTI) == conditionalCount.end()) {
-					// Then we've encountered the word for a first time.
-					// Is this slow?
-					conditionalCount[valueFromTI] = 1; // Initialize it to	 1.
-				} else {
-					// Then we've already seen it before..
-					conditionalCount[valueFromTI]++; // Just increment it.
-				}
-				if (_debugMode > 2) {
-					std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
-				}
-				// MAKE SURE TO RESET LC_dist_min
-				LC_dist_min = 1e+9;
-			
-
-			}
-
-		}
-
-
-		if (_debugMode > 3) {
-			std::cout << "  " << "i_ti_path=" << i_ti_path<< " ===";
-			std::cout << "  TI	xyz=(" << TI_idxX << "," << TI_idxY << "," << TI_idxZ << ")";
-			std::cout << " - LC_dist=" << LC_dist << " min(LC_dist)=" << LC_dist_current;
-			std::cout << std::endl;
-		}
-
-
-
-
-		if (maxCpdfCount <= CpdfCount ) {
-			if (_debugMode > 2) {
-				std::cout << "MaxCpdfCount Reached i_ti_path=" << i_ti_path << " - CpdfCount=" << CpdfCount << std::endl;
-			}
-			break;
-		}
-
-
-		// Stop looking if we have reached the maximum number of allowed iterations in TI
-		if (i_ti_path>_maxIterations) {
-			if (_debugMode > 2) {
-				std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations << std::endl;
-			}
-			break;
-		}
-
-		//std::cout << "-- DONE --" << std::endl;
-
-	} // END SCAN OF TI FOR CPDF
-  //std::cout << sgIdxX << "," << sgIdxY << "  :h_dist_cum = " << h_dist_cum << "  LC_dist = "<< LC_dist << std::endl;
-
-	
-	// At this point set the local soft data as NaN to avoid simulate it again
-	_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
-
-	// assign minimum distance to temporary grid 1
-	if (_debugMode>1) {
-		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist_current;
-		_tg2[sgIdxZ][sgIdxY][sgIdxX] = CpdfCount;
-		MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
-		_tg3[sgIdxZ][sgIdxY][sgIdxX] = node1DIdx;
-		//_tg4[sgIdxZ][sgIdxY][sgIdxX] = _tiPath[i_ti_path]; // POSITION ON TI
-		_tg4[sgIdxZ][sgIdxY][sgIdxX] = i_ti_path;
-		_tg5[sgIdxZ][sgIdxY][sgIdxX] = L_c.size(); // number of used conditional points
-	}
-
-
-
-	// CHECK THAT conditionalCount HAS AT LEAST ONE COUNT
-	// This may not always be the case when no conditional event has been found!
-	if (CpdfCount==0 ) {
-		// NO MATCHES HAS BEEN FOUND. ADD THE CURRENT BEST MACTH TO THE conditionalCount
-		// std::cout << " CpdfCount " << CpdfCount << std::endl;
-		if (conditionalCount.find(valueFromTI) == conditionalCount.end()) {
-			// Then we've encountered the word for a first time. Is this slow?
-			conditionalCount[valueFromTI] = 1; // Initialize it to	 1.
-		} else {
-			// Then we've already seen it before..
-			conditionalCount[valueFromTI]++; // Just increment it.
-		}
-	}
-
-	// COMPUTE ConditionalPdf from conditionalCount
-	//Loop through all the conditional points to calculate the pdf (probability distribution function)
-	//Getting the sum of counter and sort the map using the counter
-	float totalCounter = 0;
-	for(std::map<float,int>::iterator iter = conditionalCount.begin(); iter != conditionalCount.end(); ++iter) {
-		totalCounter += iter->second;
-	}
-	// std::cout << "totalCounter=" << totalCounter << std::endl;
-
-	//std::map<float, float> conditionalPdfFromTi;
-	//Looping again in conditionalCount, compute and add the probabilities from TI
-	for(std::map<float, int>::iterator iter = conditionalCount.begin(); iter != conditionalCount.end(); ++iter) {
-		cPdf.insert(std::pair<float, float>(iter->first, (float)(iter->second) / (float)totalCounter));
-	}
-	// Now the conditional PDF from the TI is available as conditionalPdfFromTi;
-
-
-	if (_debugMode>2) {
-		std::cout << "NsimInTI=" << i_ti_path;
-		std::cout << " --CpdfCount = " << CpdfCount;
-		std::cout << " valueFromTI = " << valueFromTI;
-		std::cout << " LC_dist_current = " << LC_dist_current;
-
-		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY <<  "," << sgIdxZ <<")" << std::endl;
-		std::cout << "_getCpdfTiEnesim: -- ENESIM END --"<< std::endl;
-
-	}
-
-
-
-	return true;
-}
+//bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf) {
+//
+//	std::cout << "WE SHOULD NOT BE HERE!!!!!" << std::endl;
+//
+//	int maxCpdfCount = _nMaxCountCpdf;
+//
+//	// map containing the count of conditional data values
+//	std::map<float, int> conditionalCount;
+//
+//	int CpdfCount = 0; // the number of matches found, hence the number of counts used to construct the condtitional
+//	float valueFromTI; 
+//	float LC_dist_current; // the 'current' distance'
+//	float LC_dist_min; // The minimal distance found
+//	float TI_x_min, TI_y_min, TI_z_min; // The position in the TI associated with the minimal distance
+//	int TI_idxX, TI_idxY, TI_idxZ;
+//	float V_center_ti = -1; // value of the central node in the TI
+//	int node1DIdx; // Integer to hold 1d index from 3D point
+//	std::vector<MPS::Coords3D> L_s; // relative location in soft grid
+//	std::vector<float> V_s; // value at realtive location in soft grid
+//
+//
+//	// Find (_maxNeighbours) the closest data in simulation grid (_sg)
+//	// and store the relive locatoin in L_h, and the values in V_h
+//	std::vector<MPS::Coords3D> L_c;
+//	std::vector<float> V_c;
+//	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
+//	
+//	if (_debugMode>2) {
+//		std::cout << "_getCpdfTiEnesim: -- ENESIM TOP --"<< std::endl;
+//		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY <<  "," << sgIdxZ <<")" << std::endl;
+//		std::cout << "nLxyz=" << L_c.size() << "(of max "<< _maxNeighbours << ")" << std::endl;
+//		std::cout << "circularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
+//
+//	}
+//	// Compute relative distance for each conditional data
+//	std::vector<float> L_dist(L_c.size());
+//	for (unsigned int i=0; i<L_c.size(); i++) {
+//		 if (_debugMode>3) {
+//			std::cout << "  Lxyz=("<<L_c[i].getX() << ","<<L_c[i].getY() <<  ","<<L_c[i].getZ() << ")"<< " V="<<V_c[i]<< std::endl;
+//		}
+//		if (_distance_power_order!=0) {
+//			L_dist[i] = sqrt(L_c[i].getX()*L_c[i].getX() + L_c[i].getY()*L_c[i].getY() + L_c[i].getZ()*L_c[i].getZ());
+//			L_dist[i]  = pow(L_dist[i],-1*_distance_power_order) ;
+//
+//		} else {
+//			L_dist[i]=1;
+//		}
+//	}
+//
+//	
+//	// The path scanning the training image is shifted such that a random start location is chosen
+//	int ti_shift;
+//	ti_shift = (std::rand() % (int)(_tiDimX*_tiDimY*_tiDimZ));
+//	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
+//
+//	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
+//	// to find the local conditional pdf f_TI(m_i | m_c)
+//
+//	
+//	// For SOFT DATA
+//	std::map<float, std::vector<float>> conditionalSoftProb;
+//
+//	
+//	// Loop over training image to find a close match to L_c and find ,V_c
+//	
+//	CpdfCount = 0; // Set number of count in Cpdf to zero
+//	LC_dist_min = std::numeric_limits<float>::max(); // set the current 'minimum' distance to a very high number
+//	float LC_dist; // distance of L,V to value in TI
+//	unsigned int i_ti_path;
+//	
+//	for (i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
+//		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
+//
+//		// Get the centered value in the TI
+//		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
+//
+//		// Get the distance between the conditional data in TI and SIM grid
+//		std::cout << "1";
+//		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_dist);
+//
+//
+//
+//		// Check if current L,T in TI match conditional observations better
+//		if (LC_dist<LC_dist_min) {
+//			
+//			// We have a new MIN distance, update the found conditional values 
+//			//   as well as the minimum distance and the associated location in the TI
+//			valueFromTI = V_center_ti; 
+//			LC_dist_current = LC_dist; // needed?
+//			LC_dist_min = LC_dist;
+//			TI_x_min = TI_idxX;
+//			TI_y_min = TI_idxY;
+//			TI_z_min = TI_idxZ;
+//			  
+//			
+//			// Add a count to the Cpdf if the current node match L,V according to some threshold..
+//			if (LC_dist<=_distance_threshold) {
+//				CpdfCount++;
+//				// Update conditionalCount Counter (from which the local cPdf can be computed)
+//				if (conditionalCount.find(valueFromTI) == conditionalCount.end()) {
+//					// Then we've encountered the word for a first time.
+//					// Is this slow?
+//					conditionalCount[valueFromTI] = 1; // Initialize it to	 1.
+//				} else {
+//					// Then we've already seen it before..
+//					conditionalCount[valueFromTI]++; // Just increment it.
+//				}
+//				if (_debugMode > 3) {
+//					std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
+//				}
+//				// MAKE SURE TO RESET LC_dist_min
+//				LC_dist_min = 1e+9;
+//			
+//
+//			}
+//
+//		}
+//
+//
+//		if (_debugMode > 3) {
+//			std::cout << "  " << "i_ti_path=" << i_ti_path<< " ===";
+//			std::cout << "  TI	xyz=(" << TI_idxX << "," << TI_idxY << "," << TI_idxZ << ")";
+//			std::cout << " - LC_dist=" << LC_dist << " min(LC_dist)=" << LC_dist_current;
+//			std::cout << std::endl;
+//		}
+//
+//
+//
+//
+//		if (maxCpdfCount <= CpdfCount ) {
+//			if (_debugMode > 2) {
+//				std::cout << "MaxCpdfCount Reached i_ti_path=" << i_ti_path << " - CpdfCount=" << CpdfCount << std::endl;
+//			}
+//			break;
+//		}
+//
+//
+//		// Stop looking if we have reached the maximum number of allowed iterations in TI
+//		if (i_ti_path>_maxIterations) {
+//			if (_debugMode > 2) {
+//				std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations << std::endl;
+//			}
+//			break;
+//		}
+//
+//		//std::cout << "-- DONE --" << std::endl;
+//
+//	} // END SCAN OF TI FOR CPDF
+//  //std::cout << sgIdxX << "," << sgIdxY << "  :h_dist_cum = " << h_dist_cum << "  LC_dist = "<< LC_dist << std::endl;
+//
+//	
+//	// At this point set the local soft data as NaN to avoid simulate it again
+//	_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+//
+//	// assign minimum distance to temporary grid 1
+//	if (_debugMode>1) {
+//		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist_current;
+//		_tg2[sgIdxZ][sgIdxY][sgIdxX] = CpdfCount;
+//		MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
+//		_tg3[sgIdxZ][sgIdxY][sgIdxX] = node1DIdx;
+//		//_tg4[sgIdxZ][sgIdxY][sgIdxX] = _tiPath[i_ti_path]; // POSITION ON TI
+//		_tg4[sgIdxZ][sgIdxY][sgIdxX] = i_ti_path;
+//		_tg5[sgIdxZ][sgIdxY][sgIdxX] = L_c.size(); // number of used conditional points
+//	}
+//
+//
+//
+//	// CHECK THAT conditionalCount HAS AT LEAST ONE COUNT
+//	// This may not always be the case when no conditional event has been found!
+//	if (CpdfCount==0 ) {
+//		// NO MATCHES HAS BEEN FOUND. ADD THE CURRENT BEST MACTH TO THE conditionalCount
+//		// std::cout << " CpdfCount " << CpdfCount << std::endl;
+//		if (conditionalCount.find(valueFromTI) == conditionalCount.end()) {
+//			// Then we've encountered the word for a first time. Is this slow?
+//			conditionalCount[valueFromTI] = 1; // Initialize it to	 1.
+//		} else {
+//			// Then we've already seen it before..
+//			conditionalCount[valueFromTI]++; // Just increment it.
+//		}
+//	}
+//
+//	// COMPUTE ConditionalPdf from conditionalCount
+//	//Loop through all the conditional points to calculate the pdf (probability distribution function)
+//	//Getting the sum of counter and sort the map using the counter
+//	float totalCounter = 0;
+//	for(std::map<float,int>::iterator iter = conditionalCount.begin(); iter != conditionalCount.end(); ++iter) {
+//		totalCounter += iter->second;
+//	}
+//	// std::cout << "totalCounter=" << totalCounter << std::endl;
+//
+//	//std::map<float, float> conditionalPdfFromTi;
+//	//Looping again in conditionalCount, compute and add the probabilities from TI
+//	for(std::map<float, int>::iterator iter = conditionalCount.begin(); iter != conditionalCount.end(); ++iter) {
+//		cPdf.insert(std::pair<float, float>(iter->first, (float)(iter->second) / (float)totalCounter));
+//	}
+//	// Now the conditional PDF from the TI is available as conditionalPdfFromTi;
+//
+//
+//	if (_debugMode>2) {
+//		std::cout << "NsimInTI=" << i_ti_path;
+//		std::cout << " --CpdfCount = " << CpdfCount;
+//		std::cout << " valueFromTI = " << valueFromTI;
+//		std::cout << " LC_dist_current = " << LC_dist_current;
+//
+//		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY <<  "," << sgIdxZ <<")" << std::endl;
+//		std::cout << "_getCpdfTiEnesim: -- ENESIM END --"<< std::endl;
+//
+//	}
+//
+//
+//
+//	return true;
+//}
 
 
 
@@ -469,7 +469,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	// map containing the probability of conditional conditional data values
 	std::map<float, float> conditionalSoftProb;
 	
-	SoftProbability = 1;
+	SoftProbability = 1; // Default value
 
 	int CpdfCount = 0; // the number of matches found, hence the number of counts used to construct the condtitional
 	float valueFromTI;
@@ -528,8 +528,10 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	// Then the only the lower dimensional X-Y TI-grid shoudl be search for matches
 	// _StationaryLastDim
 
+
 	if (_ColocatedDimension > 0) {
-	
+		// Colocated Dimension can for example be used to simulate a 2D image color image using a 3D RGB training image
+
 		// Check if the current _tiPath is set of for full size, and if so, reduce the size
 		int smallTiSize = _tiDimX * _tiDimY; // size of the TI-grid to scan through
 		if (_tiPath.size() != smallTiSize) {
@@ -577,6 +579,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	CpdfCount = 0; // Set number of count in Cpdf to zero
 	LC_dist_min = std::numeric_limits<float>::max(); // set the current 'minimum' distance to a very high number
 	float LC_dist; // distance of L,V to value in TI
+	float minDist = std::numeric_limits<float>::max(); // Dummy for testing
 	unsigned int i_ti_path;
 
 	for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
@@ -588,7 +591,10 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 		// Get the distance between the conditional data in TI and SIM grid
 		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_weight);
 
-
+		if (LC_dist < minDist) {
+			minDist = LC_dist;
+			std::cout << " minDist = " << minDist << std::endl;
+		}
 
 		// Check if current L,T in TI match conditional observations better
 		if (LC_dist<LC_dist_min) {
@@ -610,7 +616,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 				conditionalCount[valueFromTI]++; // Just increment it.
 
 
-				if (_debugMode > 2) {
+				if (_debugMode > 3) {
 					std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
 				}
 				// MAKE SURE TO RESET LC_dist_min
