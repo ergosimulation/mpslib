@@ -23,24 +23,8 @@ and Visual Studio C++. Using GNU C++ the code can be compiled using
 
     git clone https://github.com/ergosimulation/mpslib.git MPSlib
     cd MPSlib
-    sh ./configure.sh
     make
 
-Platform specific compilation options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The line ``sh ./configure.sh`` test for a the platform used (OSX, Linux,
-Windows) and stes the C++ compilation flags accordingly (``CPPFLAGS``).
-
-::
-
-    sh ./configure.sh
-    make
-
-The ``configure.sh`` script requires 'sed' and 'uname'. If these are not
-available the only difference for different architectures should be
-related to static linking, which is not available on GCC/OSX. This can
-be manually adjusted in the CPPFLAGS variable in the Makefile.
 
 LINUX (Ubuntu Linux 16.04)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -85,8 +69,11 @@ mingw\_w64 toolchain using:
         pacman -S mingw-w64-x86_64-gcc
         pacman -S make
 
-Compiler flags:
+Then run "MSYS2 MinGW 64-bit" and/or "MSYS2 MinGW 64-bit" (should present in the windows start menu), and run the 'make' command in the mpslib folder:
 
 ::
 
-    CPPFLAGS = -static -O3
+  cd /mnt/c/Users/john/mpslib
+  make
+
+
