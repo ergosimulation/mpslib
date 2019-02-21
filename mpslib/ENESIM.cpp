@@ -579,7 +579,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	CpdfCount = 0; // Set number of count in Cpdf to zero
 	LC_dist_min = std::numeric_limits<float>::max(); // set the current 'minimum' distance to a very high number
 	float LC_dist; // distance of L,V to value in TI
-	float minDist = std::numeric_limits<float>::max(); // Dummy for testing
+	//float minDist = std::numeric_limits<float>::max(); // Dummy for testing
 	unsigned int i_ti_path;
 
 	for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
@@ -591,10 +591,10 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 		// Get the distance between the conditional data in TI and SIM grid
 		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_weight);
 
-		if (LC_dist < minDist) {
-			minDist = LC_dist;
-			std::cout << " minDist = " << minDist << std::endl;
-		}
+		//if (LC_dist < minDist) {
+		//	minDist = LC_dist;
+		//	std::cout << " minDist = " << minDist << std::endl;
+		//}
 
 		// Check if current L,T in TI match conditional observations better
 		if (LC_dist<LC_dist_min) {
@@ -763,7 +763,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 
 		}
 
-		if (_debugMode > 3) {
+		if (_debugMode > 2) {
 			std::cout << "  " << "i_ti_path=" << i_ti_path << " ===";
 			std::cout << "  TI	xyz=(" << TI_idxX << "," << TI_idxY << "," << TI_idxZ << ")";
 			std::cout << " - LC_dist=" << LC_dist << " min(LC_dist)=" << LC_dist_current;

@@ -13,6 +13,8 @@ O.template_size=[20 20 1];
 O.method='mps_snesim_tree'; 
 %O.method='mps_snesim_list'; 
 %O.method='mps_genesim'; 
+O.plot=1; % Plot progress when calling mps_cpp_mask
+
 
 % load TI
 TI1=read_eas_matrix('TI1.dat');
@@ -28,7 +30,7 @@ MASK(:,121:end)=3;
 TI{1}=TI2;
 TI{2}=TI3;
 TI{3}=TI4;
-O.mask_conditional = [1 1 1];
+O.mask_conditional = [1 1 1]; % For each mask 'mask_conditional' indicates wheter simulation should be conditional to previsouly simnulated data)
 
 tic
 [reals,O1,Omul]=mps_cpp_mask(TI,SIM,MASK,O);

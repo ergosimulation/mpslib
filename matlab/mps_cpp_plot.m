@@ -89,8 +89,19 @@ if (length(O.z)==1);
     if O.debug>1
         figure;clf;
         
-        for i=1:length(strTG);
-            subplot(1,length(strTG),i);
+        nTG=length(strTG);
+        
+        if nTG<=3
+            nsp_x = 1; 
+            nsp_y = nTG;
+        else
+            nsp_x = 2; 
+            nsp_y = ceil(nTG/2);
+        end
+            
+        
+        for i=1:nTG;
+            subplot(nsp_y,nsp_x,i);
             imagesc(O.x,O.y,O.(sprintf('TG%d',i)));
             xlabel('X');ylabel('Y');
             title(strTG{i})
@@ -100,6 +111,7 @@ if (length(O.z)==1);
         if hardcopy==1; 
             print('-dpng',sprintf('%s_debug_1.png',O.ti_filename));
         end
+        
         if strcmp(O.method,'mps_genesim')
             
             % plot poisition in TI
