@@ -570,6 +570,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	ti_shift = (std::rand() % (int)(_tiPath.size() ));
 	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
 	
+	
 
 	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
 	// to find the local conditional pdf f_TI(m_i | m_c)
@@ -579,8 +580,9 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	CpdfCount = 0; // Set number of count in Cpdf to zero
 	LC_dist_min = std::numeric_limits<float>::max(); // set the current 'minimum' distance to a very high number
 	float LC_dist; // distance of L,V to value in TI
-	//float minDist = std::numeric_limits<float>::max(); // Dummy for testing
+	float minDist = std::numeric_limits<float>::max(); // Dummy for testing
 	unsigned int i_ti_path;
+	std::cout << " BEFORE minDist = " << minDist << std::endl;
 
 	for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
 		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
@@ -591,10 +593,10 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 		// Get the distance between the conditional data in TI and SIM grid
 		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_weight);
 
-		//if (LC_dist < minDist) {
-		//	minDist = LC_dist;
-		//	std::cout << " minDist = " << minDist << std::endl;
-		//}
+		if (LC_dist < minDist) {
+			minDist = LC_dist;
+			std::cout << " minDist = " << minDist << std::endl;
+		}
 
 		// Check if current L,T in TI match conditional observations better
 		if (LC_dist<LC_dist_min) {
@@ -926,8 +928,15 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 						// add a distance of 1, if case of no matching pixels
 						LC_dist=LC_dist+1*L_weight[i];
 					}
-				}	else if (_distance_measure==2){
-					LC_dist = LC_dist + abs(V_ti-V[i])*L_weight[i];
+				}	else if (_distance_measure==2){					
+					LC_dist = LC_dist + fabs(V_ti - V[i])*L_weight[i];
+
+					//std::cout << "		i=" << i << ", V_ti=" << V_ti;
+					//std::cout << ", V[i]=" << V[i];
+					//std::cout << ", V_diff=" << V_diff;
+					//std::cout << ", L_weight[i]=" << L_weight[i];
+					//std::cout << ", LC_dist=" << LC_dist << std::endl;
+
 				}
 			} else {
 				// The conditioning location of the point to compare to is located outside
@@ -938,7 +947,7 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 					LC_dist = 1e+9*L_weight[i];
 				}
 			}
-			//std::cout << ">>LC_dist = " << LC_dist << std::endl;
+			//std::cout << "		i=" << i << ", " << "<LC_dist = " << LC_dist << std::endl;
 		}
 		
 		if (_distance_measure==1) {
@@ -1199,8 +1208,8 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 
 	}
 
-	if (_debugMode >1) {
-		std::cout << "at [ix,y,ix]=[" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << "] real=" << simulatedValue << std::endl;
+	if (_debugMode >2) {
+		std::cout << "at [ix,iy,iz]=[" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << "] real=" << simulatedValue << std::endl;
 		// std::cout << "Simulated value="<< simulatedValue << ", LC_dist_min=" << LC_dist_min << " " << std::endl ;
 		// std::cout << "Simulated value=" << simulatedValue << " " << std::endl;
 	}
