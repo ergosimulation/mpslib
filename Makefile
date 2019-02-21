@@ -3,6 +3,9 @@ export CPPFLAGS+= -O3 -std=c++11
 ifeq ($(UNAME_S),Linux)
 	export CPPFLAGS += -static -Wl,--no-as-needed
 endif
+ifeq ($(UNAME_S),MINGW64_NT-10.0)
+	export CPPFLAGS += -static -Wl,--no-as-needed
+endif
 
 # NAME OF LIBRARY
 MPSLIB = mpslib/mpslib.a
