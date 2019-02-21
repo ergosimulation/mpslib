@@ -102,8 +102,8 @@ Debug mode
 -  [-1]: + Simulation output is written to files on disk
 -  [ 0]: + Information about simulation is written to screen
 -  [ 1]: + Simulated realization(s) are shown in terminal
--  [ 2]: + Extra information is written to disk (Random path, ...)
--  [ 3]: + Debug information written to screen (in general not useful
+-  [ 2]: + Extra information is written to disk (Random path, number of conditional data, ...)
+-  [ 3]: + Debug information written to screen (results in much slower performance - in general not useful
    for an end-user)
 
 
