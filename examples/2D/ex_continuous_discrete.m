@@ -5,7 +5,7 @@ filename_d = 'channels.dat';
 filename_c = 'channels_continuous.dat';
 doSmall=1;
 if doSmall
-    di=4;
+    di=2;
     TI_c=read_eas_matrix(filename_c);TI_c=TI_c(di:di:end,di:di:end);
     TI_d=read_eas_matrix(filename_d);TI_d=TI_d(di:di:end,di:di:end);
     filename_d = 'channels_small.dat';
@@ -23,6 +23,9 @@ colormap(gray)
 [ny,nx]=size(TI_d);
 %nx=100;ny=50;
 %nx=30;ny=30;
+nx=2*nx
+ny=2*ny
+
 x=1:1:nx;
 y=1:1:ny;
 SIM=ones(ny,nx).*NaN;
@@ -88,9 +91,9 @@ for j=1:length(distance_pow)
 
 end
 end
-figure(2);
+figure(2);subfigure(1,1,1)
 print_mul(sprintf('distance measure %d - discrete',O.distance_measure))
-figure(3);
+figure(3);subfigure(1,1,1)
 print_mul(sprintf('distance measure %d - continious',O.distance_measure))
 
 %%
@@ -98,3 +101,5 @@ i=2;
 j=2;
 %mps_cpp_plot(reals_d{i,j},O_d{i,j})
 mps_cpp_plot(reals_c{i,j},O_c{i,j})
+figure(6);
+print_mul(sprintf('distance measure %d - continious, d_min=%3.1g, d_pow=%g',O.distance_measure,distance_min(i), distance_pow(j)))
