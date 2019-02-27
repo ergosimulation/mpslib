@@ -1,8 +1,8 @@
-Number of realizations # 50
-Random Seed (0 `random` seed) # 0
+Number of realizations # 25
+Random Seed (0 `random` seed) # 1
 Number of mulitple grids (start from 0) # 3
 Min Node count (0 if not set any limit)# 0
-Maximum number condtitional data (0: all) # 25
+Maximum number condtitional data (0: all) # 9
 Search template size X # 5
 Search template size Y # 5
 Search template size Z # 1
@@ -17,11 +17,12 @@ Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
 Training image file (spaces not allowed) # ti.dat
 Output folder (spaces in name not allowed) # .
-Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
+Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential, EF) # 1 4
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
 HardData filename  (same size as the simulation grid)# mps_2d_hard_data.dat
 HardData seach radius (world units) # 1
-Softdata categories (separated by ;) # 0;1;2;3
-Soft datafilenames (separated by ; only need (number_categories - 1) grids) # mps_2d_soft_data.dat
+Softdata categories (separated by ;) # 0;1
+Soft datafilenames (separated by ; only need (number_categories - 1) grids) # mps_2d_soft_data_scatter.dat
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
-Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 0
+Mask grid # mask.dat

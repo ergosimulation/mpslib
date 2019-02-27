@@ -42,7 +42,8 @@ if ~isfield(O,'shuffle_ti_grid');O.shuffle_ti_grid=1;end
 if ~isfield(O,'hard_data_filename');O.hard_data_filename='conditional.dat';end
 if ~isfield(O,'hard_data_search_radius');O.hard_data_search_radius=1;end
 if ~isfield(O,'soft_data_categories');O.soft_data_categories='0;1';end
-if ~isfield(O,'soft_data_fnam');O.soft_data_fnam='soft.dat';end
+if ~isfield(O,'soft_data_filename');O.soft_data_filename='soft.dat';end
+if isfield(O,'soft_data_fnam');O.soft_data_filename=O.soft_data_fnam,end
 if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
   
@@ -88,7 +89,7 @@ fprintf(fid,'HardData filename  (same size as the simulation grid)# %s\n',O.hard
 fprintf(fid,'HardData seach radius (world units) # %g\n',O.hard_data_search_radius);
 % SOFT DATA
 fprintf(fid,'Softdata categories (separated by ;) # %s\n',O.soft_data_categories);
-fprintf(fid,'Soft datafilenames (separated by ; only need (number_categories - 1) grids) # %s\n',O.soft_data_fnam);
+fprintf(fid,'Soft datafilenames (separated by ; only need (number_categories - 1) grids) # %s\n',O.soft_data_filename);
 
 fprintf(fid,'Number of threads (minimum 1, maximum 8 - depend on your CPU) # %d\n',O.n_threads);
 fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n',O.debug);

@@ -81,7 +81,9 @@ if O.WriteTI==1;
     if ~isfield(O,'ti_filename')
         O.ti_filename='ti.dat';
     end
-    disp(sprintf('%s: writing ti %s',mfilename,O.ti_filename))
+    if (O.debug>1) 
+        disp(sprintf('%s: writing ti %s',mfilename,O.ti_filename))
+    end
     write_eas_matrix(O.ti_filename,TI);
 end
 
@@ -110,13 +112,14 @@ end
 
 %%
 % WRITE HARD DATA IF SET AS VARIABLE
-if ~isfield(O,'hard_data_filename');
+if ~isfield(O,'hard_data_filename')
     O.hard_data_filename='d_hard.dat';
     if exist(O.hard_data_filename,'file')
         delete(O.hard_data_filename); % delete if not set
     end
     
 end
+
 if isfield(O,'d_hard');
     write_eas(O.hard_data_filename,O.d_hard);
 else
@@ -128,7 +131,8 @@ else
         [xx,yy,zz]=meshgrid(x,y,z);
         i_hard=find(~isnan(SIM));
         if ~isempty(i_hard)
-            O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];
+            1
+            O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];            
             write_eas(O.hard_data_filename,O.d_hard);
         end
         
@@ -202,10 +206,18 @@ if ~exist(O.exe_filename,'file')
 end
 
 cmd=sprintf('%s %s',O.exe_filename,O.parameter_filename);
+if (O.debug>-1), disp(sprintf('%s: running ''%s''',mfilename,cmd)); end
+
 % run the algorithm
 tic;
 [status,cmdout]=system(cmd);
 O.time=toc;
+
+if (O.debug>0), 
+    disp(sprintf('%s: output:',mfilename)); 
+    disp(cmdout);
+end
+
 %%
 
 %% READ DATA
