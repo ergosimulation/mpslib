@@ -24,7 +24,7 @@ class mpslib:
                  shuffle_simulation_grid=2, entropyfactor_simulation_grid=4, shuffle_ti_grid=1,
                  hard_data_search_radius=1,
                  soft_data_categories=np.arange(2), soft_data_fnam='soft.dat', n_threads=1, verbose_level=0,
-                 template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_min_node_count=0,
+                 template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_cond_soft=0, n_min_node_count=0,
                  n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
                  max_search_radius=10000000, remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
                  colocate_dimension=0):
@@ -38,8 +38,7 @@ class mpslib:
         self.parameter_filename = parameter_filename.lower()  # change string to lower case
         self.method = method.lower()  # change string to lower case
         self.verbose_level = verbose_level
-        self.verbose_level = debug_level
-
+        
         self.remove_gslib_after_simulation = remove_gslib_after_simulation  # remove individual gslib fiels after simulation
         self.gslib_combine = gslib_combine  # combine realzations into one gslib file
 
@@ -70,6 +69,7 @@ class mpslib:
         # if the method is GENSIM, add package specific parameters
         if self.method == 'mps_genesim':
             self.par['n_cond'] = n_cond
+            self.par['n_cond_soft'] = n_cond_soft
             self.par['n_max_ite'] = n_max_ite
             self.par['n_max_cpdf_count'] = n_max_cpdf_count
             self.par['distance_measure'] = distance_measure
@@ -175,7 +175,7 @@ class mpslib:
         file.write('Number of realizations # %d\n' % self.par['n_real'])
         file.write('Random Seed (0 `random` seed) # %d \n' % self.par['rseed'])
         file.write('Maximum number of counts for condtitional pdf # %d\n' % self.par['n_max_cpdf_count'])
-        file.write('Max number of conditional point # %d\n' % self.par['n_cond'])
+        file.write('Max number of conditional point: Nhard, Nsoft# %d %d\n' % (self.par['n_cond'],self.par['n_cond_soft']))
         file.write('Max number of iterations # %d\n' % self.par['n_max_ite'])
         file.write("Distance measure [1:disc, 2:cont], minimum distance, power # %d %3.1f %3.1f\n" % (
         self.par['distance_measure'], self.par['distance_min'], self.par['distance_pow']))
@@ -281,6 +281,7 @@ class mpslib:
             :return: returns boolean success if the model run has been completed
             """
         import os
+        import time
         success = False
 
         # update self.x, self.y, self.z
@@ -325,7 +326,6 @@ class mpslib:
         exe_path = self.which(exe_file)
 
         if (self.verbose_level > -1):
-            print(self.verbose_level)
             print("mpslib: trying to run '%s'  in folder '%s'"%(exe_file,exe_path))
 
         if exe_path is None:
@@ -345,6 +345,8 @@ class mpslib:
         if (self.verbose_level > 0):
             print("mpslib: trying to run  " + exe_path + " " + self.parameter_filename)
 
+    
+        t_start = time.time()
         if self.iswin:
             CREATE_NO_WINDOW = 0x08000000
             # stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
@@ -364,8 +366,13 @@ class mpslib:
                     print('{}'.format(c))
             else:
                 break
-
-        # read on simulated data
+            
+        t_end = time.time()
+        self.time = t_end-t_start
+        if (self.verbose_level > -1):
+            print("mpslib: '%s' ran in  %6.2fs " % (exe_file,self.time))
+            
+        # read in simulated data
         self.sim = []
         for i in range(0, self.par['n_real']):
             filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
@@ -482,8 +489,15 @@ class mpslib:
         if (os.path.isfile(self.par['soft_data_fnam'])):
             os.remove(self.par['soft_data_fnam'])
 
+    # Delete mask data
+    def delete_mask_data(self):
+        import os
+        if (os.path.isfile(self.par['mask_fnam'])):
+            os.remove(self.par['mask_fnam'])
+
     # Delete locard filense
     def delete_local_files(self):
+        self.delete_mask_data()
         self.delete_soft_data()
         self.delete_hard_data()
         self.delete_gslib()
@@ -578,7 +592,7 @@ class mpslib:
             fig.add_subplot(ax1)
             if filternan==1:
                 self.sim[i][self.sim[i]==nanval] = np.nan
-            plt.imshow(self.sim[i], interpolation='none')
+            plt.imshow(self.sim[i], extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], interpolation='none')
             plt.title("Real %d" % (i + 1))
 
         fig.suptitle(self.method + ' - ' + self.parameter_filename, fontsize=16)
@@ -588,7 +602,7 @@ class mpslib:
         plt.show(block=False)
 
     # plot etypes (only in 2D so far)
-    def plot_etype(self):
+    def plot_etype(self, title_txt=''):
 
         import matplotlib.pyplot as plt
         import numpy as np
@@ -618,7 +632,11 @@ class mpslib:
         fig.clf()
         plt.set_cmap('hot')
         plt.subplot(1, 3, 1)
-        im = plt.imshow(emean, zorder=-1)
+        im = plt.imshow(emean, 
+                        extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], 
+                        zorder=-1,
+                        vmin=0,
+                        vmax=1)
         plt.colorbar(im, fraction=0.046, pad=0.04)
         if (use_hard):
             plt.plot(d_hard['D'][:, 0], d_hard['D'][:, 1], "k.", MarkerSize=25, zorder=0)
@@ -629,17 +647,20 @@ class mpslib:
         plt.title('Etype Mean')
 
         plt.subplot(1, 3, 2)
-        im = plt.imshow(estd)
+        im = plt.imshow(estd, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], cmap='hot', vmin=0);
         plt.colorbar(im, fraction=0.046, pad=0.04)
         plt.title('Etype Std')
 
         plt.subplot(1, 3, 3)
-        im = plt.imshow(emode)
+        im = plt.imshow(emode, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]])
         plt.colorbar(im, fraction=0.046, pad=0.04)
         plt.title('Etype Mode')
 
         # plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
-        fig.suptitle(self.method + ' - ' + self.parameter_filename, fontsize=16)
+        if len(title_txt)==0:
+            title_txt = self.method + ' - ' + self.parameter_filename
+        
+        fig.suptitle(title_txt, fontsize=16)
         plt.show(block=False)
 
 

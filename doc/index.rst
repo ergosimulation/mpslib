@@ -84,5 +84,6 @@ How is it organized?
    training-image-format
    matlab-interface
    python-interface
+   Examples/index
    references
 

@@ -1,4 +1,5 @@
 ''
+''
 mpslib_hard_and_soft_data.py
 
 Example of parsing hard and soft data to MPSLIB algorithms

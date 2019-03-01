@@ -28,9 +28,9 @@
 * @brief Constructors from a configuration file
 */
 MPS::ENESIM_GENERAL::ENESIM_GENERAL(const std::string& configurationFile) : MPS::ENESIM(){
-	std::cout << "Initialize start" << std::endl;
+	//std::cout << "Initialize start" << std::endl;
 	initialize(configurationFile);
-	std::cout << "Initialize stop" << std::endl;
+	//std::cout << "Initialize stop" << std::endl;
 }
 
 /**

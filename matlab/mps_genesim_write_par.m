@@ -62,9 +62,9 @@ fprintf(fid,'Random Seed (0 `random` seed) # %d\n',O.rseed);
 fprintf(fid,'Maximum number of counts for conditional pdf # %d\n',O.n_max_cpdf_count);
 % LIMIT NEIGHBORHOOD
 if (length(O.n_cond)==1)
-    fprintf(fid,'Max number of conditional point # %d\n',O.n_cond(1));
+    fprintf(fid,'Max number of conditional point (Nhard) # %d\n',O.n_cond(1));
 else
-    fprintf(fid,'Max number of conditional point # %d %d\n',O.n_cond(1),O.n_cond(2));
+    fprintf(fid,'Max number of conditional point (Nhard,Nsoft) # %d %d\n',O.n_cond(1),O.n_cond(2));
 end
 fprintf(fid,'Max number of iterations # %d\n',O.n_max_ite);
 %
@@ -82,7 +82,7 @@ else
     fprintf(fid,'Maximum search radius # %f %f\n',O.max_search_radius(1),O.max_search_radius(2));
 end
 
-% SIMULATION GRID SUZE
+% SIMULATION GRID SIZE
 for i=1:3;
   fprintf(fid,'Simulation grid size %s # %d\n',char(87+i),O.simulation_grid_size(i));
 end
