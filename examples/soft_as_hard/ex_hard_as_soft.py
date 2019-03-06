@@ -5,6 +5,7 @@ The simplest example of running MPSliv from python
 import mpslib as mps
 import matplotlib.pyplot as plt
 import numpy as np
+plt.ion()
 
 #%% load TI
 EAS=mps.eas.read('ti.dat')
@@ -36,10 +37,10 @@ d_soft_hard = np.array([[ 6., 14.,  0.,  0.,  1.],
 
 #%% Initialize the MPS object, using a specific algorithm (def='mps_snesim_tree')
 nx=20
-ny=10
+ny=30
 nz=1
 x0=0
-y0=10
+y0=0
 z0=0
 O=mps.mpslib(method='mps_genesim', 
              simulation_grid_size=np.array([nx, ny, nz]), 
@@ -49,11 +50,11 @@ O.delete_local_files() # Make sure no hard/soft data are conditioned to
 
 # Use soft data
 
-O.par['n_real']=40
+O.par['n_real']=150
 O.par['shuffle_simulation_grid']=2 # '2' indicates using a preferential simulation path
 O.par['n_max_ite']=10000000;
 O.par['n_max_cpd_count']=20; # Direct sampling style
-O.par['n_cond']=16;
+O.par['n_cond']=25;
 O.par['n_cond_soft']=3;
 O.par['soft_data_fnam']='d_soft.dat'
 
@@ -65,7 +66,7 @@ if hasattr(O, 'd_hard'):
 
 m_arr = []
 
-for iex in range(4):
+for iex in range(5):
     if (iex==0):
         O.d_soft = d_soft
         O.par['n_cond_soft']=1;
@@ -76,8 +77,13 @@ for iex in range(4):
         txt='Soft data, 3 non-co-located'
     elif (iex==2):        
         O.d_soft = d_soft_hard    
-        txt='Soft as HARD data'
-    elif (iex==3):    
+        O.par['n_cond_soft']=1;
+        txt='Soft as HARD data, colocated only'
+    elif (iex==3):        
+        O.d_soft = d_soft_hard
+        O.par['n_cond_soft']=3;
+        txt='Soft as HARD data, 3 non-co-located'
+    elif (iex==4):    
         if hasattr(O, 'd_soft'):
             delattr(O,'d_soft')
         O.d_hard = d_hard
@@ -87,4 +93,4 @@ for iex in range(4):
     m_arr.append(np.mean(O.sim, axis=0))
     #Plot the results
     O.plot_etype(title_txt=txt)
-    
+    plt.savefig('hard_as_soft_ex%d' % iex)
