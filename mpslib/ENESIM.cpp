@@ -53,6 +53,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		return;
 	}
 
+	_debugMode = -1;
 
 	std::ifstream file(fileName);
 	std::string str;
@@ -86,8 +87,9 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	else {
 		_maxNeighbours_soft = 0;
 	}
-	//std::cout << "_maxNeighbours_soft= " << _maxNeighbours_soft << std::endl;
-
+	if (_debugMode>0) {
+		std::cout << "readpar: _maxNeighbours_soft= " << _maxNeighbours_soft << std::endl;
+	}
 	// Maximum iterations
 	_readLineConfiguration(file, ss, data, s, str);
 	read_int  =  stoi(data[1]);
@@ -126,8 +128,9 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	else {
 		_maxSearchRadius_soft = 0;
 	}
-	//std::cout << "_maxSearchRadius_soft= " << _maxSearchRadius_soft << std::endl;
-
+	if (_debugMode>0) {
+		std::cout << "readpar: _maxSearchRadius_soft= " << _maxSearchRadius_soft << std::endl;
+	}
 	// Simulation Grid size X
 	_readLineConfiguration(file, ss, data, s, str);
 	_sgDimX = stoi(data[1]);
@@ -171,7 +174,12 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		_shuffleEntropyFactor = stof(data[2]);
 	} else {
 		_shuffleEntropyFactor = 4;
+	}	
+	if (_debugMode>0) {
+		std::cout << "readpar: _shuffleSgPath=" << _shuffleSgPath << ", _shuffleEntropyFactor="  << _shuffleEntropyFactor << std::endl;
 	}
+	
+	
 	// Shuffle TI Path
 	_readLineConfiguration(file, ss, data, s, str);
 	_shuffleTiPath = (stoi(data[1]) != 0);
@@ -194,6 +202,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 			}
 		}
 	}
+
 	// Softdata filenames
 	if(_readLineConfiguration(file, ss, data, s, str)) {
 		ss.clear();
@@ -211,14 +220,28 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	// Number of threads
 	_readLineConfiguration(file, ss, data, s, str);
 	_numberOfThreads = stoi(data[1]);
+	if (_debugMode>0) {
+		std::cout << "readpar: _numberOfThreads=" << _numberOfThreads << std::endl;
+	}
+	
+	
 	// DEBUG MODE
 	_readLineConfiguration(file, ss, data, s, str);
 	_debugMode = stoi(data[1]);
+	if (_debugMode>0) {
+		std::cout << "readpar: _debugMode=" << _debugMode << std::endl;
+	}
+	
+
 	// Mask data grid
 	if (_readLineConfiguration(file, ss, data, s, str)) {
 		data[1].erase(std::remove_if(data[1].begin(), data[1].end(), [](char x) {return std::isspace(x); }), data[1].end()); //Removing spaces
 		_maskDataFileName = data[1];
 	}
+	if (_debugMode>0) {
+		std::cout << "readpar: _maskDataFileName=" << _maskDataFileName << std::endl;
+	}
+
 }
 
 /**
@@ -411,7 +434,8 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 					V_s.clear();
 					_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _softDataGrids[0], _maxNeighbours_soft, _maxSearchRadius_soft, L_s, V_s);
 					if (_debugMode>2) {
-						std::cout << "--> Found N_soft_cond data = " << L_s.size() << std::endl;
+						std::cout << "--> Found N_soft_cond data = " << L_s.size() << " -- _maxSearchRadius_soft" << _maxSearchRadius_soft << std::endl;
+
 					}
 					P_soft_i.clear();
 					P_soft_max_i.clear();

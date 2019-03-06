@@ -26,7 +26,8 @@ class mpslib:
                  soft_data_categories=np.arange(2), soft_data_fnam='soft.dat', n_threads=1, verbose_level=0,
                  template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_cond_soft=0, n_min_node_count=0,
                  n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
-                 max_search_radius=10000000, remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
+                 max_search_radius=10000000, max_search_radius_soft=10000000,                  
+                 remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
                  colocate_dimension=0):
         '''Initialize variables in Class'''
 
@@ -77,6 +78,7 @@ class mpslib:
             self.par['distance_pow'] = distance_pow
             self.par['colocate_dimension'] = colocate_dimension
             self.par['max_search_radius'] = max_search_radius
+            self.par['max_search_radius_soft'] = max_search_radius_soft
             # self.par['exe'] = 'mps_genesim'
 
         if self.method[0:10] == 'mps_snesim':
@@ -136,6 +138,7 @@ class mpslib:
         self.par.setdefault('distance_min', 0)
         self.par.setdefault('distance_pow', 0)
         self.par.setdefault('max_search_radius', 1000000)
+        self.par.setdefault('max_search_radius_soft', 1000000)
 
     # % Check parameter file setting using  SNESIM
     def parfile_check_snesim(self):
@@ -180,7 +183,7 @@ class mpslib:
         file.write("Distance measure [1:disc, 2:cont], minimum distance, power # %d %3.1f %3.1f\n" % (
         self.par['distance_measure'], self.par['distance_min'], self.par['distance_pow']))
         file.write('Colocate Dimension # %d \n' % self.par['colocate_dimension'])
-        file.write("Max Search Radius for conditional data # %f \n" % self.par['max_search_radius'])
+        file.write("Max Search Radius for conditional data [hard,soft] # %f %f\n" % (self.par['max_search_radius'], self.par['max_search_radius_soft']))
         file.write('Simulation grid size X # %d\n' % self.par['simulation_grid_size'][0])
         file.write('Simulation grid size Y # %d\n' % self.par['simulation_grid_size'][1])
         file.write('Simulation grid size Z # %d\n' % self.par['simulation_grid_size'][2])
@@ -633,7 +636,7 @@ class mpslib:
         plt.set_cmap('hot')
         plt.subplot(1, 3, 1)
         im = plt.imshow(emean, 
-                        extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], 
+                        extent=[self.x[0], self.x[-1], self.y[-1], self.y[0]], 
                         zorder=-1,
                         vmin=0,
                         vmax=1)

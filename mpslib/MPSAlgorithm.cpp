@@ -332,15 +332,27 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	bool readSucessfull = false;
 	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
 
+	if (_debugMode>0) {
+		std::cout << "READING TI: " << _tiFilename << std::endl;
+	}
 	// Read TI
 	_readTIFromFiles();
 
+	if (_debugMode>0) {
+		std::cout << "READING HARD DATA: " << _hardDataFileNames << std::endl;
+	}
 	//Reading Hard conditional data
 	_readHardDataFromFiles();
 
+	if (_debugMode>0) {
+		std::cout << "READING SOFT DATA: " << _softDataFileNames[0] << std::endl;
+	}
 	//Reading Soft conditional data
 	_readSoftDataFromFiles();
 
+	if (_debugMode>0) {
+		std::cout << "READING MASK: " << _maskDataFileName << std::endl;
+	}
 	//Reading Mask data
 	_readMaskDataFromFile();
 }
