@@ -138,7 +138,8 @@ void MPS::MPSAlgorithm::_initilizePath(const int& sgDimX, const int& sgDimY, con
 	for (int z=0; z<sgDimZ; z++) {
 		for (int y=0; y<sgDimY; y++) {
 			for (int x=0; x<sgDimX; x++) {
-				path[cnt] = cnt++;
+				path[cnt] = cnt;
+				cnt++;
 			}
 		}
 	}
