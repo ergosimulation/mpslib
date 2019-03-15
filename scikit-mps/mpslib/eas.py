@@ -71,7 +71,7 @@ def read(filename='eas.dat'):
 
     file.close()
 
-
+    
     try:
         eas['D'] = np.genfromtxt(filename, skip_header=2+eas['n_cols'])
         if (debug_level>1):
@@ -80,10 +80,17 @@ def read(filename='eas.dat'):
         print("eas: COULD NOT READ DATA FROM %s" % filename)
         
     
-    
     # If dimensions are given in title, then convert to 2D/3D array
     if "dim" in eas:
-        eas['Dmat']=eas['D'].reshape((eas['dim']['ny'],eas['dim']['nx']))
+        if (eas['dim']['nz']==1):
+            eas['Dmat']=eas['D'].reshape((eas['dim']['ny'],eas['dim']['nx']))
+        elif (eas['dim']['nx']==1):
+            eas['Dmat']=np.transpose(eas['D'].reshape((eas['dim']['nz'],eas['dim']['ny'])))
+        elif (eas['dim']['ny']==1):
+            eas['Dmat']=eas['D'].reshape((eas['dim']['nz'],eas['dim']['nx']))
+        else:
+            eas['Dmat']=eas['D'].reshape((eas['dim']['nz'],eas['dim']['ny'],eas['dim']['nx']))
+            
         if (debug_level>0):
             print("eas: converted data in matrixes (Dmat)")
 
