@@ -89,7 +89,7 @@ void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
 			templateY = _templateSizeY_base + ceil(level*ddy);
 			templateZ = _templateSizeZ_base + ceil(level*ddz);
 		
-			if (_debugMode > -3) {
+			if (_debugMode > 0) {
 				std::cout << "Grid " << level << "/" << _totalGridsLevel << std::endl;
 				std::cout << "Using adaptive grid" << std::endl;
 				std::cout << "Template Size INIT = " << _templateSizeX << "," << _templateSizeY << "," << _templateSizeZ << std::endl;
