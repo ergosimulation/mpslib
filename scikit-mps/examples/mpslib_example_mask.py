@@ -12,9 +12,10 @@ from scipy import squeeze
 
 # TI1: Strebelle
 TI1, TI_filename1 = mps.trainingimages.strebelle(1)
+TI1=np.swapaxes(TI1,2,1)
+mps.eas.write_mat(TI1,TI_filename1)
 # TI1: Strebelle, rotated and coarsened
 TI2, TI_filename2 = mps.trainingimages.strebelle(2)
-#TI2=np.swapaxes(TI2,2,1)
 mps.eas.write_mat(TI2,TI_filename2)
 
 
@@ -40,7 +41,7 @@ O.par['simulation_grid_size']=grid_size
 
 #%% USE MASK
 d_mask1=np.zeros([grid_size[2],grid_size[1],grid_size[0]])
-d_mask1[:,80:150,130:150]=1;
+d_mask1[:,80:150,100:180]=1;
 d_mask1[:,80:150,0:40]=1;
 d_mask2=1-d_mask1;
 

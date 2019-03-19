@@ -48,21 +48,30 @@ def get_remote(url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_
     return local_file
     
 def coarsen_2d_ti(Dmat,di=2):
-    ny, nx = Dmat.shape
-    ndim3 = di * di
+    '''
+    Takes a 2D trainin image and makes it coarser, by constructing a 3D TI 
+    based on all coarsened 2D images
+    '''
+    from scipy import squeeze
+
+    nx, ny, nz = Dmat.shape
+    ndim3 = di * di    
     x = np.arange(nx)
     y = np.arange(ny)
     ix = x[0:(nx - di):di]
     iy = y[0:(ny - di):di]
-    nx2 = ix.size
-    ny2 = iy.size
-    TI = np.zeros((ny2, nx2, ndim3))
+    nx2 = len(ix)
+    ny2 = len(iy)
+    TI = np.zeros( (nx2, ny2, nz, ndim3))
     l = -1;
     for j in range(di):
         for k in range(di):
             l = l + 1
-            TI_small = Dmat[(0 + j)::di, (0 + k)::di]
-            TI[::, ::, l] = TI_small[0:ny2, 0:nx2]
+            
+            TI_small = Dmat[(0 + j)::di, (0 + k)::di, 0]
+            TI[:, :, 0,l] = TI_small[0:nx2, 0:ny2]
+            
+    TI=squeeze(TI)
     return TI
 
 
@@ -179,6 +188,7 @@ def rot20():
 
 
 def strebelle(di=1, coarse3d=0):
+    
     url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_strebelle.sgems';
     local_file = get_remote(url,'ti_strebelle.dat')
     Deas = eas.read(local_file)
@@ -238,7 +248,7 @@ def bangladesh(di=1,coarse3d=0):
     if di > 1:
         if coarse3d == 0:
             Dmat = TI
-            TI = Dmat[::di, ::di]
+            TI = Dmat[::di, ::di, ::di]
         else:
             Dmat = TI
             TI = coarsen_2d_ti(Dmat, di)
@@ -259,7 +269,8 @@ def maze():
 def checkerboard(nx=40, ny=40, cellsize=4):
 
     import numpy as np
-    TI=np.kron([[1, 0] * cellsize, [0, 1] * cellsize] * cellsize, np.ones((ny, nx)))
+    TI=np.kron([[1, 0] * cellsize, [0, 1] * cellsize] * cellsize, np.ones((nx,ny)))
+    TI=TI[:,:,np.newaxis]
 
     local_file = 'ti_checkerboard.dat'
     
@@ -289,6 +300,7 @@ def checkerboard2(nx=40, ny=50, cell_x=8, cell_y=4, cell_2=10):
                 TI[iy, ix] = 0
 
     local_file = 'ti_checkerboard2_%d_%d__%d_%d__%d.dat' % (nx,ny,cell_x,cell_y,cell_2) # a diagonal
+    
     eas.write_mat(TI,local_file)
 
     Deas = eas.read(local_file)

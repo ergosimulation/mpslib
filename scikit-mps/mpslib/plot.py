@@ -36,17 +36,15 @@ def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), filename='', ):
     else:
         return 1
 
-    values = np.transpose(Data, (2,1,0))
-    
     # Create the spatial reference
     grid = vtki.UniformGrid()
     # Set the grid dimensions: shape + 1 because we want to inject our values on the CELL data
-    grid.dimensions = np.array(values.shape) + 1
+    grid.dimensions = np.array(Data.shape) + 1
     # Edit the spatial reference
     grid.origin = origin # The bottom left corner of the data set
     grid.spacing = spacing # These are the cell sizes along each axis
     # Add the data values to the cell data
-    grid.cell_arrays['values'] = values.flatten(order='F') # Flatten the array!
+    grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
     # Now plot the grid!
     if (slice==0):
         grid.plot(show_edges=True)
@@ -91,6 +89,7 @@ def plot_3d_mpl(Data):
     plt.show()
 
 
+#%%
 def plot_3d_real(O,ireal=0,slice=0):
     '''
     plot 3D relization using vtki
@@ -102,6 +101,51 @@ def plot_3d_real(O,ireal=0,slice=0):
     
     plot_3d_vtk(O.sim[ireal], slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
     
+#%%
+def plot_eas(Deas):
+    '''
+    Plot data directly form EAS
+    '''
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from scipy import squeeze
     
-    
-    
+    # check for matrix/cube
+    if 'Dmat' in Deas:
+        if (Deas['dim']['nz']==1):
+            if (Deas['dim']['ny']==1):
+                plt.plot(np.arange(Deas['dim']['nx']),Deas['Dmat'])
+            elif (Deas['dim']['nx']==1): 
+                plt.plot(np.arange(Deas['dim']['ny']),Deas['Dmat'])
+            else:
+                # X-Y
+                plt.imshow(np.transpose(Deas['Dmat'][:,:,0]))                
+                plt.xlabel('X')
+                plt.ylabel('Y')
+        elif (Deas['dim']['ny']==1):
+            if (Deas['dim']['nz']==1):
+                plt.plot(np.arange(Deas['dim']['nx']),Deas['Dmat'])
+            elif (Deas['dim']['nx']==1): 
+                plt.plot(np.arange(Deas['dim']['nz']),Deas['Dmat'])
+            else:
+                # X-Z
+                plt.imshow(squeeze(Deas['Dmat'][:,0,:]))
+                plt.xlabel('X')
+                plt.xlabel('Z')
+        elif (Deas['dim']['nx']==1):
+            if (Deas['dim']['ny']==1):
+                plt.plot(np.arange(Deas['dim']['nz']),Deas['Dmat'])
+            elif (Deas['dim']['nz']==1): 
+                plt.plot(np.arange(Deas['dim']['ny']),Deas['Dmat'])
+            else:
+                # Y-Z
+                plt.imshow(squeeze(Deas['Dmat'][0,:,:]))
+                plt.xlabel('Y')
+                plt.xlabel('Z')
+        else:
+            plot_3d_vtk(Deas['Dmat'])
+    else:
+        # scatter plot
+        print('EAS scatter plot not yet implemented')        
+        
+        
