@@ -5,7 +5,7 @@ Created on Wed Jan 24 19:36:26 2018
 @author: thoma
 """
 
-import os.path
+import os
 import numpy as np
 from . import eas
 #import urllib.request
@@ -16,16 +16,35 @@ except ImportError:
 #    from urllib2 import urlopen
     from urllib import urlretrieve as urlretrieve
 
-def get_remote(url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_strebelle.sgems',local_file = 'ti.dat'):
+def get_remote(url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_strebelle.sgems',local_file = 'ti.dat', is_zip=0, filename_in_zip=''):
+    #import os    
+    
+    if (is_zip==1):
+        local_file_zip = local_file + '.zip'
+    
     if not (os.path.exists(local_file)):
-        print('Beginning download of ' + url + ' to ' + local_file)
-        urlretrieve(url, local_file)
-        #urllib.request.urlretrieve(url, local_file)
-
-    print('Loading ' + local_file)
-    D = eas.read(local_file)
-    return D
-
+        if (is_zip==1):
+            import zipfile
+            # download zip file
+            print('Beginning download of ' + url + ' to ' + local_file_zip)
+            urlretrieve(url, local_file_zip)
+            # unzip file
+            print('Unziping %s to %s' % (local_file_zip,local_file))
+            zip_ref = zipfile.ZipFile(local_file_zip, 'r')
+            zip_ref.extractall('.')
+            zip_ref.close()
+            # rename unzipped file            
+            if len(filename_in_zip)>0:
+                os.rename(filename_in_zip,local_file)
+            
+            
+        else:
+            print('Beginning download of ' + url + ' to ' + local_file)
+            urlretrieve(url, local_file)
+        
+        
+    return local_file
+    
 def coarsen_2d_ti(Dmat,di=2):
     ny, nx = Dmat.shape
     ndim3 = di * di
@@ -45,10 +64,109 @@ def coarsen_2d_ti(Dmat,di=2):
     return TI
 
 
+def ti_list(show=1):
+    ti_name=[]
+    ti_desc=[]
+    
+    ti_name.append('checkerboard')
+    ti_desc.append('2D checkerboard')
+
+    ti_name.append('checkerboard2')
+    ti_desc.append('2D checkerboard - alternative')
+
+    ti_name.append('strebelle')
+    ti_desc.append('2D discrete channels from Strebelle')
+    
+    ti_name.append('lines')
+    ti_desc.append('2D discrete lines')
+
+    ti_name.append('stones')
+    ti_desc.append('2D continious stones')
+    
+    ti_name.append('bangladesh')
+    ti_desc.append('2D discrete Bangladesh')
+
+    ti_name.append('maze')
+    ti_desc.append('2D discrete maze')
+
+    ti_name.append('rot90')
+    ti_desc.append('3D rotation 90')
+    
+    ti_name.append('rot20')
+    ti_desc.append('3D rotation 20')
+
+    ti_name.append('horizons')
+    ti_desc.append('3D continious horizons')
+
+    ti_name.append('fluvsim')
+    ti_desc.append('3D discrete fluvsim')
+    
+    if (show==1):
+        print('Available training images:')
+        for i in range(len(ti_name)):
+            print('%15s - %s' % (ti_name[i],ti_desc[i]) )
+    
+    
+    return ti_name, ti_desc
+
+'''
+The training images
+'''
+def fluvsim():
+    local_file = 'ti_fluvsim.dat';
+    filename_in_zip='ti_fluvsim_big_channels3D.SGEMS'
+    url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_fluvsim_big_channels3d.zip';
+    is_zip=1;
+    local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+    
+    return TI, local_file
+
+def horizons():
+    local_file = 'ti_horizons.dat';
+    url='http://trainingimages.org/uploads/3/4/7/0/34703305/ti_horizons_continuous.zip'
+    filename_in_zip='TI_horizons_continuous.SGEMS'
+    is_zip=1;
+    local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+    
+    return TI, local_file
+
+
+def rot90():
+    local_file = 'ti_tot90.dat';
+    url='http://trainingimages.org/uploads/3/4/7/0/34703305/checker_rotinvariant_90.zip'
+    filename_in_zip='checker_rtoinvariant_90.SGEMS'
+    is_zip=1;
+    local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+    
+    return TI, local_file
+
+def rot20():
+    local_file = 'ti_rot20.dat';
+    url='http://trainingimages.org/uploads/3/4/7/0/34703305/checker_rotinvariant_20.zip'
+    filename_in_zip='checker_rtoinvariant_20.SGEMS'
+    is_zip=1;
+    local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+    
+    return TI, local_file
+
+
 def strebelle(di=1, coarse3d=0):
     url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_strebelle.sgems';
-    Deas = get_remote(url,'ti_strebelle.dat')
+    local_file = get_remote(url,'ti_strebelle.dat')
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+    
     local_file = 'ti_strebelle_%d.dat' % (di);
+    
+    
     TI = Deas['Dmat']
     if di>1:
         if coarse3d==0:
@@ -66,7 +184,8 @@ def strebelle(di=1, coarse3d=0):
 def lines(di=1,coarse3d=0):
     local_file = 'ti_lines.dat';
     url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_lines_arrows.sgems';
-    Deas = get_remote(url,local_file)
+    get_remote(url,local_file)
+    Deas = eas.read(local_file)
     TI = Deas['Dmat']
 
     if di > 1:
@@ -84,15 +203,18 @@ def lines(di=1,coarse3d=0):
 def stones():
     local_file = 'ti_stones.dat';
     url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_stonewall.sgems';
-    Deas = get_remote(url,local_file)
-    Dmat = Deas['Dmat']
-    return Dmat, local_file
+    get_remote(url,local_file)
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+    return TI, local_file
 
 def bangladesh(di=1,coarse3d=0):
     local_file = 'ti_bangladesh.dat';
     url = 'http://trainingimages.org/uploads/3/4/7/0/34703305/bangladesh.sgems';
-    Deas = get_remote(url,local_file)
+    get_remote(url,local_file)
+    Deas = eas.read(local_file)
     TI = Deas['Dmat']
+    
     if di > 1:
         if coarse3d == 0:
             Dmat = TI
@@ -106,9 +228,10 @@ def bangladesh(di=1,coarse3d=0):
 def maze():
     local_file = 'ti_maze.dat';
     url = 'https://raw.githubusercontent.com/cultpenguin/mGstat/master/ti/maze.gslib';
-    Deas = get_remote(url,local_file)
-    Dmat = Deas['Dmat']
-    return Dmat, local_file
+    get_remote(url,local_file)
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+    return TI, local_file
 
 
 
@@ -119,6 +242,13 @@ def checkerboard(nx=40, ny=40, cellsize=4):
     TI=np.kron([[1, 0] * cellsize, [0, 1] * cellsize] * cellsize, np.ones((ny, nx)))
 
     local_file = 'ti_checkerboard.dat'
+    
+    eas.write_mat(TI,local_file)
+
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+
+    
     return TI, local_file
 
 def checkerboard2(nx=40, ny=50, cell_x=8, cell_y=4, cell_2=10):
@@ -139,4 +269,11 @@ def checkerboard2(nx=40, ny=50, cell_x=8, cell_y=4, cell_2=10):
                 TI[iy, ix] = 0
 
     local_file = 'ti_checkerboard2_%d_%d__%d_%d__%d.dat' % (nx,ny,cell_x,cell_y,cell_2) # a diagonal
+    eas.write_mat(TI,local_file)
+
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+
+
+    
     return TI, local_file

@@ -71,7 +71,6 @@ def read(filename='eas.dat'):
 
     file.close()
 
-    
     try:
         eas['D'] = np.genfromtxt(filename, skip_header=2+eas['n_cols'])
         if (debug_level>1):
@@ -91,6 +90,10 @@ def read(filename='eas.dat'):
         else:
             eas['Dmat']=eas['D'].reshape((eas['dim']['nz'],eas['dim']['ny'],eas['dim']['nx']))
             
+
+        eas['Dmat']=eas['D'].reshape((eas['dim']['nx'],eas['dim']['ny'],eas['dim']['nz']))
+        eas['Dmat']=eas['D'].reshape((eas['dim']['nz'],eas['dim']['ny'],eas['dim']['nx']))
+                
         if (debug_level>0):
             print("eas: converted data in matrixes (Dmat)")
 
@@ -154,15 +157,8 @@ def write_mat(D = np.empty([]), filename='eas.dat'):
         (ny,nx) = D.shape
         D = np.transpose(D)
     else:
-        (ny,nx,nz) = D.shape
-        # NEXT LINES ARE NEED TO PROPERLY STORE IN EAS FORMAT
-        D2=np.zeros((nx,ny,nz))
-        for iz in range(D.shape[2]):
-            Ds = D[:,:,iz]
-            D2[:, :, iz] = np.transpose(D[:,:,iz])
-
-        D=D2
-
+        (nz,ny,nx) = D.shape
+        
     title = ("%d %d %d" % (nx,ny,nz) )
     if (debug_level > 0):
         print("eas: writing matrix to %s " % filename)
@@ -178,12 +174,7 @@ def write_mat(D = np.empty([]), filename='eas.dat'):
     eas['title'] = title
     eas['header'] = []
     eas['header'].append('Header')
-    #eas['D'] = D.ravel(order='C') #NOT OK
-    eas['D'] = D.ravel(order='F') # OK, but TRANSPOSED
-    #eas['D'] = D.ravel(order='A') # NOT OK
-    #eas['D'] = D.ravel(order='K')
-
-    #eas['D'] = D.flatten();
+    eas['D'] = D.flatten();
 
     write_dict(eas,filename)
 

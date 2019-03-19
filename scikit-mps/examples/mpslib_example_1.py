@@ -16,8 +16,15 @@ O1 = mps.mpslib(method='mps_snesim_tree',
 O1.parameter_filename = 'mps_snesim.txt'
 O1.par['debug_level']=-1
 O1.par['n_cond']=49
+
+TI, TI_fname = mps.trainingimages.checkerboard()
+TI, TI_fname = mps.trainingimages.bangladesh()
+#O1.ti=TI
+O1.par['ti_fnam']=TI_fname
+
 O1.run()
 
+#%%
 plt.figure(1)
 O1.plot_reals()
 plt.savefig(O1.method+'.png', dpi=600)

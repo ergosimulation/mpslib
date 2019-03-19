@@ -583,7 +583,8 @@ class mpslib:
         import matplotlib.pyplot as plt
         import matplotlib.gridspec as gridspec
         import numpy as np
-
+        from scipy import squeeze
+        
         nr = np.min((self.par['n_real'], nr))
         nsp = int(np.ceil(np.sqrt(nr)))
 
@@ -595,7 +596,9 @@ class mpslib:
             fig.add_subplot(ax1)
             if filternan==1:
                 self.sim[i][self.sim[i]==nanval] = np.nan
-            plt.imshow(self.sim[i], extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], interpolation='none')
+                
+            D=squeeze(self.sim[i])
+            plt.imshow(D, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], interpolation='none')
             plt.title("Real %d" % (i + 1))
 
         fig.suptitle(self.method + ' - ' + self.parameter_filename, fontsize=16)
@@ -611,8 +614,9 @@ class mpslib:
         import numpy as np
         import os
         from scipy import stats
-
-        # read soft data ('check if it exist')
+        from scipy import squeeze
+   
+     # read soft data ('check if it exist')
         use_soft = 0
         if (os.path.isfile(self.par['soft_data_fnam'])):
             d_soft = eas.read(self.par['soft_data_fnam'])
@@ -625,16 +629,16 @@ class mpslib:
             use_hard = 1
 
         # compute Etype
-        emean = np.mean(self.sim, axis=0)
-        estd = np.std(self.sim, axis=0)
-        emode = stats.mode(self.sim, axis=0)
-        emode = emode[0][0]
+        emean = squeeze(np.mean(self.sim, axis=0))
+        estd = squeeze(np.std(self.sim, axis=0))
+        #emode = squeeze(stats.mode(self.sim, axis=0))
+        #emode = squeeze(emode[0][0])
 
         # plot the Etypes
         fig = plt.figure(2)
         fig.clf()
         plt.set_cmap('hot')
-        plt.subplot(1, 3, 1)
+        plt.subplot(1, 2, 1)
         im = plt.imshow(emean, 
                         extent=[self.x[0], self.x[-1], self.y[-1], self.y[0]], 
                         zorder=-1,
@@ -649,15 +653,15 @@ class mpslib:
             plt.scatter(d_soft['D'][:, 0], d_soft['D'][:, 1], c=d_soft['D'][:, 3], s=25, zorder=2)
         plt.title('Etype Mean')
 
-        plt.subplot(1, 3, 2)
+        plt.subplot(1, 2, 2)
         im = plt.imshow(estd, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], cmap='hot', vmin=0);
         plt.colorbar(im, fraction=0.046, pad=0.04)
         plt.title('Etype Std')
 
-        plt.subplot(1, 3, 3)
-        im = plt.imshow(emode, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]])
-        plt.colorbar(im, fraction=0.046, pad=0.04)
-        plt.title('Etype Mode')
+        #plt.subplot(1, 3, 3)
+        #im = plt.imshow(emode, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]])
+        #plt.colorbar(im, fraction=0.046, pad=0.04)
+        #plt.title('Etype Mode')
 
         # plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
         if len(title_txt)==0:
@@ -665,6 +669,7 @@ class mpslib:
         
         fig.suptitle(title_txt, fontsize=16)
         plt.show(block=False)
+    
 
 
 '''
