@@ -201,7 +201,7 @@ def strebelle(di=1, coarse3d=0):
     if di>1:
         if coarse3d==0:
             Dmat = TI
-            TI = Dmat[:,::di,::di]
+            TI = Dmat[::di,::di, :]
         else:
             Dmat = TI
             TI = coarsen_2d_ti(Dmat, di)

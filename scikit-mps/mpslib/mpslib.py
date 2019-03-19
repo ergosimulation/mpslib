@@ -563,10 +563,9 @@ class mpslib:
                     if (len(self.sim[0].shape)==1):
                         val = self.sim[i][ix]
                     elif (len(self.sim[0].shape)==2):
-                        val = self.sim[i][iy,ix]
+                        val = self.sim[i][ix,iy]
                     else:
-                        val = self.sim[i][iz,iy,ix]
-                    d = np.array([[self.x[ix],self.y[iy],self.z[iz],val]])                        
+                       d = np.array([[self.x[ix],self.y[iy],self.z[iz],val]])                        
                         
                     if not np.isnan(val):
                         #d = np.array([[self.x(ix), self.y(iy), self.z(ix), self.sim(iy.ix)]])
@@ -586,6 +585,9 @@ class mpslib:
         import numpy as np
         from scipy import squeeze
         
+        
+        nx, ny, nz = self.par['simulation_grid_size']
+        
         nr = np.min((self.par['n_real'], nr))
         nsp = int(np.ceil(np.sqrt(nr)))
 
@@ -598,7 +600,7 @@ class mpslib:
             if filternan==1:
                 self.sim[i][self.sim[i]==nanval] = np.nan
                 
-            D=squeeze(self.sim[i])
+            D=squeeze(np.transpose(self.sim[i]))
             plt.imshow(D, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], interpolation='none')
             plt.title("Real %d" % (i + 1))
 
@@ -630,8 +632,8 @@ class mpslib:
             use_hard = 1
 
         # compute Etype
-        emean = squeeze(np.mean(self.sim, axis=0))
-        estd = squeeze(np.std(self.sim, axis=0))
+        emean = np.transpose(squeeze(np.mean(self.sim, axis=0)))
+        estd = np.transpose(squeeze(np.std(self.sim, axis=0)))
         #emode = squeeze(stats.mode(self.sim, axis=0))
         #emode = squeeze(emode[0][0])
 

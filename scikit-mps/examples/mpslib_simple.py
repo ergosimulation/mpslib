@@ -1,6 +1,6 @@
 '''
 mpslib_simple:
-The simplest example of running MPSliv from python
+The simplest example of running MPSlib from python
 '''
 import mpslib as mps
 # Initialize the MPS object, using a specific algorithm (def='mps_snesim_tree')
