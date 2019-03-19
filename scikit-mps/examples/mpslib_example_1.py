@@ -4,7 +4,6 @@
 #%%
 import mpslib as mps
 import matplotlib.pyplot as plt
-plt.ion()
 plt.set_cmap('hot')
 
 
@@ -32,11 +31,11 @@ plt.show()
 
 
 #%% Use the same modeling parameters, but change simulation methods
-O1.change_method('mps_snesim_list')
-O1.run()
-plt.figure(2)
-O1.plot_reals()
-plt.savefig(O1.method+'.png', dpi=600)
+#O1.change_method('mps_snesim_list')
+#O1.run()
+#plt.figure(2)
+#O1.plot_reals()
+#plt.savefig(O1.method+'.png', dpi=600)
 
 
 #%% RUN GENESIM
@@ -47,6 +46,7 @@ O2.par['n_real']=4;
 O2.par['n_max_ite']=1000;
 O2.par['n_cond']=31;
 O2.par['shuffle_simulation_grid']=1;
+O2.par['ti_fnam']=TI_fname
 O2.parameter_filename = 'mps_genesim.txt'
 O2.run();
 
