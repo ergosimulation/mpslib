@@ -8,6 +8,8 @@ Created on Wed Jan 24 19:36:26 2018
 import os
 import numpy as np
 from . import eas
+from . import plot
+
 #import urllib.request
 try:
 #    from urllib.request import urlopen
@@ -109,6 +111,24 @@ def ti_list(show=1):
     
     return ti_name, ti_desc
 
+
+def ti_plot_all():
+    '''
+    plot all training images
+    '''
+    
+    import sys
+    this_mod = sys.modules[__name__]
+
+    TI_fnames,d=ti_list(1)
+
+    for i in range(len(TI_fnames)):
+        print('Loading %s' % TI_fnames[i])
+        TI, TI_fname = getattr(this_mod,TI_fnames[i])()
+        print(TI.shape)
+        plot.plot_3d_vtk(TI,1)
+
+
 '''
 The training images
 '''
@@ -171,7 +191,7 @@ def strebelle(di=1, coarse3d=0):
     if di>1:
         if coarse3d==0:
             Dmat = TI
-            TI = Dmat[::di,::di]
+            TI = Dmat[:,::di,::di]
         else:
             Dmat = TI
             TI = coarsen_2d_ti(Dmat, di)

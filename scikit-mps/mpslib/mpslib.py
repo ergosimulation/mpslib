@@ -564,13 +564,14 @@ class mpslib:
                         val = self.sim[i][ix]
                     elif (len(self.sim[0].shape)==2):
                         val = self.sim[i][iy,ix]
-                        d = np.array([[self.x[ix],self.y[iy],self.z[iz],val]])                        
                     else:
-                        val = self.sim[i][iy,ix,iz]
+                        val = self.sim[i][iz,iy,ix]
+                    d = np.array([[self.x[ix],self.y[iy],self.z[iz],val]])                        
                         
                     if not np.isnan(val):
                         #d = np.array([[self.x(ix), self.y(iy), self.z(ix), self.sim(iy.ix)]])
                         if n==0:
+
                             d_hard = d                        
                         else:
                             d_hard=np.append(d_hard,d,axis=0)
