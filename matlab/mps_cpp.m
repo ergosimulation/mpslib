@@ -130,8 +130,7 @@ else
         z=[0:1:O.simulation_grid_size(3)-1]*O.grid_cell_size(3)+O.origin(3);
         [xx,yy,zz]=meshgrid(x,y,z);
         i_hard=find(~isnan(SIM));
-        if ~isempty(i_hard)
-            1
+        if ~isempty(i_hard)            
             O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];            
             write_eas(O.hard_data_filename,O.d_hard);
         end
