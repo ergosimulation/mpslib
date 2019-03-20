@@ -25,7 +25,53 @@ def module_exists(module_name,show_info=0):
 
 
 
-def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), filename='', ):
+def plot_3d_reals_vtk(O, nshow=4):
+    '''Plot realizations in in O.sim in 3D using vtki
+    
+    Paramaters
+    ----------
+    O : mpslib object
+        
+    nshow : int (def=4)
+        show a maxmimum of 'nshow' realizations
+    '''
+    import numpy as np
+    import vtki
+    
+    if not(hasattr(O,'sim')):
+        print('No data to plot (no "sim" attribute)')
+        return -1
+    if (O.sim is None):
+        print('No data to plot ("sim" attribute i "None")')
+        return -1
+    
+    nr = O.par['n_real']
+    nshow = np.min((nshow,nr))
+    
+    
+    nxy = np.ceil(np.sqrt(nshow)).astype('int')
+    
+    plotter = vtki.Plotter( shape=(nxy,nxy))
+    for i in range(nshow):
+        plotter.subplot(0,i)
+        
+        Data = O.sim[i]
+        grid = vtki.UniformGrid()
+        grid.dimensions = np.array(Data.shape) + 1
+        
+        grid.origin = O.par['origin']
+        grid.spacing = O.par['grid_cell_size']
+        grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
+        
+        plotter.add_mesh(grid.slice_orthogonal())
+        plotter.add_text('#%d' % (i+1))
+        plotter.show_grid()
+        
+        
+    plotter.show()
+
+
+def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), filename='', header='' ):
     '''
     plot 3D sube using 'vtki' 
     '''
@@ -51,6 +97,7 @@ def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), filename='', ):
     else:
         plot = vtki.Plotter()
         plot.add_mesh(grid.slice_orthogonal())
+        plot.add_text(header)
         plot.show_grid()
         if len(filename)>0:
             plot.screenshot(filename)

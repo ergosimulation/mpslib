@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import subprocess
+from . import plot as plot
 from . import eas as eas
 from . import trainingimages as trainingimages
 # from . import trainingimages
@@ -577,7 +578,10 @@ class mpslib:
                         n=n+1
         return d_hard
                 
-
+    # plot realizations using vtki 2D/3D
+    def plot_reals_vtk(self, nshow=9):
+        plot.plot_3d_reals_vtk(self, nshow=nshow) 
+        
     # plot realizations (only in 2D so far)
     def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals', nanval=-997799, filternan=1):
         import matplotlib.pyplot as plt
@@ -612,7 +616,10 @@ class mpslib:
 
     # plot etypes (only in 2D so far)
     def plot_etype(self, title_txt=''):
-
+        '''
+        Plot Etype mean and variance from simulation
+        '''
+        
         import matplotlib.pyplot as plt
         import numpy as np
         import os
@@ -673,7 +680,22 @@ class mpslib:
         fig.suptitle(title_txt, fontsize=16)
         plt.show(block=False)
     
-
+    # plot TI
+    def plot_ti(self):
+        '''
+        Plot TI
+        '''
+        #if not('ti' in self.par):
+        if not(hasattr(self,'ti')):           
+            try:
+                E=eas.read(self.par['ti_fnam'])
+                self.ti = E['Dmat']
+            except:
+                print('Could not load %s, and can then not plot the traiing image' % self.par['ti_fnam'])
+                return -1
+                    
+        
+        plot.plot_3d_vtk(self.ti, header=self.par['ti_fnam'], slice=1   )
 
 '''
     def to_file(self):
