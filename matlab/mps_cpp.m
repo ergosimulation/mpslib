@@ -195,15 +195,12 @@ end
 
 if isfield(O,'exe_root')
     w_root = O.exe_root;
-    %w_root=strrep(w_root,' ','\ ');
 else
     w_root=[fileparts(which('mps_cpp')),filesep,'..'];
-    %w_root=strrep(w_root,' ','\ ');
 end
 O.exe_filename=[w_root,filesep,O.method];
 if ~isunix
     O.exe_filename=[O.exe_filename,'.exe'];
-    O.exe_filename=system(strrep(O.exe_filename,' ','\ '))
 end
 
 % check that file exist
