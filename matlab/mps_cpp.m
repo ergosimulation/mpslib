@@ -131,7 +131,12 @@ else
         [xx,yy,zz]=meshgrid(x,y,z);
         i_hard=find(~isnan(SIM));
         if ~isempty(i_hard)            
-            O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];            
+            x_hard=xx(i_hard);
+            y_hard=yy(i_hard);
+            z_hard=zz(i_hard);
+            sim_hard=SIM(i_hard);
+            O.d_hard=[x_hard(:) y_hard(:) z_hard(:) sim_hard(:)];
+            %O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];
             write_eas(O.hard_data_filename,O.d_hard);
         end
         
