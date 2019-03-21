@@ -16,17 +16,22 @@ def run_unpack(args):
     return Omul
 '''
 #%% Initialize the MPS object, using a specific algorithm (def='mps_snesim_tree')
-O=mps.mpslib(method='mps_snesim_tree', simulation_grid_size=(50,30,1), origin=(0,0,0))
-O.par['n_real']=100
-O.par['n_cond']=9
+O=mps.mpslib(method='mps_snesim_tree', simulation_grid_size=(150,130,1), origin=(0,0,0))
+
+O.par['n_threads']=30; # 10
+#.par['n_threads']=-1# USE ALL
+
+O.par['n_real']=200
+O.par['n_cond']=16
 d_hard = np.array([[25,10,0,0],[28,13,0,1]])
 # Set training image
 O.ti = mps.trainingimages.checkerboard2()[0]
 O.ti = mps.trainingimages.strebelle()[0]
 #O.plot_ti()
 O.d_hard = d_hard
-O.par['n_threads']=20;
 #O.delete_local_files() # Make sure no hard/soft data are conditioned to
+O.remove_gslib_after_simulation=0;
+
 
 # Make sure the TI is set as a variable
 if os.path.isfile(O.par['ti_fnam']):

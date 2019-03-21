@@ -283,7 +283,7 @@ class mpslib:
         from multiprocessing import Pool
         from multiprocessing import cpu_count
         
-        Ncpu = np.int(cpu_count())
+        Ncpu = np.int(cpu_count()/2)
         
         
         # make sure TI is set        
@@ -312,6 +312,7 @@ class mpslib:
         
             OO=copy.deepcopy(self)
             OO.parameter_filename = '%s_%03d.txt' % (self.method,ithread)
+            OO.par['rseed']=self.par['rseed']+ithread
             OO.par['ti_fnam'] = 'ti_thread_%03d.dat' % ithread
             if (ithread==(Nthreads-1)):
                 # LAST THREAD
@@ -328,7 +329,7 @@ class mpslib:
             Oall.append(Ocur)
 
         # Wait some time to make sure all files have been written!!
-        time.sleep(10)
+        
 
         # Perform simulation in parallal
         #Ncpu = np.int(cpu_count()/2)
@@ -419,7 +420,14 @@ class mpslib:
 
         # write parameter file
         self.par_write()
-
+        
+        if not self.iswin:
+            # Flushing may be necessary in linux, to make sure fiels are written before simulation starts
+            try:
+                subprocess.run(["sync"])
+            except:
+                print('Could not run sync!')
+            
 
         exe_file = self.method
         if self.iswin:
@@ -428,14 +436,14 @@ class mpslib:
         exe_path = self.which(exe_file)
 
         if (self.verbose_level > -1):
-            print("mpslib: trying to run '%s'  in folder '%s'"%(exe_file,exe_path))
+            print("mpslib: trying to run '%s' on '%s' in folder '%s'" % (exe_file,self.parameter_filename,exe_path))
 
         if exe_path is None:
             s = 'mpslib: The program {} does not exist or is not executable.'.format(exe_file)
             raise Exception(s)
             return -1
         else:
-            if (self.verbose_level > -1):
+            if (self.verbose_level > 0):
                 s = 'mpslib: Using the following executable to run the model: {}'.format(exe_path)
                 print(s)
 
@@ -586,20 +594,30 @@ class mpslib:
 
     def delete_hard_data(self):
         import os
-        if (os.path.isfile(self.par['hard_data_fnam'])):
-            os.remove(self.par['hard_data_fnam'])
+        try:
+            if (os.path.isfile(self.par['hard_data_fnam'])):
+                os.remove(self.par['hard_data_fnam'])
+        except: 
+            print('Could not delete %s' % self.par['hard_data_fnam'])
 
     # Delete soft data
     def delete_soft_data(self):
         import os
-        if (os.path.isfile(self.par['soft_data_fnam'])):
-            os.remove(self.par['soft_data_fnam'])
+        try:
+            if (os.path.isfile(self.par['soft_data_fnam'])):
+                os.remove(self.par['soft_data_fnam'])
+        except:
+            print('Could not delete %s' % self.par['soft_data_fnam'])
 
     # Delete mask data
     def delete_mask_data(self):
         import os
-        if (os.path.isfile(self.par['mask_fnam'])):
-            os.remove(self.par['mask_fnam'])
+        try:
+            if (os.path.isfile(self.par['mask_fnam'])):
+                os.remove(self.par['mask_fnam'])
+        except:
+            print('Could not delete %s' % self.par['mask_fnam'])
+
 
     # Delete locard filense
     def delete_local_files(self):
