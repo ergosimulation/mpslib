@@ -195,12 +195,15 @@ end
 
 if isfield(O,'exe_root')
     w_root = O.exe_root;
+    %w_root=strrep(w_root,' ','\ ');
 else
     w_root=[fileparts(which('mps_cpp')),filesep,'..'];
+    %w_root=strrep(w_root,' ','\ ');
 end
 O.exe_filename=[w_root,filesep,O.method];
 if ~isunix
     O.exe_filename=[O.exe_filename,'.exe'];
+    O.exe_filename=system(strrep(O.exe_filename,' ','\ '))
 end
 
 % check that file exist
@@ -209,8 +212,10 @@ if ~exist(O.exe_filename,'file')
     return;
 end
 
-cmd=sprintf('%s %s',O.exe_filename,O.parameter_filename);
+cmd = sprintf('"%s" %s',O.exe_filename, O.parameter_filename);
+%cmd=sprintf('%s %s',O.exe_filename,O.parameter_filename);
 if (O.debug>-1), disp(sprintf('%s: running ''%s''',mfilename,cmd)); end
+
 
 % run the algorithm
 tic;
