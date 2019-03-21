@@ -327,6 +327,9 @@ class mpslib:
             Ocur.append('Thread %03d' % ithread)
             Oall.append(Ocur)
 
+        # Wait some time to make sure all files have been written!!
+        time.sleep(10)
+
         # Perform simulation in parallal
         #Ncpu = np.int(cpu_count()/2)
         print('Using a maximum of %d cores' % Ncpu)
