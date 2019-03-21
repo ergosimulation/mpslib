@@ -274,6 +274,100 @@ class mpslib:
         file.write('Mask grid filename (same size as the simulation grid)# %s\n' % self.par['mask_fnam'])
         file.close()
 
+
+    def run_parallel(self):
+        '''RUN simulation in parallel
+        '''
+        import os
+        import copy
+        from multiprocessing import Pool
+        from multiprocessing import cpu_count
+        
+        Ncpu = np.int(cpu_count())
+        
+        
+        # make sure TI is set        
+        if os.path.isfile(self.par['ti_fnam']):
+            E=eas.read(self.par['ti_fnam'])
+            self.ti=E['Dmat']
+
+        # Set number of threads to use
+        if (self.par['n_threads']<1):
+            Nthreads=Ncpu;
+            if (Ncpu/self.par['n_real'])>1:
+                Nthreads = self.par['n_real']
+                
+        else:
+            Nthreads = self.par['n_threads'];
+
+        real_per_thread= np.ceil(self.par['n_real']/Nthreads).astype(int)
+        
+        print('parallel: using %d threads to simulate %d realizations' % (Nthreads,self.par['n_real']))
+        print('parallel: with up to %g relizations per thread' % real_per_thread)
+
+
+        #%% Setup structure to be parsed to parallel
+        Oall=[];
+        for ithread in range(Nthreads):
+        
+            OO=copy.deepcopy(self)
+            OO.parameter_filename = '%s_%03d.txt' % (self.method,ithread)
+            OO.par['ti_fnam'] = 'ti_thread_%03d.dat' % ithread
+            if (ithread==(Nthreads-1)):
+                # LAST THREAD
+                OO.par['n_real'] = self.par['n_real'] - (Nthreads-1)*real_per_thread
+            else:
+                OO.par['n_real'] = real_per_thread
+                    
+            OO.par['out_folder']='./thread%03d' % ithread
+            if not (os.path.isdir(OO.par['out_folder'])):
+                os.mkdir(OO.par['out_folder'])    
+            Ocur=[]
+            Ocur.append(OO)
+            Ocur.append('Thread %03d' % ithread)
+            Oall.append(Ocur)
+
+        # Perform simulation in parallal
+        #Ncpu = np.int(cpu_count()/2)
+        print('Using a maximum of %d cores' % Ncpu)
+        
+        p = Pool(Ncpu)
+        #Omul = p.map(run_unpack, Oall)
+        #Omul = p.map(self.run_unpack, Oall)
+        
+        #if __name__ == '__main__':
+        #p = Pool(Ncpu)
+        #Omul = p.map(run_unpack, Oall)
+        #Omul = p.map(self.run_unpack, Oall)
+        Omul = p.map(mpslib.run_unpack, Oall)
+
+
+
+
+        # Collect some data
+        self.x=Omul[0].x
+        self.y=Omul[0].y
+        self.z=Omul[0].z
+        for ithread in range(len(Omul)):
+            if (ithread==0):
+                self.sim = Omul[ithread].sim
+            else:
+                self.sim = self.sim + Omul[ithread].sim
+
+
+
+        #return Oall
+
+
+    def run_unpack(args):
+        '''Run simulation by unpacking input args
+        '''
+        Omul, txt = args
+        print(txt)
+        Omul.run()
+        return Omul
+
+
     def run(self, normal_msg='Elapsed time (sec)', silent=False):
         """
             *Description:*\n
@@ -288,6 +382,7 @@ class mpslib:
         import time
         success = False
 
+        
         # update self.x, self.y, self.z
         if (hasattr(self, 'x') == 0):
             self.x = np.arange(self.par['simulation_grid_size'][0]) * self.par['grid_cell_size'][0] + self.par['origin'][0]
@@ -381,7 +476,8 @@ class mpslib:
         for i in range(0, self.par['n_real']):
             filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
             time.sleep(.1) # SOMETIMES NEEEDED WHEN FILES IS NOT YET ACCESSIBLE
-            OUT = eas.read(filename)
+            filename_with_path = os.path.join(self.par['out_folder'], filename)
+            OUT = eas.read(filename_with_path)
             if (self.verbose_level > 0):
                 print('mpslib: Reading: %s' % (filename))
             self.sim.append(OUT['Dmat'])
@@ -394,6 +490,7 @@ class mpslib:
             header = []
             for i in range(self.par['n_real']):
                 cur_file = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
+                cur_file = os.path.join(self.par['out_folder'], cur_file)
                 if os.path.isfile(cur_file):
                     if (self.verbose_level > 1):
                         print('mpslib: Merging %s' % cur_file)
@@ -476,7 +573,9 @@ class mpslib:
         else:
             file_list = glob.glob('%s/%s*.gslib' % (self.par['out_folder'], self.par['ti_fnam']))
         for file in file_list:
-            os.remove(os.path.join(self.par['out_folder'], file))
+            #file_with_path = os.path.join(self.par['out_folder'], file)
+            #os.remove(os.path.join(self.par['out_folder'], file_with_path))
+            os.remove(file)
             if (self.verbose_level > 1):
                 print('Removing {0}'.format(os.path.join(self.par['out_folder'], file)))
 
@@ -615,7 +714,7 @@ class mpslib:
         plt.show(block=False)
 
     # plot etypes (only in 2D so far)
-    def plot_etype(self, title_txt=''):
+    def plot_etype(self, title=''):
         '''
         Plot Etype mean and variance from simulation
         '''
@@ -674,11 +773,13 @@ class mpslib:
         #plt.title('Etype Mode')
 
         # plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
-        if len(title_txt)==0:
-            title_txt = self.method + ' - ' + self.parameter_filename
+        if len(title)==0:
+            title = self.method + ' - ' + self.parameter_filename
         
-        fig.suptitle(title_txt, fontsize=16)
+        fig.suptitle(title, fontsize=16)
         plt.show(block=False)
+    
+        return emean, estd
     
     # plot TI
     def plot_ti(self):

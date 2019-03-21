@@ -41,6 +41,12 @@ def read(filename='eas.dat'):
         eas['n_cols']: number of columns of data
         eas['header']: Header string of length n_cols    
     '''
+    
+    
+    if not (os.path.isfile(filename)):
+        print("Filename:'%s', does not exist" % filename)
+    
+    
     file = open(filename, "r")
     if (debug_level > 0):
         print("eas: file ->%20s" % filename)
