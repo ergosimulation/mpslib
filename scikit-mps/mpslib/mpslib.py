@@ -333,18 +333,15 @@ class mpslib:
         
 
         # Perform simulation in parallal
-        #Ncpu = np.int(cpu_count()/2)
         print('parallel: Using a maximum of %d cores' % Ncpu)
-   
+        print('__name__ = %s' % __name__)
         freeze_support()
         p = Pool(Ncpu)
         Omul = p.map(mpslib.run_unpack, Oall)
 
 
-
-
-        print('parallel job done. Collecting data from threads')
         # Collect some data
+        print('parallel job done. Collecting data from threads')
         self.x=Omul[0].x
         self.y=Omul[0].y
         self.z=Omul[0].z
