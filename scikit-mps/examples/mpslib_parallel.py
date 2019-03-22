@@ -8,21 +8,15 @@ import numpy as np
 import os
 import copy
 
-'''
-def run_unpack(args):
-    Omul, txt = args
-    print(txt)
-    Omul.run()
-    return Omul
-'''
+
 #%% Initialize the MPS object, using a specific algorithm (def='mps_snesim_tree')
 O=mps.mpslib(method='mps_snesim_tree', simulation_grid_size=(150,130,1), origin=(0,0,0))
 
-O.par['n_threads']=30; # 10
-#.par['n_threads']=-1# USE ALL
+#O.par['n_threads']=30; # 10
+O.par['n_threads']=-1# USE ALL
 
-O.par['n_real']=200
-O.par['n_cond']=16
+O.par['n_real']=50
+O.par['n_cond']=9
 d_hard = np.array([[25,10,0,0],[28,13,0,1]])
 # Set training image
 O.ti = mps.trainingimages.checkerboard2()[0]
@@ -88,10 +82,10 @@ for ithread in range(Nthreads):
 #    
     
     
-O_all = O.run_parallel()
+Oall = O.run_parallel()
 
 emean, evar = O.plot_etype()
-    
+#    
 mps.plot.plot_3d_vtk(emean[:,:,np.newaxis])
 
 
@@ -105,9 +99,8 @@ Ncpu = np.int(cpu_count())
 if __name__ == '__main__':
     p = Pool(Ncpu)
     #Omul = p.map(run_unpack, Oall)
-    Omul = p.map(mps.mpslib.run_unpack, O_all)
+    Omul = p.map(mps.mpslib.run_unpack, Oall)
 '''
-
 
     
 #%%    

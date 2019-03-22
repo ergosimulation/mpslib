@@ -281,6 +281,7 @@ class mpslib:
         import os
         import copy
         from multiprocessing import Pool
+        from multiprocessing import freeze_support
         from multiprocessing import cpu_count
         
         Ncpu = np.int(cpu_count()/2)
@@ -333,21 +334,16 @@ class mpslib:
 
         # Perform simulation in parallal
         #Ncpu = np.int(cpu_count()/2)
-        print('Using a maximum of %d cores' % Ncpu)
-        
+        print('parallel: Using a maximum of %d cores' % Ncpu)
+   
+        freeze_support()
         p = Pool(Ncpu)
-        #Omul = p.map(run_unpack, Oall)
-        #Omul = p.map(self.run_unpack, Oall)
-        
-        #if __name__ == '__main__':
-        #p = Pool(Ncpu)
-        #Omul = p.map(run_unpack, Oall)
-        #Omul = p.map(self.run_unpack, Oall)
         Omul = p.map(mpslib.run_unpack, Oall)
 
 
 
 
+        print('parallel job done. Collecting data from threads')
         # Collect some data
         self.x=Omul[0].x
         self.y=Omul[0].y
@@ -356,11 +352,15 @@ class mpslib:
             if (ithread==0):
                 self.sim = Omul[ithread].sim
             else:
-                self.sim = self.sim + Omul[ithread].sim
+                if Omul[ithread].sim is not None:
+                    # only us sim data if the exist
+                    self.sim = self.sim + Omul[ithread].sim
+                else:
+                    print('parallel: could not use data from thread %d' % ithread)
 
+        print('parallel: collected %d realizations' % (len(self.sim)))
 
-
-        #return Oall
+        return Omul
 
 
     def run_unpack(args):
