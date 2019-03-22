@@ -8,14 +8,16 @@ from exclass import exclass
 import time
 
 #%%
-print(__name__)
-print(time.time())
-O = exclass(x=1);
-O.run();
+print('__name__= %s' % __name__)
+print('time=%g' % time.time())
 if __name__ == '__main__':
-    Oall, Oall_par =  O.run_parallel(N=20)
-     
+    O = exclass(x=1);
+
+    nr = 5
     
-    for i in range(len(Oall_par)):
-        print('%10.2g %10.2g' % (Oall[i].x,Oall_par[i].x))
- 
+    Oseq = O.run_seq(N=nr);
+     
+    Opar = O.run_parallel(N=nr)
+         
+    for i in range(nr):
+        print('i = %d, x_seq=%3g, x_par=%3g'  % (i,Oseq[i].x, Opar[i].x))

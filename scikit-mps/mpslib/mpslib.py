@@ -284,20 +284,41 @@ class mpslib:
         from multiprocessing import freeze_support
         from multiprocessing import cpu_count
         
-        Ncpu = np.int(cpu_count()/2)
+        #Ncpu = np.int(cpu_count()/1)
+        Ncpu = np.int(np.ceil(cpu_count()*.8))
+        #Ncpu = np.int(cpu_count()/2)
         
+        
+        # make sure hard data, soft data and mask data are given as variables
+        # and not only filenams (such that these are written to the thread folders)
         
         # make sure TI is set        
-        if os.path.isfile(self.par['ti_fnam']):
-            E=eas.read(self.par['ti_fnam'])
-            self.ti=E['Dmat']
+        if (hasattr(self, 'ti') == 0):
+            if os.path.isfile(self.par['ti_fnam']):
+                E=eas.read(self.par['ti_fnam'])
+                self.ti=E['Dmat']
+        # make sure mask is set        
+        if (hasattr(self, 'd_mask') == 0):
+            if os.path.isfile(self.par['mask_fnam']):
+                E=eas.read(self.par['mask_fnam'])
+                self.d_mask=E['Dmat']
+        # make sure hard data is set   
+        if (hasattr(self, 'd_hard') == 0):
+            if os.path.isfile(self.par['hard_data_fnam']):
+                E=eas.read(self.par['hard_data_fnam'])
+                self.d_hard=E['D']
+        # make sure hard data is set        
+        if (hasattr(self, 'd_soft') == 0):
+            if os.path.isfile(self.par['soft_data_fnam']):
+                E=eas.read(self.par['soft_data_fnam'])
+                self.d_soft=E['D']
+
 
         # Set number of threads to use
         if (self.par['n_threads']<1):
             Nthreads=Ncpu;
             if (Ncpu/self.par['n_real'])>1:
                 Nthreads = self.par['n_real']
-                
         else:
             Nthreads = self.par['n_threads'];
 
@@ -309,18 +330,28 @@ class mpslib:
 
         #%% Setup structure to be parsed to parallel
         Oall=[];
-        for ithread in range(Nthreads):
-        
+        n_real =  self.par['n_real']
+        n_real_sum = 0
+        n_real_left = n_real-n_real_sum 
+            
+        #for ithread in range(Nthreads):
+        ithread=-1
+        while (n_real_left>0):
+            ithread = ithread+1
             OO=copy.deepcopy(self)
             OO.parameter_filename = '%s_%03d.txt' % (self.method,ithread)
             OO.par['rseed']=self.par['rseed']+ithread
             OO.par['ti_fnam'] = 'ti_thread_%03d.dat' % ithread
-            if (ithread==(Nthreads-1)):
-                # LAST THREAD
-                OO.par['n_real'] = self.par['n_real'] - (Nthreads-1)*real_per_thread
-            else:
+            if (n_real_left>real_per_thread):
                 OO.par['n_real'] = real_per_thread
-                    
+            else:
+                # LAST THREAD
+                OO.par['n_real'] = n_real_left
+            
+            n_real_sum = n_real_sum +  OO.par['n_real']
+            
+            print('Thread %2d %2d/%2d' % (ithread,OO.par['n_real'],n_real_left) )
+            
             OO.par['out_folder']='./thread%03d' % ithread
             if not (os.path.isdir(OO.par['out_folder'])):
                 os.mkdir(OO.par['out_folder'])    
@@ -328,12 +359,15 @@ class mpslib:
             Ocur.append(OO)
             Ocur.append('Thread %03d' % ithread)
             Oall.append(Ocur)
-
+                
+            n_real_left = n_real-n_real_sum 
+            
         # Wait some time to make sure all files have been written!!
         
+        Ncpu_used = len(Oall)
 
         # Perform simulation in parallal
-        print('parallel: Using a maximum of %d cores' % Ncpu)
+        print('parallel: Using %d of max %d threads' % (Ncpu_used,Ncpu) )
         print('__name__ = %s' % __name__)
         freeze_support()
         p = Pool(Ncpu)
@@ -407,13 +441,18 @@ class mpslib:
 
         # write soft data if set
         if hasattr(self, 'd_soft'):
-            self.delete_soft_data()
+            #self.delete_soft_data()
             eas.write(self.d_soft, self.par['soft_data_fnam'])
 
         # write hard data if set
         if hasattr(self, 'd_hard'):
-            self.delete_hard_data()
+            #self.delete_hard_data()
             eas.write(self.d_hard, self.par['hard_data_fnam'])
+
+        # write mask if set
+        if hasattr(self, 'd_mask'):
+            eas.write_mat(self.d_mask, self.par['mask_fnam'])
+
 
         # write parameter file
         self.par_write()
