@@ -17,19 +17,22 @@ if __name__ == '__main__':
     
     #O.par['n_threads']=30; # 10
     
-    O.par['n_real']=200
+    O.par['n_real']=1000
     O.par['n_cond']=16
-    d_hard = np.array([[25,10,0,0],[28,13,0,1],[30,50,0,1]])
+    d_hard = np.array([[25,10,0,0],[28,13,0,1]])
     d_hard = np.array([[25,10,0,0],[28,13,0,1]])
     d_soft = np.array([[10,10,0,0.1, 0.9],[10,13,0,.1, 0.9],[30,53,0,.01, 0.99]])
     # Set training image
     O.ti = mps.trainingimages.checkerboard2()[0]
-    O.ti = mps.trainingimages.strebelle()[0]
+    O.ti = mps.trainingimages.strebelle(di=2)[0]
     #O.plot_ti()
     O.d_hard = d_hard
     O.d_soft = d_soft
     #O.delete_local_files() # Make sure no hard/soft data are conditioned to
-    O.remove_gslib_after_simulation=0;
+    O.remove_gslib_after_simulation=1;
+    #O.gslib_combine
+    
+    
     # INMPORTANT
     O.delete_hard_data()
     O.delete_soft_data()

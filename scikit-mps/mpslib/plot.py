@@ -71,7 +71,7 @@ def plot_3d_reals_vtk(O, nshow=4):
     plotter.show()
 
 
-def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), filename='', header='' ):
+def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
     '''
     plot 3D sube using 'vtki' 
     '''
@@ -92,18 +92,32 @@ def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), filename='', hea
     # Add the data values to the cell data
     grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
     # Now plot the grid!
-    if (slice==0):
-        grid.plot(show_edges=True)
-    else:
-        plot = vtki.Plotter()
-        plot.add_mesh(grid.slice_orthogonal())
+    if (len(threshold)==2):
+        plot = vtki.BackgroundPlotter() # interactive
+        #plot = vtki.Plotter() # interactive
+        grid_threshold = grid.threshold(threshold)        
+        #plot.enable_eye_dome_lighting()
+        plot.add_mesh(grid_threshold)
+        if len(filename)>0:
+            plot.screenshot(filename)
+        plot.show()
+    
+    elif (slice==1):
+        #plot = vtki.Plotter() % static
+        plot = vtki.BackgroundPlotter() # interactive
+        
+        grid_slice = grid.slice_orthogonal()
+        plot.add_mesh(grid_slice)
+        
         plot.add_text(header)
         plot.show_grid()
         if len(filename)>0:
             plot.screenshot(filename)
         plot.show()
-
-
+    
+    else:
+        grid.plot(show_edges=True)
+    
 
 
 #%%
