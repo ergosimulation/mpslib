@@ -17,7 +17,7 @@ if __name__ == '__main__':
     
     #O.par['n_threads']=30; # 10
     
-    O.par['n_real']=1000
+    O.par['n_real']=30
     O.par['n_cond']=16
     d_hard = np.array([[25,10,0,0],[28,13,0,1]])
     d_hard = np.array([[25,10,0,0],[28,13,0,1]])
