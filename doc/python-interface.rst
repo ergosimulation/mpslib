@@ -38,7 +38,7 @@ A simple example of using scikit-mps to generate 4 realizations using ``mps_snes
   
    O.plot_etype()
 
-Which provides Figures :numref:`mpslib_simple_reals` and :numref:`mpslib_simple_etype`.
+that provides Figures :numref:`mpslib_simple_reals` and :numref:`mpslib_simple_etype`.
    
 .. _mpslib_simple_reals:
 .. figure:: /assets/mpslib_simple_reals.png
