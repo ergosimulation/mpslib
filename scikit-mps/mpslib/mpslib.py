@@ -283,7 +283,8 @@ class mpslib:
         from multiprocessing import Pool
         from multiprocessing import freeze_support
         from multiprocessing import cpu_count
-        
+        import time
+
         #Ncpu = np.int(cpu_count()/1)
         Ncpu = np.int(np.ceil(cpu_count()*.8))
         #Ncpu = np.int(cpu_count()/2)
@@ -350,20 +351,21 @@ class mpslib:
             
             n_real_sum = n_real_sum +  OO.par['n_real']
             
-            print('Thread %2d %2d/%2d' % (ithread,OO.par['n_real'],n_real_left) )
+            # print('Thread %2d %2d/%2d' % (ithread,OO.par['n_real'],n_real_left) )
             
             OO.par['out_folder']='./thread%03d' % ithread
             if not (os.path.isdir(OO.par['out_folder'])):
                 os.mkdir(OO.par['out_folder'])    
             Ocur=[]
             Ocur.append(OO)
-            Ocur.append('Thread %03d' % ithread)
+            Ocur.append('%03d' % ithread)
             Oall.append(Ocur)
                 
             n_real_left = n_real-n_real_sum 
             
         # Wait some time to make sure all files have been written!!
-        
+        #time.sleep(5)
+
         Ncpu_used = len(Oall)
 
         # Perform simulation in parallal
@@ -397,13 +399,13 @@ class mpslib:
     def run_unpack(args):
         '''Run simulation by unpacking input args
         '''
-        Omul, txt = args
-        print(txt)
-        Omul.run()
+        Omul, thread = args
+        print('Thread:%s, nr=%d' % (thread,Omul.par['n_real']) ) 
+        Omul.run(thread=thread)
         return Omul
 
 
-    def run(self, normal_msg='Elapsed time (sec)', silent=False):
+    def run(self, normal_msg='Elapsed time (sec)', silent=False, thread=''):
         """
             *Description:*\n
             This function runs the mpslib executable from python.
@@ -491,7 +493,11 @@ class mpslib:
         if (self.verbose_level > 0):
             print("mpslib: trying to run  " + exe_path + " " + self.parameter_filename)
 
-    
+
+        # Next line may be needed when using parallel simulation
+        if len(thread)>0:
+            time.sleep(1)    
+
         t_start = time.time()
         if self.iswin:
             CREATE_NO_WINDOW = 0x08000000
@@ -524,39 +530,46 @@ class mpslib:
             filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
             time.sleep(.1) # SOMETIMES NEEEDED WHEN FILES IS NOT YET ACCESSIBLE
             filename_with_path = os.path.join(self.par['out_folder'], filename)
-            OUT = eas.read(filename_with_path)
-            if (self.verbose_level > 0):
-                print('mpslib: Reading: %s' % (filename))
-            self.sim.append(OUT['Dmat'])
-            success = True
+            try:
+                OUT = eas.read(filename_with_path)
+                if (self.verbose_level > 0):
+                    print('mpslib: Reading: %s' % (filename))
+                self.sim.append(OUT['Dmat'])
+                success = True
+            except:
+                print('%s:Could not read gslib output file: %s' % (thread,filename))
+                success = False
 
         # combine gslib output files
         if (self.gslib_combine):
             import os
             n = 0;
             header = []
-            for i in range(self.par['n_real']):
-                cur_file = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
-                cur_file = os.path.join(self.par['out_folder'], cur_file)
-                if os.path.isfile(cur_file):
-                    if (self.verbose_level > 1):
-                        print('mpslib: Merging %s' % cur_file)
-                    d_cur = eas.read(cur_file)
-                    if n == 0:
-                        n_data = len(d_cur['D'])
-                        Dall = np.zeros((n_data, self.par['n_real']))
-                    header.append('Real #%d' % (i + 1))
-                    Dall[:, i] = d_cur['D']
-                    n = n + 1
-        Dall = Dall[:, range(n)]
+            try:
+                for i in range(self.par['n_real']):
+                    cur_file = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
+                    cur_file = os.path.join(self.par['out_folder'], cur_file)
+                    if os.path.isfile(cur_file):
+                        if (self.verbose_level > 1):
+                            print('mpslib: Merging %s' % cur_file)
+                        d_cur = eas.read(cur_file)
+                        if n == 0:
+                            n_data = len(d_cur['D'])
+                            Dall = np.zeros((n_data, self.par['n_real']))
+                        header.append('Real #%d' % (i + 1))
+                        Dall[:, i] = d_cur['D']
+                        n = n + 1
+                Dall = Dall[:, range(n)]
+                filename_out = '%s.gslib' % (self.par['ti_fnam'])
+                title = 'Realizations from %s - %s' % (self.method, d_cur['title'])
+                eas.write(Dall, filename_out, title=title, header=header)
+            except:
+                print('%s:Could read combine gslib output files - perhaps empty output?' % (thread) )
 
         # remove gslib output files
         if (self.remove_gslib_after_simulation):
             self.delete_gslib()
 
-        filename_out = '%s.gslib' % (self.par['ti_fnam'])
-        title = 'Realizations from %s - %s' % (self.method, d_cur['title'])
-        eas.write(Dall, filename_out, title=title, header=header)
 
         return success
 
