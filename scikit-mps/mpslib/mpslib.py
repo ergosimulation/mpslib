@@ -784,7 +784,7 @@ class mpslib:
         plt.show(block=False)
 
     # plot etypes (only in 2D so far)
-    def plot_etype(self, title=''):
+    def plot_etype(self, title='', hardcopy=0, hardcopy_filename='etype'):
         '''
         Plot Etype mean and variance from simulation
         '''
@@ -847,6 +847,11 @@ class mpslib:
             title = self.method + ' - ' + self.parameter_filename
         
         fig.suptitle(title, fontsize=16)
+
+        if (hardcopy):
+            plt.savefig(hardcopy_filename)
+
+
         plt.show(block=False)
     
         return emean, estd

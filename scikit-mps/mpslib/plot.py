@@ -95,8 +95,13 @@ def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), fi
     if (len(threshold)==2):
         plot = vtki.BackgroundPlotter() # interactive
         #plot = vtki.Plotter() # interactive
-        grid_threshold = grid.threshold(threshold)        
-        #plot.enable_eye_dome_lighting()
+        grid_threshold = grid.threshold(threshold)   
+        try:
+            pass
+            # crashed in version 0.17.3 on linux
+            # plot.eye_dome_lighting_on()      
+        except:
+            pass
         plot.add_mesh(grid_threshold)
         if len(filename)>0:
             plot.screenshot(filename)
