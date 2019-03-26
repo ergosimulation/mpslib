@@ -11,7 +11,7 @@ O.n_max_cpdf_count=1;
 O.max_search_radius=[10000 10000];
 
 O.debug=1;
-O.n_real=160;
+O.n_real=50;
 O.clean = 1;
 %O.exe_root = 'E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
 
@@ -20,9 +20,12 @@ nc_soft=[0 1 3];
 j=0;
 for ic=1:length(nc_soft);
     for k=1:2;
+        disp(sprintf('ic=%d, k=%d ', ic,k))
         j=j+1;
-        O.n_cond = [25 nc_soft(ic)];O.shuffle_simulation_grid=k;
-        [r{j},Oo{j}]=mps_cpp_thread(TI,SIM,O);
+        %O.n_cond = [25 nc_soft(ic)];O.shuffle_simulation_grid=k;
+        O.n_cond = [9 nc_soft(ic)];O.shuffle_simulation_grid=k;
+        %[r{j},Oo{j}]=mps_cpp_thread(TI,SIM,O);
+        [r{j},Oo{j}]=mps_cpp(TI,SIM,O);
     end
 end
 
@@ -36,7 +39,7 @@ for i=1:length(Oo)
     title(sprintf('t=%3.1fs i_p=%d, nc_{soft}=%d',Oo{i}.time,Oo{i}.shuffle_simulation_grid,Oo{i}.n_cond(2)))
     %title(sprintf('t=%3.1fs i_p=%d, nc_{hard}=%d, nc_{soft}=%d ',Oo{i}.time,Oo{i}.shuffle_simulation_grid,Oo{i}.n_cond(1),Oo{i}.n_cond(2)))
 end
-print_mul(sprintf('%s_nMaxCpdf%03d_C','ex_hard_as_soft',O.n_max_cpdf_count))
+%print_mul(sprintf('%s_nMaxCpdf%03d_C','ex_hard_as_soft',O.n_max_cpdf_count))
 
 
 

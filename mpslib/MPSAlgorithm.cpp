@@ -356,6 +356,9 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	}
 	//Reading Mask data
 	_readMaskDataFromFile();
+
+
+
 }
 
 /**
@@ -363,7 +366,7 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 */
 void MPS::MPSAlgorithm::_readHardDataFromFiles(void) {
 	bool readSucessfull = false;
-	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
+	std::string fileExtension; //= MPS::utility::getExtension(_tiFilename);
 
 	//Reading Hard conditional data
 	readSucessfull = false;
@@ -382,7 +385,7 @@ void MPS::MPSAlgorithm::_readHardDataFromFiles(void) {
 */
 void MPS::MPSAlgorithm::_readSoftDataFromFiles(void) {
 	bool readSucessfull = false;
-	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
+	std::string fileExtension;// = MPS::utility::getExtension(_tiFilename);
 
 	for (unsigned int i = 0; i<_softDataFileNames.size(); i++) {
 		readSucessfull = false;

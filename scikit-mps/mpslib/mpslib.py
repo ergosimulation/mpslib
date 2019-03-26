@@ -25,7 +25,7 @@ class mpslib:
                  shuffle_simulation_grid=2, entropyfactor_simulation_grid=4, shuffle_ti_grid=1,
                  hard_data_search_radius=1,
                  soft_data_categories=np.arange(2), soft_data_fnam='soft.dat', n_threads=1, verbose_level=0,
-                 template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_cond_soft=0, n_min_node_count=0,
+                 template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_cond_soft=1, n_min_node_count=0,
                  n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
                  max_search_radius=10000000, max_search_radius_soft=10000000,                  
                  remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
@@ -197,7 +197,8 @@ class mpslib:
         file.write('Training image file (spaces not allowed) # %s\n' % self.par['ti_fnam'])
         file.write('Output folder (spaces in name not allowed) # %s\n' % self.par['out_folder'])
         file.write(
-            'Shuffle Simulation Grid path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_simulation_grid'])
+            'Shuffle Simulation Grid path (0: sequential, 1: random, 2: preferential, EF) # %d %d\n' % 
+            (self.par['shuffle_simulation_grid'],  self.par['entropyfactor_simulation_grid']))
         file.write('Shuffle Training Image path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_ti_grid'])
         file.write('HardData filename  (same size as the simulation grid)# %s\n' % self.par['hard_data_fnam'])
         file.write('HardData seach radius (world units) # %g\n' % self.par['hard_data_search_radius'])
@@ -206,7 +207,7 @@ class mpslib:
             if c == 0:
                 file.write('%d' % ii)
             else:
-                file.write('; %d' % ii)
+                file.write(';%d' % ii)
         file.write('\n')
         file.write('Soft datafilenames (separated by ; only need (number_categories - 1) grids) # %s\n' %
                    self.par['soft_data_fnam'])
@@ -255,7 +256,8 @@ class mpslib:
         file.write('Training image file (spaces not allowed) # %s\n' % self.par['ti_fnam'])
         file.write('Output folder (spaces in name not allowed) # %s\n' % self.par['out_folder'])
         file.write(
-            'Shuffle Simulation Grid path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_simulation_grid'])
+            'Shuffle Simulation Grid path (0: sequential, 1: random, 2: preferential, EF) # %d %d\n' % 
+            (self.par['shuffle_simulation_grid'],  self.par['entropyfactor_simulation_grid']))
         file.write('Shuffle Training Image path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_ti_grid'])
         file.write('HardData filename  (same size as the simulation grid)# %s\n' % self.par['hard_data_fnam'])
         file.write('HardData seach radius (world units) # %g\n' % self.par['hard_data_search_radius'])
@@ -264,7 +266,7 @@ class mpslib:
             if c == 0:
                 file.write('%d' % ii)
             else:
-                file.write('; %d' % ii)
+                file.write(';%d' % ii)
         file.write('\n')
         file.write('Soft datafilenames (separated by ; only need (number_categories - 1) grids) # %s\n' %
                    self.par['soft_data_fnam'])
@@ -813,6 +815,11 @@ class mpslib:
         #emode = squeeze(stats.mode(self.sim, axis=0))
         #emode = squeeze(emode[0][0])
 
+        vmin=0
+        vmax=1
+        if (hasattr(self, 'ti')):    
+            vmin = np.min(self.ti)
+            vmax = np.max(self.ti)
         # plot the Etypes
         fig = plt.figure(2)
         fig.clf()
@@ -821,8 +828,8 @@ class mpslib:
         im = plt.imshow(emean, 
                         extent=[self.x[0], self.x[-1], self.y[-1], self.y[0]], 
                         zorder=-1,
-                        vmin=0,
-                        vmax=1)
+                        vmin=vmin,
+                        vmax=vmax)
         plt.colorbar(im, fraction=0.046, pad=0.04)
         if (use_hard):
             plt.plot(d_hard['D'][:, 0], d_hard['D'][:, 1], "k.", MarkerSize=25, zorder=0)

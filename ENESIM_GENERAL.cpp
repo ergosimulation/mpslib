@@ -63,10 +63,12 @@ void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 		std::random_shuffle ( _tiPath.begin(), _tiPath.end() );
 	}
 
+	
 	//Define multi threading parameters
-	_threads.resize(_numberOfThreads - 1);
+	//_threads.resize(_numberOfThreads - 1);
 	_jobDone = false;
 
+	
 	if(_debugMode > -1 ) {
 		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
 		std::cout << "Conditional points: " << _maxNeighbours << std::endl;

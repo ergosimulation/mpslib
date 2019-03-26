@@ -226,7 +226,7 @@ def write_dict(eas,filename='eas.dat'):
 
         for ii in np.arange(n_data):
             for jj in np.arange(n_cols):
-                file.write('%12g ' % eas['D'][ii, jj])
+                file.write('%12g' % eas['D'][ii, jj])
             file.write('\n')
     file.close();   
     return 1

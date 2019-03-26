@@ -492,6 +492,7 @@ namespace MPS {
 					}
 				}
 
+				
 				//Putting data inside
 				int dataCnt=0, idxX = 0, idxY = 0, idxZ;
 				float coordX, coordY, coordZ;
