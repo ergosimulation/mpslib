@@ -6,20 +6,22 @@ Example of parsing hard and soft data to MPSLIB algorithms
 
 import mpslib as mps
 import numpy as np
-
+import time
+import copy
+import matplotlib.pyplot as plt
 #%%
 if __name__ == '__main__':
     
     
     #%%
     #O1=mps.mpslib(method='mps_snesim_tree', parameter_filename='mps_snesim.txt')
-    O1=mps.mpslib(method='mps_genesim', parameter_filename='mps_genesim.txt')
+    O=mps.mpslib(method='mps_genesim', parameter_filename='mps_genesim.txt')
     
 
-    use_ti_2cat = 0
+    use_ti_2cat = 1
     if use_ti_2cat==1:
         TI1, TI_filename1 = mps.trainingimages.strebelle(3, coarse3d=1)
-        O1.par['soft_data_categories']=np.array([0,1])
+        O.par['soft_data_categories']=np.array([0,1])
     
         # Set hard data
         d_hard = np.array([[ 6, 14, 0, 1],
@@ -33,7 +35,7 @@ if __name__ == '__main__':
     
     else:
         TI1, TI_filename1 = mps.trainingimages.checkerboard2()
-        O1.par['soft_data_categories']=np.array([0,1,2])
+        O.par['soft_data_categories']=np.array([0,1,2])
     
         
         # Set soft data
@@ -51,46 +53,71 @@ if __name__ == '__main__':
     
     
     
-    O1.ti=TI1
+    O.ti=TI1
     
     #%%
-    O1.par['n_cond']=16
-    O1.par['rseed']=1
-    O1.par['simulation_grid_size'][0]=30
-    O1.par['simulation_grid_size'][1]=30
-    O1.par['simulation_grid_size'][2]=1
-    O1.par['n_real']=200
-    O1.par['debug_level']=-1
-    O1.par['hard_data_fnam']='hard.dat'
-    O1.par['soft_data_fnam']='soft.dat'
+    O.remove_gslib_after_simulation=1;
+    O.par['n_cond']=16
+    O.par['rseed']=1
+    O.par['simulation_grid_size'][0]=30
+    O.par['simulation_grid_size'][1]=30
+    O.par['simulation_grid_size'][2]=1
+    O.par['n_real']=250
+    O.par['debug_level']=-1
+    O.par['hard_data_fnam']='hard.dat'
+    O.par['soft_data_fnam']='soft.dat'
     # snesim
-    O1.par['n_multiple_grids']=2;
-    O1.par['n_max_cpdf_count']=1
-    O1.par['shuffle_simulation_grid']=1
+    O.par['n_multiple_grids']=2;
+    O.par['n_max_cpdf_count']=1
+    O.par['shuffle_simulation_grid']=2
     # enesim
-    O1.par['n_cond_soft']=1
-    
-    
-    O1.delete_local_files()
+    O.par['n_cond_soft']=1
     
     
     
     
-    #O1.d_hard = d_hard
-    O1.d_soft = d_soft
+    n_cond_soft = np.array([0,1,2])
+    i_path = np.array([0,1,2])
     
-    O1.remove_gslib_after_simulation=1;
-    doRunPar = 1
-    if (doRunPar):
-        O1.par['n_threads']=-1;
-        O1.run_parallel()
-    else:
-        O1.run()
+    t = []
+    etype_mean = [] 
+    etype_std = [] 
     
-    #s=np.std(O1.sim, axis=0)
-    #m=np.mean(O1.sim, axis=0)
-    
-    O1.plot_reals()
-    O1.plot_etype()
-    
+    plt.figure(1)
+    plt.clf()
+            
+    n=-1
+    for i in range(len(n_cond_soft)):
+        for j in range(len(i_path)):
+            n=n+1
+            O.delete_local_files()
+            
+            O_test = copy.deepcopy(O)
+            
+            O_test.par['n_cond_soft']=n_cond_soft[i]
+            O_test.par['shuffle_simulation_grid']=i_path[j]
+            
+            O.d_hard = d_hard
+            #O_test.d_soft = d_soft
+            t0=time.time()
+            doRunPar = 1
+            if (doRunPar):
+                O_test.par['n_threads']=-1;
+                O_test.run_parallel()
+            else:
+                O_test.run()
+            
+            etype_mean.append(np.mean(O_test.sim, axis=0))
+            etype_std.append(np.std(O_test.sim, axis=0))
+            t.append(time.time()-t0)
+            
+            plt.figure(1)
+            plt.subplot(3,3,n+1)
+            plt.imshow(np.transpose(etype_mean[n][:,:,0]), vmin=0, vmax=2);
+            #plt.colorbar();
+            plt.title('ip=%d, nc=%d, t=%3.1fs' % (O_test.par['shuffle_simulation_grid'],O_test.par['n_cond_soft'],t[n]))
+            
+    plt.show()
+            
+            
     
