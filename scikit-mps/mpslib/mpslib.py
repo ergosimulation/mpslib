@@ -799,14 +799,20 @@ class mpslib:
    
      # read soft data ('check if it exist')
         use_soft = 0
-        if (os.path.isfile(self.par['soft_data_fnam'])):
-            d_soft = eas.read(self.par['soft_data_fnam'])
+        if (hasattr(self, 'd_soft')):
+            use_soft = 1
+        elif (os.path.isfile(self.par['soft_data_fnam'])):
+            D = eas.read(self.par['soft_data_fnam'])
+            self.d_soft = D['D'];
             use_soft = 1
 
         # read hard data ('check if it exist')
         use_hard = 0
-        if (os.path.isfile(self.par['hard_data_fnam'])):
-            d_hard = eas.read(self.par['hard_data_fnam'])
+        if (hasattr(self, 'd_hard')):
+            use_hard = 1
+        elif (os.path.isfile(self.par['hard_data_fnam'])):
+            D = eas.read(self.par['hard_data_fnam'])
+            self.d_hard = D['D'];
             use_hard = 1
 
         # compute Etype
@@ -825,22 +831,28 @@ class mpslib:
         fig.clf()
         plt.set_cmap('hot')
         plt.subplot(1, 2, 1)
+        dx=self.par['grid_cell_size'][1]
+        dy=self.par['grid_cell_size'][1]
         im = plt.imshow(emean, 
-                        extent=[self.x[0], self.x[-1], self.y[-1], self.y[0]], 
+                        extent=[self.x[0]-dx/2, self.x[-1]+dx/2, self.y[-1]-dy/2, self.y[0]+dy/2], 
                         zorder=-1,
                         vmin=vmin,
                         vmax=vmax)
         plt.colorbar(im, fraction=0.046, pad=0.04)
         if (use_hard):
-            plt.plot(d_hard['D'][:, 0], d_hard['D'][:, 1], "k.", MarkerSize=25, zorder=0)
-            plt.scatter(d_hard['D'][:, 0], d_hard['D'][:, 1], c=d_hard['D'][:, 3], s=25, zorder=1)
+            plt.plot(self.d_hard[:, 0], self.d_hard[:, 1], "k.", MarkerSize=25, zorder=0)
+            plt.scatter(self.d_hard[:, 0], self.d_hard[:, 1], c=self.d_hard[:, 3], s=25, zorder=1)
         if (use_soft):
-            plt.plot(d_soft['D'][:, 0], d_soft['D'][:, 1], ".", color=((.4, .4, .4)), MarkerSize=25, zorder=0)
-            plt.scatter(d_soft['D'][:, 0], d_soft['D'][:, 1], c=d_soft['D'][:, 3], s=25, zorder=2)
+            #plt.plot(self.d_soft[:, 0], self.d_soft[:, 1], "o", color=((.4, .4, .4)), MarkerSize=10, zorder=0)
+            s = 150*np.max(self.d_soft[:,3:], axis=1)
+            plt.scatter(self.d_soft[:, 0], self.d_soft[:, 1], facecolors='None', edgecolors=((.4, .4, .4)), s=s, zorder=0)
+            #plt.scatter(self.d_soft[:, 0], self.d_soft[:, 1], c=self.d_soft[:, 3], s=25, zorder=2)
         plt.title('Etype Mean')
 
         plt.subplot(1, 2, 2)
-        im = plt.imshow(estd, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], cmap='hot', vmin=0);
+        im = plt.imshow(estd, 
+                        extent=[self.x[0]-dx/2, self.x[-1]+dx/2, self.y[-1]-dy/2, self.y[0]+dy/2],
+                        cmap='hot', vmin=0);
         plt.colorbar(im, fraction=0.046, pad=0.04)
         plt.title('Etype Std')
 
@@ -861,7 +873,10 @@ class mpslib:
 
         plt.show(block=False)
     
-        return emean, estd
+        self.etype_mean = emean
+        self.etype_std = estd
+    
+        return 
     
     # plot TI
     def plot_ti(self):

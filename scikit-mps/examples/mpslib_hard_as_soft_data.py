@@ -2,6 +2,9 @@
 mpslib_hard_and_soft_data.py
 
 Example of parsing hard and soft data to MPSLIB algorithms
+
+Compare to mpslib/examples/soft_as_hard/ex_hard_as_soft
+
 '''
 
 import mpslib as mps
@@ -14,7 +17,7 @@ if __name__ == '__main__':
     
     
     #%%
-    #O1=mps.mpslib(method='mps_snesim_tree', parameter_filename='mps_snesim.txt')
+    #O=mps.mpslib(method='mps_snesim_tree', parameter_filename='mps_snesim.txt')
     O=mps.mpslib(method='mps_genesim', parameter_filename='mps_genesim.txt')
     
 
@@ -31,7 +34,7 @@ if __name__ == '__main__':
         # Set soft data
         d_soft = np.array([[ 6, 14, 0, 0.001, 0.999],
                            [ 13, 16, 0, 0.001, 0.999],
-                           [ 3, 14, 0, 0.001, 0.999]])
+                           [ 3, 14, 0, 0.999, 0.001]])
     
     else:
         TI1, TI_filename1 = mps.trainingimages.checkerboard2()
@@ -62,7 +65,7 @@ if __name__ == '__main__':
     O.par['simulation_grid_size'][0]=30
     O.par['simulation_grid_size'][1]=30
     O.par['simulation_grid_size'][2]=1
-    O.par['n_real']=250
+    O.par['n_real']=200
     O.par['debug_level']=-1
     O.par['hard_data_fnam']='hard.dat'
     O.par['soft_data_fnam']='soft.dat'
@@ -78,6 +81,8 @@ if __name__ == '__main__':
     
     n_cond_soft = np.array([0,1,2])
     i_path = np.array([0,1,2])
+    
+    n_cond_soft = np.array([0,1])
     
     t = []
     etype_mean = [] 
@@ -97,14 +102,16 @@ if __name__ == '__main__':
             O_test.par['n_cond_soft']=n_cond_soft[i]
             O_test.par['shuffle_simulation_grid']=i_path[j]
             
-            O.d_hard = d_hard
-            #O_test.d_soft = d_soft
+            #O_test.d_hard = d_hard
+            O_test.d_soft = d_soft
+            
             t0=time.time()
             doRunPar = 1
             if (doRunPar):
-                O_test.par['n_threads']=-1;
+                O_test.par['n_threads']=20;
                 O_test.run_parallel()
             else:
+                O_test.par['n_real']=30
                 O_test.run()
             
             etype_mean.append(np.mean(O_test.sim, axis=0))
@@ -113,9 +120,11 @@ if __name__ == '__main__':
             
             plt.figure(1)
             plt.subplot(3,3,n+1)
-            plt.imshow(np.transpose(etype_mean[n][:,:,0]), vmin=0, vmax=2);
+            plt.imshow(np.transpose(etype_mean[n][:,:,0]), vmin=0, vmax= np.max(O.ti));
             #plt.colorbar();
             plt.title('ip=%d, nc=%d, t=%3.1fs' % (O_test.par['shuffle_simulation_grid'],O_test.par['n_cond_soft'],t[n]))
+            
+            #O_test.plot_etype()
             
     plt.show()
             

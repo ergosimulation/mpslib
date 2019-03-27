@@ -24,8 +24,8 @@ for ic=1:length(nc_soft);
         j=j+1;
         %O.n_cond = [25 nc_soft(ic)];O.shuffle_simulation_grid=k;
         O.n_cond = [9 nc_soft(ic)];O.shuffle_simulation_grid=k;
-        %[r{j},Oo{j}]=mps_cpp_thread(TI,SIM,O);
-        [r{j},Oo{j}]=mps_cpp(TI,SIM,O);
+        [r{j},Oo{j}]=mps_cpp_thread(TI,SIM,O);
+        %[r{j},Oo{j}]=mps_cpp(TI,SIM,O);
     end
 end
 
