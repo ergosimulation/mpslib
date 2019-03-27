@@ -280,6 +280,8 @@ protected:
 	* @brief Soft data categories
 	*/
 	std::vector<float> _softDataCategories;
+	std::vector<float> _dataCategories;
+	
 	/**
 	* @brief Softdata grid
 	*/
@@ -348,6 +350,11 @@ protected:
 	* @brief Read Mask data
 	*/
 	void _readMaskDataFromFile(void);
+	
+	/**
+	* @brief Get unique set of categories from TI
+	*/
+	void _getCategories(void);
 
 	/**
 	* @brief Initialize a sequential simulation path

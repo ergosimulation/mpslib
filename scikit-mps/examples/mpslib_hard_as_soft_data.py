@@ -60,12 +60,12 @@ if __name__ == '__main__':
     
     #%%
     O.remove_gslib_after_simulation=1;
-    O.par['n_cond']=16
+    O.par['n_cond']=9
     O.par['rseed']=1
     O.par['simulation_grid_size'][0]=30
     O.par['simulation_grid_size'][1]=30
     O.par['simulation_grid_size'][2]=1
-    O.par['n_real']=200
+    O.par['n_real']=100
     O.par['debug_level']=-1
     O.par['hard_data_fnam']='hard.dat'
     O.par['soft_data_fnam']='soft.dat'
