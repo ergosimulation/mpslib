@@ -51,7 +51,6 @@ Figure :numref:`prefpath` shows the point wise mean of 100 realizations using a 
 .. figure:: /assets/hard_as_soft_data_nonco_mps_genesim_0.png
    :alt: Realizations
    :align: center
-   :scale: 90%
 
    E-type mean using a sequential, random and preferential simulation path, conditioning co-located soft data.
 
@@ -84,29 +83,15 @@ where :math:`Nc_{soft}` refer to the number of (the closest) soft conditional po
    Max number of iterations # 1000000
    ...
 
+Figure :numref:`nonco_prefpath` shows the point wise mean of 100 realizations using a sequential, random and preferential simulation path (from `mpslib_hard_as_soft_data.py <https://github.com/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_hard_as_soft_data.py>`_) using two non-colocated soft data.
 
+Note how the sequential and random path can in principle be used, as part of the soft data is used at each iteration, but that the simulation time is dramatically higher than using the preferential path (10 to 20 times faster). The speed is us due to the simulation of the nodes of the soft data the start of the simulation. When the soft data has been simulated, the will in effect be treated as previously simulated hard data, and hence the simulation will perform as normal conditional sequential simulation. 
 
 .. _nonco_prefpath:
 .. figure:: /assets/hard_as_soft_data_nonco_mps_genesim_2.png
-   :alt: Realizations
-   :align: center
-   :scale: 90%
 
    E-type mean using a sequential, random and preferential simulation path, conditioning to 3 non-co-located soft data.
 
-and
- 
-
    
-
-
-The number of soft conditional 
-The usual approach to handling soft data, is to conisder on co-located soft data during sequential simulation. This means that at each iteration of sequential simulation one sample from 
-
-.. math::
-   f(m_i | I_{hard}, I_{soft}) = f_{TI}(m_i | \mathbf{m}_c) * f_{soft}(m_i) 
-      
-
-
    
 

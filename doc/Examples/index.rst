@@ -1,12 +1,7 @@
 Examples
 ========
 
-::
-
-    mps_genesim mps_genesim.txt
-    mps_snesim_tree mps_snesim_tree.txt
-    mps_snesim_list mps_snesim_list.txt
-
+The section contains different example of the use of MPSlib.
 
 .. toctree::
    :maxdepth: 1
