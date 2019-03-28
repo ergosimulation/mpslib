@@ -420,9 +420,13 @@ void MPS::MPSAlgorithm::_readTIFromFiles(void) {
 		exit(-1);
 	}
 
-  // Get unique list of sorted categories
-	//_getCategories();
+	//Update TI array dimensions
+	_tiDimX = (int)_TI[0][0].size();
+	_tiDimY = (int)_TI[0].size();
+	_tiDimZ = (int)_TI.size();
 
+  // Get unique list of sorted categories
+	_getCategories();
 
 }
 
@@ -463,6 +467,11 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 
 	_dataCategories.clear();
 	
+	//Next lines if _tiDim has not been set
+	//_tiDimX = (int)_TI[0][0].size();
+	//_tiDimY = (int)_TI[0].size();
+	//_tiDimZ = (int)_TI.size();
+
 	// Loop through TI to find unique categories _Categegories
 	for (int z=0; z<_tiDimZ; z+=1) {
 		for (int y=0; y<_tiDimY; y+=1) {

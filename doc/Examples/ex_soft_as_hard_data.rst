@@ -16,6 +16,28 @@ The assumption of spatial independence is critical. If the uncertain information
 
 MPSlib allow conditioning to both co-located soft data (mps_snesim_tree and mps_genesim) and non-co-located soft data (mps_genesim). The implementation of soft in MPSlib is described in detail in in [HANSEN2018]_.
 
+Soft data must be provided as as EAS file. If a training image with `Ncat` categories is used
+then the EAS file must contain N=3+`Ncat` columns. The first three must be ´X´, `Y`, and `Z`.
+The the following columns provide the probability of each category. 
+Column 4 (the first column with soft data) refer to the probability of the category with the lowest number in the training image. 
+
+An example of defining 3 soft data, for a case with `Ncat=2`, 
+and with soft information close to hard information (almost no uncertainty) is 
+
+.. code-block:: python
+   :linenos:
+
+    SOFT data mimicking hard data
+    5
+    X
+    Y
+    Z
+    P(cat=0)
+    P(cat=1)
+            6          14           0       0.001       0.999
+            13         16           0       0.001       0.999
+            3          14           0       0.999       0.001
+
 
 --------------------
 Co-located soft data
@@ -44,7 +66,7 @@ The default path in MPSlib is therefore the `preferential` path, that can select
    ...
    
 
-Figure :numref:`prefpath` shows the point wise mean of 100 realizations using a sequential, random and preferential simulation path (from `mpslib_hard_as_soft_data.py <https://github.com/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_hard_as_soft_data.py>`_):
+Figure :numref:`prefpath` shows the point wise mean of 100 realizations using the soft data described above, in case using a sequential, random and preferential simulation path (from `mpslib_hard_as_soft_data.py <https://github.com/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_hard_as_soft_data.py>`_):
 .
 
 .. _prefpath:
