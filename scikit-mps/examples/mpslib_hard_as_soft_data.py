@@ -12,6 +12,8 @@ import numpy as np
 import time
 import copy
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams.update({'font.size': 10})
 #%%
 if __name__ == '__main__':
     
@@ -21,7 +23,7 @@ if __name__ == '__main__':
     O=mps.mpslib(method='mps_genesim', parameter_filename='mps_genesim.txt')
     
 
-    use_ti_2cat = 1
+    use_ti_2cat = 0
     if use_ti_2cat==1:
         TI1, TI_filename1 = mps.trainingimages.strebelle(3, coarse3d=1)
         O.par['soft_data_categories']=np.array([0,1])
@@ -60,7 +62,7 @@ if __name__ == '__main__':
     
     #%%
     O.remove_gslib_after_simulation=1;
-    O.par['n_cond']=9
+    O.par['n_cond']=25
     O.par['rseed']=1
     O.par['simulation_grid_size'][0]=30
     O.par['simulation_grid_size'][1]=30
@@ -81,8 +83,6 @@ if __name__ == '__main__':
     
     n_cond_soft = np.array([0,1,2])
     i_path = np.array([0,1,2])
-    
-    n_cond_soft = np.array([0,1])
     
     t = []
     etype_mean = [] 
@@ -122,9 +122,10 @@ if __name__ == '__main__':
             plt.subplot(3,3,n+1)
             plt.imshow(np.transpose(etype_mean[n][:,:,0]), vmin=0, vmax= np.max(O.ti));
             #plt.colorbar();
-            plt.title('ip=%d, nc=%d, t=%3.1fs' % (O_test.par['shuffle_simulation_grid'],O_test.par['n_cond_soft'],t[n]))
-            
+            plt.title('ip=%d, nc=%d, t=%3.1fs' % (O_test.par['shuffle_simulation_grid'],O_test.par['n_cond_soft'],t[n]), fontsize=8)
             #O_test.plot_etype()
+    plt.savefig('hard_as_soft_data.png', dpi=600, facecolor='w', edgecolor='w',
+        orientation='portrait', transparent=True)
             
     plt.show()
             

@@ -64,5 +64,19 @@ fig.add_subplot(ax1)
 plt.bar(r2,t)
 plt.xlabel('Template size at fine grid')
 plt.ylabel('Computation time')
+plt.savefig('varying_template', dpi=600, facecolor='w', edgecolor='w',
+        orientation='portrait', transparent=True)
+
 plt.show()
+
+#%% SPPEEDUP
+fig = plt.figure(figsize=(5, 5))
+plt.plot(r2,t[0]/np.array(t))
+plt.xlabel('Template size at fine grid')
+plt.ylabel('Speedup compared to using full template')
+plt.grid()  
+plt.savefig('varying_template_speedup', dpi=600, facecolor='w', edgecolor='w', orientation='portrait', transparent=True)
+
+plt.show()
+
 
