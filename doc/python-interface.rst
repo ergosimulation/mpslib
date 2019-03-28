@@ -1,5 +1,5 @@
 ######################################
-Python interface to MPSlib: scikit-mps
+scikit-mps: Python interface 
 ######################################
 
 scikit-mps is a Python module that interfaces to MPSlib. It is located in ``mpslib/scikit-mps`` folder. It includes 4 submodules

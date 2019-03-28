@@ -23,7 +23,7 @@ if __name__ == '__main__':
     O=mps.mpslib(method='mps_genesim', parameter_filename='mps_genesim.txt')
     
 
-    use_ti_2cat = 0
+    use_ti_2cat = 1
     if use_ti_2cat==1:
         TI1, TI_filename1 = mps.trainingimages.strebelle(3, coarse3d=1)
         O.par['soft_data_categories']=np.array([0,1])
@@ -78,22 +78,21 @@ if __name__ == '__main__':
     # enesim
     O.par['n_cond_soft']=1
     
-    
-    
-    
-    n_cond_soft = np.array([0,1,2])
+    n_cond_soft = np.array([0,1,2,3])
     i_path = np.array([0,1,2])
     
-    t = []
-    etype_mean = [] 
-    etype_std = [] 
+    t=np.zeros((len(n_cond_soft),len(i_path)))
     
-    plt.figure(1)
-    plt.clf()
-            
+                
     n=-1
+    OUT=[]
     for i in range(len(n_cond_soft)):
+        
+        EM=[]
         for j in range(len(i_path)):
+            
+            
+            
             n=n+1
             O.delete_local_files()
             
@@ -113,21 +112,51 @@ if __name__ == '__main__':
             else:
                 O_test.par['n_real']=30
                 O_test.run()
-            
-            etype_mean.append(np.mean(O_test.sim, axis=0))
-            etype_std.append(np.std(O_test.sim, axis=0))
-            t.append(time.time()-t0)
-            
-            plt.figure(1)
-            plt.subplot(3,3,n+1)
-            plt.imshow(np.transpose(etype_mean[n][:,:,0]), vmin=0, vmax= np.max(O.ti));
-            #plt.colorbar();
-            plt.title('ip=%d, nc=%d, t=%3.1fs' % (O_test.par['shuffle_simulation_grid'],O_test.par['n_cond_soft'],t[n]), fontsize=8)
-            #O_test.plot_etype()
-    plt.savefig('hard_as_soft_data.png', dpi=600, facecolor='w', edgecolor='w',
+
+
+            EM.append(np.mean(O_test.sim, axis=0))
+            t[i,j]=time.time()-t0
+        
+        OUT.append(EM)
+        
+    #%% plot some data
+    fig = plt.figure(figsize=(15, 6))
+    plt.clf
+        
+    for i in range(len(n_cond_soft)):
+        for j in range(len(i_path)):
+        
+            isb=len(i_path)*i+j+1
+            plt.subplot(len(i_path),len(n_cond_soft),isb)
+            plt.imshow(np.transpose(OUT[i][j][:,:,0]), vmin=0, vmax= np.max(O.ti));
+            plt.title('ip=%d, nc=%d, t=%3.1fs' % (i_path[j],n_cond_soft[i],t[i,j]), fontsize=8)
+    plt.suptitle('%s - %s' % (O.method,TI_filename1))
+    plt.savefig('hard_as_soft_data_%s.png' % (O.method), dpi=600, facecolor='w', edgecolor='w',
         orientation='portrait', transparent=True)
-            
     plt.show()
             
             
-    
+    #%% plot some data
+        
+    for i in range(len(n_cond_soft)):
+        fig = plt.figure(figsize=(15, 6))    
+        plt.clf
+
+        for j in range(len(i_path)):        
+            isb=j+1
+            plt.subplot(1,len(i_path),isb)
+            plt.imshow(np.transpose(OUT[i][j][:,:,0]), vmin=0, vmax= np.max(O.ti));
+            if i_path[j]==0:
+                txt='Sequential'
+            elif i_path[j]==1:
+                txt='Sequential'
+            elif i_path[j]==2:
+                txt='Preferential'
+                
+            plt.title('%s path, Nc_{soft}=%d, t=%3.1fs' % (txt,n_cond_soft[i],t[i,j]), fontsize=12)
+            
+        #plt.suptitle('%s - %s' % (O.method,TI_filename1))
+        plt.savefig('hard_as_soft_data_nonco_%s_%d.png' % (O.method,n_cond_soft[i]), dpi=600, facecolor='w', edgecolor='w', orientation='portrait', transparent=True)
+        #plt.show()
+                        
+            

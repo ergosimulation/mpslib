@@ -71,7 +71,7 @@ plt.show()
 
 #%% SPPEEDUP
 fig = plt.figure(figsize=(5, 5))
-plt.plot(r2,t[0]/np.array(t))
+plt.bar(r2,t[0]/np.array(t))
 plt.xlabel('Template size at fine grid')
 plt.ylabel('Speedup compared to using full template')
 plt.grid()  
