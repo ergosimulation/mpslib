@@ -259,9 +259,13 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		//Going through the search tree and get the value of the current template
 		std::vector<TreeNode>* currentTreeNode;
 		std::list<std::vector<TreeNode>*> nodesToCheck;
+
+		//      RENAME conditionalPoints to conditionalCount
 		std::map<float, int> conditionalPoints;
 		int sumCounters = 0;
 		int currentLevel = 0, maxLevel = 0;
+
+		// MAKE SURE CODE WORKS WHEN N_COND = 1.. SHOULD ALWAYS GIVE the 1D MARGfrom the TI!!!!
 
 		//For all possible values of root tree
 		for (unsigned int j=0; j<_searchTree.size(); j++) {

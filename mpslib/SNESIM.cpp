@@ -281,9 +281,9 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 	std::map<float, float> probabilitiesFromTI;
 	for(std::map<float, int>::iterator iter = conditionalPoints.begin(); iter != conditionalPoints.end(); ++iter) {
 		probabilitiesFromTI.insert(std::pair<float, float>(iter->first, (float)(iter->second) / (float)totalCounter));
-		// std::cout << "cpdf ti2: " << iter->first << " " << (float)(iter->second) / (float)totalCounter << std::endl;
+		//std::cout << "cpdf ti2: " << iter->first << " " << (float)(iter->second) / (float)totalCounter << std::endl;
 	}
-
+	
 	// Perhaps some soft data needs to be combined with the
 	// conditional probability found from the previously simulated data.
 	std::multimap<float, float> probabilitiesCombined;

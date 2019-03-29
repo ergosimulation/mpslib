@@ -261,7 +261,7 @@ def marg1D(O, plot=1, hardcopy=0, hardcopy_filename='marg1D'):
         marg1D.append(p)
     #%%                
     O.marg1D_sim = np.array(marg1D)                
-    u, c = np.unique(O.sim[ir], return_counts = True)        
+    u, c = np.unique(O.ti, return_counts = True)        
     p_ti = c / np.sum(c)        
     O.marg1D_ti = p_ti                
     
