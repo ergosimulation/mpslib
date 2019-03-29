@@ -63,11 +63,11 @@ if __name__ == '__main__':
     #%%
     O.remove_gslib_after_simulation=1;
     O.par['n_cond']=25
+    O.par['n_real']=40
     O.par['rseed']=1
     O.par['simulation_grid_size'][0]=30
     O.par['simulation_grid_size'][1]=30
     O.par['simulation_grid_size'][2]=1
-    O.par['n_real']=100
     O.par['debug_level']=-1
     O.par['hard_data_fnam']='hard.dat'
     O.par['soft_data_fnam']='soft.dat'
@@ -120,20 +120,20 @@ if __name__ == '__main__':
         OUT.append(EM)
         
     #%% plot some data
-    fig = plt.figure(figsize=(15, 6))
+    fig = plt.figure(figsize=(15, 15))
     plt.clf
         
     for i in range(len(n_cond_soft)):
         for j in range(len(i_path)):
         
             isb=len(i_path)*i+j+1
-            plt.subplot(len(i_path),len(n_cond_soft),isb)
+            plt.subplot(len(n_cond_soft),len(i_path),isb)
             plt.imshow(np.transpose(OUT[i][j][:,:,0]), vmin=0, vmax= np.max(O.ti));
             plt.title('ip=%d, nc=%d, t=%3.1fs' % (i_path[j],n_cond_soft[i],t[i,j]), fontsize=8)
     plt.suptitle('%s - %s' % (O.method,TI_filename1))
     plt.savefig('hard_as_soft_data_%s.png' % (O.method), dpi=600, facecolor='w', edgecolor='w',
         orientation='portrait', transparent=True)
-    plt.show()
+    #plt.show()
             
             
     #%% plot some data
@@ -149,7 +149,7 @@ if __name__ == '__main__':
             if i_path[j]==0:
                 txt='Sequential'
             elif i_path[j]==1:
-                txt='Sequential'
+                txt='Random'
             elif i_path[j]==2:
                 txt='Preferential'
                 

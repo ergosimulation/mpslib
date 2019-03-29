@@ -895,7 +895,7 @@ class mpslib:
         
         plot.plot_3d_vtk(self.ti, header=self.par['ti_fnam'], slice=1   )
 
-'''
+    '''
     def to_file(self):
         nreal = self.nreal
         outname = self.ti_fnam + '_all.gslib'
@@ -918,4 +918,73 @@ class mpslib:
                 f.write('\n')
         f.close()
 
-'''
+    '''
+
+
+    def xxx(self, plot=0):
+        
+        
+        #%%
+        #D = np.array(O.sim)
+        #cat = np.sort(np.unique(O.ti))
+        D = np.array(self.sim)
+        cat = np.sort(np.unique(self.ti))
+        
+        ncat = len(cat)
+        dim = D.shape 
+        dim_xyz = dim[1:4]
+        nr=dim[0]
+        H = np.zeros(dim_xyz)
+        P = np.zeros((ncat,dim_xyz[0],dim_xyz[1],dim_xyz[2]))
+        
+        #%% 1D marginal stats
+        marg1D=[]
+        for ir in range(nr):
+            c=np.zeros(ncat)
+            for icat in range(ncat):
+                c[icat]=np.count_nonzero(self.sim[ir]==cat[icat])
+                p = c / np.sum(c)
+            marg1D.append(p)
+        #%%                
+        self.marg1D_sim = np.array(marg1D)                
+        u, c = np.unique(self.sim[ir], return_counts = True)        
+        p_ti = c / np.sum(c)        
+        self.marg1D_ti = p_ti                
+        
+        
+        if (plot):
+            import matplotlib.pyplot as plt
+            plt.figure(1)
+            plt.clf()
+            plt.hist(self.marg1D_sim)
+            plt.plot(self.marg1D_ti,np.zeros(len(self.marg1D_ti)),'*', markersize=50)
+            plt.xlabel('1D marginal Probability of category form simulations and ti')
+            
+            plt.figure(2)
+            plt.clf()
+            for icat in range(ncat):
+                plt.plot(self.marg1D_sim[:,icat], label='Cat=%d'%(cat[icat]) )
+            plt.legend()                
+            tmp=self.marg1D_sim
+            for icat in range(ncat):
+                tmp[:,icat]=self.marg1D_ti[icat]
+            tmp
+            plt.plot(tmp, 'k-')
+            plt.xlabel('Realization number')
+            plt.ylabel('Porb(cat|realization)')
+            
+            
+        return True
+
+        
+        #%% Probability map
+        #for icat in range(ncat):
+            
+            
+        
+        
+        
+            
+            
+        
+        

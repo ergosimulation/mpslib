@@ -215,3 +215,87 @@ def plot_eas(Deas):
         print('EAS scatter plot not yet implemented')        
         
         
+    
+def marg1D(O, plot=0):
+    '''Plot 1D marginal probabilities from realizations and compares to the
+    1D marginal from the training image
+    
+    Paramaters
+    ----------
+    O : mpslib object
+        
+    plot : int (def=0)
+        plot the output
+        
+        
+    Output
+    ------
+    O.marg1D_sim : np.array [nr,ncat]
+    O.marg1D_ti : np.array [ncat]
+    
+    '''
+    import numpy as np
+    import matplotlib.pyplot as plt
+    
+    
+    #%%
+    #D = np.array(O.sim)
+    #cat = np.sort(np.unique(O.ti))
+    D = np.array(O.sim)
+    cat = np.sort(np.unique(O.ti))
+    
+    ncat = len(cat)
+    dim = D.shape 
+    dim_xyz = dim[1:4]
+    nr=dim[0]
+    #H = np.zeros(dim_xyz)
+    #P = np.zeros((ncat,dim_xyz[0],dim_xyz[1],dim_xyz[2]))
+    
+    #%% 1D marginal stats
+    marg1D=[]
+    for ir in range(nr):
+        c=np.zeros(ncat)
+        for icat in range(ncat):
+            c[icat]=np.count_nonzero(O.sim[ir]==cat[icat])
+            p = c / np.sum(c)
+        marg1D.append(p)
+    #%%                
+    O.marg1D_sim = np.array(marg1D)                
+    u, c = np.unique(O.sim[ir], return_counts = True)        
+    p_ti = c / np.sum(c)        
+    O.marg1D_ti = p_ti                
+    
+    
+    if (plot):
+        plt.figure(1)
+        plt.clf()
+        plt.hist(O.marg1D_sim)
+        plt.plot(O.marg1D_ti,np.zeros(len(O.marg1D_ti)),'*', markersize=50)
+        plt.xlabel('1D marginal Probability of category form simulations and ti')
+        
+        plt.figure(2)
+        plt.clf()
+        for icat in range(ncat):
+            plt.plot(O.marg1D_sim[:,icat], label='Cat=%d'%(cat[icat]) )
+        plt.legend()                
+        tmp=O.marg1D_sim
+        for icat in range(ncat):
+            tmp[:,icat]=O.marg1D_ti[icat]
+        tmp
+        plt.plot(tmp, 'k-')
+        plt.xlabel('Realization number')
+        plt.ylabel('Porb(cat|realization)')
+        
+        
+    return True
+
+    
+    #%% Probability map
+    #for icat in range(ncat):
+        
+        
+    
+    
+    
+            
+        
