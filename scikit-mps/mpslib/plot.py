@@ -216,7 +216,7 @@ def plot_eas(Deas):
         
         
     
-def marg1D(O, plot=0):
+def marg1D(O, plot=1, hardcopy=0, hardcopy_filename='marg1D'):
     '''Plot 1D marginal probabilities from realizations and compares to the
     1D marginal from the training image
     
@@ -272,6 +272,8 @@ def marg1D(O, plot=0):
         plt.hist(O.marg1D_sim)
         plt.plot(O.marg1D_ti,np.zeros(len(O.marg1D_ti)),'*', markersize=50)
         plt.xlabel('1D marginal Probability of category form simulations and ti')
+        if (hardcopy):
+            plt.savefig(hardcopy_filename)
         
         plt.figure(2)
         plt.clf()
@@ -285,8 +287,10 @@ def marg1D(O, plot=0):
         plt.plot(tmp, 'k-')
         plt.xlabel('Realization number')
         plt.ylabel('Porb(cat|realization)')
-        
-        
+        plt.show()
+        if (hardcopy):
+            plt.savefig(hardcopy_filename+'_2')
+
     return True
 
     

@@ -12,8 +12,6 @@ import numpy as np
 import time
 import copy
 import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.rcParams.update({'font.size': 10})
 #%%
 if __name__ == '__main__':
     
@@ -23,7 +21,7 @@ if __name__ == '__main__':
     O=mps.mpslib(method='mps_genesim', parameter_filename='mps_genesim.txt')
     
 
-    use_ti_2cat = 1
+    use_ti_2cat = 0
     if use_ti_2cat==1:
         TI1, TI_filename1 = mps.trainingimages.strebelle(3, coarse3d=1)
         O.par['soft_data_categories']=np.array([0,1])
@@ -62,8 +60,8 @@ if __name__ == '__main__':
     
     #%%
     O.remove_gslib_after_simulation=1;
-    O.par['n_cond']=25
-    O.par['n_real']=40
+    O.par['n_cond']=36
+    O.par['n_real']=400
     O.par['rseed']=1
     O.par['simulation_grid_size'][0]=30
     O.par['simulation_grid_size'][1]=30
@@ -102,7 +100,7 @@ if __name__ == '__main__':
             O_test.par['shuffle_simulation_grid']=i_path[j]
             
             #O_test.d_hard = d_hard
-            O_test.d_soft = d_soft
+            #O_test.d_soft = d_soft
             
             t0=time.time()
             doRunPar = 1
@@ -119,6 +117,8 @@ if __name__ == '__main__':
         
         OUT.append(EM)
         
+        
+    mps.plot.marg1D(O_test,1)    
     #%% plot some data
     fig = plt.figure(figsize=(15, 15))
     plt.clf
