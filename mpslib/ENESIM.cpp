@@ -252,13 +252,13 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 * @param map with conditional pdf
 * @return true if found a value
 */
-bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf, float& SoftProbability) {
+bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf, float& SoftProbability) {
 
 	// MAKE SURE TO COUNT THE NUMBER OF SOFT CONDTIONING DATA ONCE, SUCH THAT WE DO NOT NEED
 	// TO LOOK FOR SOFT DATA ONCE THEY HAVE BEEN SIMULATED!
 	// COULD SPEED UP SNESIM AS WELL
 	if (_debugMode>2) {
-		std::cout << " -- _getCpdfTiEnesimNew TOP --" << std::endl; 
+		std::cout << " -- _getCpdEnesim TOP --" << std::endl; 
 	}
 
 	int maxCpdfCount = _nMaxCountCpdf;
@@ -670,7 +670,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 		std::cout << " LC_dist_current = " << LC_dist_current;
 
 		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
-		std::cout << "_getCpdfTiEnesim: -- ENESIM END --" << std::endl;
+		std::cout << "_getCpdfEnesim: -- ENESIM END --" << std::endl;
 
 	}
 
@@ -805,7 +805,7 @@ bool MPS::ENESIM::_combinePdf(std::map<float, float>& cPdf, std::map<float, floa
 * @param iterationCnt Iterations counter
 * @return simulated value
 */
-float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
+float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
 
 	
 	std::map<float, float> conditionalPdfFromTi;
@@ -835,7 +835,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 			conditionalPdfFromTi.clear();
 			SoftProbability = 1;
 
-			_getCpdfTiEnesimNew(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
+			_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
 			simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 			randomValue = ((float)rand() / (RAND_MAX));
 			pAcc = SoftProbability;
@@ -879,7 +879,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 	} else {
 		// SIMULTATE DIRECTLY FROM CONDITIONAL
 		// obtain conditional and generate a realization wihtout soft data
-		_getCpdfTiEnesimNew(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
+		_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
 		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 
 	}

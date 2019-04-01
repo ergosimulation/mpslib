@@ -102,7 +102,7 @@ protected:
 	* @param z coordinate Z of the current node
 	* @return true if found a value
 	*/
-	bool _getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF, float& SoftProbability);
+	bool _getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF, float& SoftProbability);
 
 	/**
 	* @brief Compbine two PDFs assuming independence
@@ -141,7 +141,7 @@ protected:
 	* @param iterationCnt Iterations counter
 	* @return simulated value
 	*/
-	float _getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
+	float _getRealizationFromCpdfEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
 
 	/**
 	* @brief Compute distance between conditional data in TI and template L
