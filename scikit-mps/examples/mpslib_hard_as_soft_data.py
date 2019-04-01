@@ -21,7 +21,7 @@ if __name__ == '__main__':
     O=mps.mpslib(method='mps_genesim', parameter_filename='mps_genesim.txt')
     
 
-    use_ti_2cat = 0
+    use_ti_2cat = 1
     if use_ti_2cat==1:
         TI1, TI_filename1 = mps.trainingimages.strebelle(3, coarse3d=1)
         O.par['soft_data_categories']=np.array([0,1])
@@ -78,6 +78,9 @@ if __name__ == '__main__':
     
     n_cond_soft = np.array([0,1,2,3])
     i_path = np.array([0,1,2])
+
+    n_cond_soft = np.array([0,3])
+    i_path = np.array([1])
     
     t=np.zeros((len(n_cond_soft),len(i_path)))
     
@@ -100,7 +103,7 @@ if __name__ == '__main__':
             O_test.par['shuffle_simulation_grid']=i_path[j]
             
             #O_test.d_hard = d_hard
-            #O_test.d_soft = d_soft
+            O_test.d_soft = d_soft
             
             t0=time.time()
             doRunPar = 1
