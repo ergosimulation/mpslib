@@ -78,12 +78,8 @@ if __name__ == '__main__':
     
     n_cond_soft = np.array([0,1,2,3])
     i_path = np.array([0,1,2])
-
-    n_cond_soft = np.array([0,3])
-    i_path = np.array([1])
     
     t=np.zeros((len(n_cond_soft),len(i_path)))
-    
                 
     n=-1
     OUT=[]
