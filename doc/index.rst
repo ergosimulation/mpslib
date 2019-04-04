@@ -85,5 +85,6 @@ How is it organized?
    matlab-interface
    python-interface
    Examples/index
+   contributions
    references
 
