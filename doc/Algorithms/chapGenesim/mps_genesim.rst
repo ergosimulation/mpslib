@@ -32,7 +32,7 @@ An example of a parameter file for ``mps_genesim``:
     Simulation grid grid cell size Z # 1
     Training image file (spaces not allowed) # ti.dat
     Output folder (spaces in name not allowed) # .
-    Shuffle Simulation Grid path (1 : random, 0 : sequential) # 2
+    Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential) # 2
     Shuffle Training Image path (1 : random, 0 : sequential) # 1
     HardData filename  (same size as the simulation grid)# conditional.dat
     HardData seach radius (world units) # 1

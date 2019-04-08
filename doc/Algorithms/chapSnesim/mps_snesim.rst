@@ -28,7 +28,7 @@ Both algorithms share the same format for the required parameter file:
     Simulation grid grid cell size Z # 1
     Training image file (spaces not allowed) # TI/mps_ti.dat
     Output folder (spaces in name not allowed) # output/.
-    Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
+    Shuffle Simulation Grid path (2: Preferential, 1: random, 0: sequential) # 1
     Maximum number of counts for condtitional pdf # 10000
     Shuffle Training Image path (1 : random, 0 : sequential) # 1
     HardData filaneme  (same size as the simulation grid)# harddata/mps_hard_grid.dat
