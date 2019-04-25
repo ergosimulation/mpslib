@@ -14,6 +14,8 @@ scikit-mps is a Python module that interfaces to MPSlib. It is located in ``mpsl
 ``mps.trainingimages`` provides easy access to 2D and 3D training images.
 ``mps.plot`` provides 2D/3D plotting utilities.
 
+It makes use of matplotlib and vtki [http://docs.vtki.org/] (for 3D graphics).
+
 
 A simple example of using scikit-mps to generate 4 realizations using ``mps_snesim_tree`` is 
 (from `mpslib_simple.py.c <https://github.com/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_simple.py>`_):
