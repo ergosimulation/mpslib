@@ -5,6 +5,7 @@ import matplotlib.gridspec as gridspec
 import mpslib as mps
 from scipy import squeeze
 import copy
+%matplotlib widget
 
 plt.ion()
 
