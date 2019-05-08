@@ -989,6 +989,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			if (_debugMode > 1) {
 				MPS::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _simulationPath, _simulationPath.size(), 1, 1);
 			}
+
 			for (unsigned int ii=0; ii<_simulationPath.size(); ii++) {
 				//Get node coordinates
 				MPS::utility::oneDTo3D(_simulationPath[ii], _sgDimX, _sgDimY, SG_idxX, SG_idxY, SG_idxZ);
@@ -1002,6 +1003,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				if (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
 					_sg[SG_idxZ][SG_idxY][SG_idxX] = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);
 
+				
 				if (_debugMode > -1) {
 					//Doing the progression
 					//Print progression on screen
