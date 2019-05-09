@@ -18,7 +18,7 @@ It makes use of matplotlib (for 2D graphics) and vista [http://docs.pyvista.org/
 
 
 A simple example of using scikit-mps to generate 4 realizations using ``mps_snesim_tree`` is 
-(from `mpslib_simple.py.c <https://github.com/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_simple.py>`_):
+(from `mpslib_simple.py <https://github.com/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_simple.py>`_):
 ::
    import mpslib as mps
 
@@ -220,29 +220,29 @@ To load and plot the widely used traning image from Strebelle, simply call it us
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.strebelle()
-   mps.plot.plot_3d_vista(ti)   
+   mps.plot.plot_3d(ti)   
    
 To load and plot a checkerboard traning image, use e.g 
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
-   mps.plot.plot_3d_vista(ti)   
+   mps.plot.plot_3d(ti)   
 
 To load and plot the 3D fluvsim  traning image, use e.g 
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.fluvsim()
-   mps.plot.plot_3d_vista(ti)   
+   mps.plot.plot_3d(ti)   
 
    
 ****************************
 mps.plot: Plotting utilities
 ****************************
-''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `vista https://github.com/pyvista/vista/`_).
+''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `vista <https://github.com/pyvista/vista/>`_).
 
 
                 
-plot_3d_reals_vista()
+plot_reals_3d()
 -------------------
 
 To plot several realizations using vista from a mpslib object, use
@@ -250,33 +250,28 @@ To plot several realizations using vista from a mpslib object, use
    import mpslib as mps
    O = mps.mpslib(n_real=4)
    O.run
-   O.plot.plot_3d_reals_vista(O)
+   O.plot.plot_reals_3d(O)
 
 
 To plot a 3D numpy array using vista use
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
-   mps.plot.plot_3d_vista(ti)
+   mps.plot.plot_3d(ti)
    
 To slice the 3D grid use
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
-   mps.plot.plot_3d_vista(ti, slice=1)
+   mps.plot.plot_3d(ti, slice=1)
 
 
 To plot only vaĺues in a specific range, e.g. -.5 to 0.5, use 
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
-   mps.plot.plot_3d_vista(ti, threshold = (-0.5, 0.5))
+   mps.plot.plot_3d(ti, threshold = (-0.5, 0.5))
 
    
    
-
-
-plot_3d_vista()      
-plot_3d_mpl()
-plot_eas()   
 
