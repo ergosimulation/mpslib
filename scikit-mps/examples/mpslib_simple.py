@@ -22,5 +22,3 @@ O.run()
 O.plot_reals(hardcopy=1, hardcopy_filename='mpslib_simple_reals')
 
 O.plot_etype(hardcopy=1, hardcopy_filename='mpslib_simple_etype')
-
-# O.plot_reals_vtk()

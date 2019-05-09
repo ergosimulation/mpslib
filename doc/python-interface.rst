@@ -14,7 +14,7 @@ scikit-mps is a Python module that interfaces to MPSlib. It is located in ``mpsl
 ``mps.trainingimages`` provides easy access to 2D and 3D training images.
 ``mps.plot`` provides 2D/3D plotting utilities.
 
-It makes use of matplotlib and vtki [http://docs.vtki.org/] (for 3D graphics).
+It makes use of matplotlib (for 2D graphics) and vista [http://docs.pyvista.org/] (for 3D graphics).
 
 
 A simple example of using scikit-mps to generate 4 realizations using ``mps_snesim_tree`` is 
@@ -220,63 +220,63 @@ To load and plot the widely used traning image from Strebelle, simply call it us
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.strebelle()
-   mps.plot.plot_3d_vtk(ti)   
+   mps.plot.plot_3d_vista(ti)   
    
 To load and plot a checkerboard traning image, use e.g 
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
-   mps.plot.plot_3d_vtk(ti)   
+   mps.plot.plot_3d_vista(ti)   
 
 To load and plot the 3D fluvsim  traning image, use e.g 
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.fluvsim()
-   mps.plot.plot_3d_vtk(ti)   
+   mps.plot.plot_3d_vista(ti)   
 
    
 ****************************
 mps.plot: Plotting utilities
 ****************************
-''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `vtki <https://github.com/vtkiorg/vtki>`_).
+''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `vista https://github.com/pyvista/vista/`_).
 
 
                 
-plot_3d_reals_vtk()
+plot_3d_reals_vista()
 -------------------
 
-To plot several realizations using vtki from a mpslib object, use
+To plot several realizations using vista from a mpslib object, use
 ::
    import mpslib as mps
    O = mps.mpslib(n_real=4)
    O.run
-   O.plot.plot_3d_reals_vtk(O)
+   O.plot.plot_3d_reals_vista(O)
 
 
-To plot a 3D numpy array using vtki use
+To plot a 3D numpy array using vista use
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
-   mps.plot.plot_3d_vtk(ti)
+   mps.plot.plot_3d_vista(ti)
    
 To slice the 3D grid use
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
-   mps.plot.plot_3d_vtk(ti, slice=1)
+   mps.plot.plot_3d_vista(ti, slice=1)
 
 
 To plot only vaĺues in a specific range, e.g. -.5 to 0.5, use 
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
-   mps.plot.plot_3d_vtk(ti, threshold = (-0.5, 0.5))
+   mps.plot.plot_3d_vista(ti, threshold = (-0.5, 0.5))
 
    
    
 
 
-plot_3d_vtk()      
+plot_3d_vista()      
 plot_3d_mpl()
 plot_eas()   
 

@@ -35,9 +35,9 @@ O1.run()
 
 
 #%%
-mps.plot.plot_3d_vtk(TI)
+mps.plot.plot_3d(TI)
 O1.plot_reals(O1.par['n_real'])
+O1.plot_reals_3d(O1.par['n_real'])
 O1.plot_etype()
-O1.plot_reals(O1.par['n_real'])
 
 

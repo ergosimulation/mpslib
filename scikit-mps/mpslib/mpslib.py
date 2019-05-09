@@ -749,11 +749,11 @@ class mpslib:
                         n=n+1
         return d_hard
                 
-    # plot realizations using vtki 2D/3D
-    def plot_reals_vtk(self, nshow=9):
-        plot.plot_3d_reals_vtk(self, nshow=nshow) 
+    # plot realizations using vista 2D/3D
+    def plot_reals_3d(self, nshow=9):
+        plot.plot_3d_reals_vista(self, nshow=nshow) 
         
-    # plot realizations (only in 2D so far)
+    # plot realizations using matplotlib in 2D
     def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals', nanval=-997799, filternan=1):
         import matplotlib.pyplot as plt
         import matplotlib.gridspec as gridspec
@@ -893,7 +893,7 @@ class mpslib:
                 return -1
                     
         
-        plot.plot_3d_vtk(self.ti, header=self.par['ti_fnam'], slice=1   )
+        plot.plot_3d(self.ti, header=self.par['ti_fnam'], slice=1   )
 
     '''
     def to_file(self):

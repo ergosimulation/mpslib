@@ -23,10 +23,14 @@ def module_exists(module_name,show_info=0):
     else:
         return True
 
+def plot_3d_reals(O, nshow=4):
+    '''Plot realizations in in O.sim in 3D
+    Currently simply a wrapper to plot_3d_reals_vista()'''
+    plot_3d_reals_vista(O, nshow)
 
 
-def plot_3d_reals_vtk(O, nshow=4):
-    '''Plot realizations in in O.sim in 3D using vtki
+def plot_3d_reals_vista(O, nshow=4):
+    '''Plot realizations in in O.sim in 3D using vista
     
     Paramaters
     ----------
@@ -36,7 +40,7 @@ def plot_3d_reals_vtk(O, nshow=4):
         show a maxmimum of 'nshow' realizations
     '''
     import numpy as np
-    import vtki
+    import vista
     
     if not(hasattr(O,'sim')):
         print('No data to plot (no "sim" attribute)')
@@ -51,12 +55,12 @@ def plot_3d_reals_vtk(O, nshow=4):
     
     nxy = np.ceil(np.sqrt(nshow)).astype('int')
     
-    plotter = vtki.Plotter( shape=(nxy,nxy))
+    plotter = vista.Plotter( shape=(nxy,nxy))
     for i in range(nshow):
         plotter.subplot(0,i)
         
         Data = O.sim[i]
-        grid = vtki.UniformGrid()
+        grid = vista.UniformGrid()
         grid.dimensions = np.array(Data.shape) + 1
         
         grid.origin = O.par['origin']
@@ -70,20 +74,25 @@ def plot_3d_reals_vtk(O, nshow=4):
         
     plotter.show()
 
+def plot_3d(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
+    '''Plot 3D volumes
+    A wrapper for plot_3d_vista'''
+    plot_3d_vista(Data, slice, origin, spacing, threshold, filename, header )
 
-def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
+
+def plot_3d_vista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
     '''
-    plot 3D sube using 'vtki' 
+    plot 3D cube using 'vista' 
     '''
     import numpy as np 
     
-    if module_exists('vtki',1):
-        import vtki
+    if module_exists('vista',1):
+        import vista
     else:
         return 1
-
+    print(filename)
     # Create the spatial reference
-    grid = vtki.UniformGrid()
+    grid = vista.UniformGrid()
     # Set the grid dimensions: shape + 1 because we want to inject our values on the CELL data
     grid.dimensions = np.array(Data.shape) + 1
     # Edit the spatial reference
@@ -93,8 +102,8 @@ def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), fi
     grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
     # Now plot the grid!
     if (len(threshold)==2):
-        plot = vtki.BackgroundPlotter() # interactive
-        #plot = vtki.Plotter() # interactive
+        plot = vista.BackgroundPlotter() # interactive
+        #plot = vista.Plotter() # interactive
         grid_threshold = grid.threshold(threshold)   
         try:
             pass
@@ -108,8 +117,8 @@ def plot_3d_vtk(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), fi
         plot.show()
     
     elif (slice==1):
-        #plot = vtki.Plotter() % static
-        plot = vtki.BackgroundPlotter() # interactive
+        # plot = vista.Plotter() # static
+        plot = vista.BackgroundPlotter() # interactive
         
         grid_slice = grid.slice_orthogonal()
         plot.add_mesh(grid_slice)
@@ -137,7 +146,7 @@ def plot_3d_mpl(Data):
     # This import registers the 3D projection, but is otherwise unused.
     from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 
-    print('USE THIS WITH CAUTION.. ONLY SUITABLE FOR SMALLE 3D MODELS. USE the VTKi interface instead')
+    print('USE THIS WITH CAUTION.. ONLY SUITABLE FOR SMALLE 3D MODELS. USE the vista interface instead')
 
     cat0 = Data<.5
     cat1 = Data>=.5
@@ -158,14 +167,14 @@ def plot_3d_mpl(Data):
 #%%
 def plot_3d_real(O,ireal=0,slice=0):
     '''
-    plot 3D relization using vtki
+    plot 3D relization using vista
     O [MPSlib object]
     ireal [int] number of realizations
     slice [int] =1, slice volume
                 =0, 3D cube
     '''
     
-    plot_3d_vtk(O.sim[ireal], slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
+    plot_3d_vista(O.sim[ireal], slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
     
 #%%
 def plot_eas(Deas):
@@ -209,7 +218,7 @@ def plot_eas(Deas):
                 plt.xlabel('Y')
                 plt.xlabel('Z')
         else:
-            plot_3d_vtk(Deas['Dmat'])
+            plot_3d_vista(Deas['Dmat'])
     else:
         # scatter plot
         print('EAS scatter plot not yet implemented')        

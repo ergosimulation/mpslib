@@ -16,7 +16,7 @@ TI, TI_fname = mps.trainingimages.rot90()
 if (TI.shape[2]==1):
     plt.imshow(TI[:,:,0])
 else:
-    mps.plot.plot_3d_vtk(TI, slice=1)
+    mps.plot.plot_3d(TI, slice=1)
         
 Deas=mps.eas.read(TI_fname)
 D=Deas['Dmat']
@@ -41,7 +41,7 @@ for i in range(len(TI_fnames)):
     print('Loading %s' % TI_fnames[i])
     TI, TI_fname = getattr(mps.trainingimages,TI_fnames[i])()
     print(TI.shape)
-    mps.plot.plot_3d_vtk(TI,1)
+    mps.plot.plot_3d(TI,1)
 
 #%%
 
@@ -122,4 +122,4 @@ Done
 plt.show()
 
 # Show coarsened pseudo 3D cube
-mps.plot.plot_3d_vtk(TI,1)
+mps.plot.plot_3d(TI,slice=1)

@@ -69,4 +69,4 @@ if __name__ == '__main__':
 
 
     emean, evar = Opar1.plot_etype()
-    mps.plot.plot_3d_vtk(emean[:,:,np.newaxis])
+    mps.plot.plot_3d(emean[:,:,np.newaxis])
