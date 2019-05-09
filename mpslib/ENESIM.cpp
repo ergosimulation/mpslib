@@ -429,13 +429,14 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 					int sdX, sdY, sdZ;
 					int NLs;
 
-					// FIND THE SOFT PROBABILITY ASSOCIATED to the  THE CURRENT MATCH!
+					// FIND THE SOFT PROBABILITY ASSOCIATED to the THE CURRENT MATCH!
 					L_s.clear();
 					V_s.clear();
-					_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _softDataGrids[0], _maxNeighbours_soft, _maxSearchRadius_soft, L_s, V_s);
-					if (_debugMode>2) {
-						std::cout << "--> Found N_soft_cond data = " << L_s.size() << " -- _maxSearchRadius_soft" << _maxSearchRadius_soft << std::endl;
-
+					if (_maxNeighbours_soft>0) {
+						_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _softDataGrids[0], _maxNeighbours_soft, _maxSearchRadius_soft, L_s, V_s);
+						//if (_debugMode>--2) {
+						//	std::cout << "i_ti_path=" << i_ti_path <<"--> Found N_soft_cond data = " << L_s.size() << " -- _maxSearchRadius_soft" << _maxSearchRadius_soft << std::endl;
+						//}
 					}
 					P_soft_i.clear();
 					P_soft_max_i.clear();
@@ -899,6 +900,32 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 	}
 
 
+
+	// FIND THE NUMBER OF SOFT DATA LEFT
+	// Empty _softDataGrids if no soft are left, in order to to search for soft conditional data!
+	if (!_softDataGrids.empty()) {
+		int n_soft_left = 0;
+		for (int z=0; z<_sgDimZ; z++) {
+			for (int y=0; y<_sgDimY; y++) {
+				for (int x=0; x<_sgDimX; x++) {
+					if (!MPS::utility::is_nan(_softDataGrids[0][z][y][x])) {
+						n_soft_left = n_soft_left+1;
+					}				
+				}
+			}
+		}
+		if (n_soft_left==0) {
+			// No soft data left --> clear soft data grid to avoid searching for soft data
+			_softDataGrids.clear();
+		}
+		if (_debugMode > 1) {
+			std::cout << "Number of soft data left to simulate = " << n_soft_left << std::endl;
+		}
+		
+	}
+    
+	
+	
 	return simulatedValue;
 }
 
