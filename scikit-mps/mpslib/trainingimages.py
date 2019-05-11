@@ -135,7 +135,7 @@ def ti_plot_all():
         print('Loading %s' % TI_fnames[i])
         TI, TI_fname = getattr(this_mod,TI_fnames[i])()
         print(TI.shape)
-        plot.plot_3d_vtk(TI,1)
+        plot.plot_3d(TI,1)
 
 
 '''
