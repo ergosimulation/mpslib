@@ -18,6 +18,9 @@ O1.par['debug_level']=-1
 # when debug_level>-1 and the text output from mpslib increase, the mpslib exe file is detached from 
 # python before it has finished running!!!
 TI, TI_filename=mps.trainingimages.checkerboard2()
+mps.plot.plot_3d(TI)
+
+#%%
 O1.ti = TI
 O1.par['ti_fnam']=TI_filename
 O1.par['simulation_grid_size'][0]=35

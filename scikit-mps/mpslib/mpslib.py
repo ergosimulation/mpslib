@@ -749,9 +749,9 @@ class mpslib:
                         n=n+1
         return d_hard
                 
-    # plot realizations using vista 2D/3D
+    # plot realizations using pyvista 2D/3D
     def plot_reals_3d(self, nshow=9):
-        plot.plot_3d_reals_vista(self, nshow=nshow) 
+        plot.plot_3d_reals_pyvista(self, nshow=nshow) 
         
     # plot realizations using matplotlib in 2D
     def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals', nanval=-997799, filternan=1):
