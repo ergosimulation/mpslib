@@ -87,14 +87,17 @@ void MPS::MPSAlgorithm::_initializeHDG(std::vector<std::vector<std::vector<float
 * @param nCategories number of categories
 * @param value value of each grid node default is NAN
 */
-void MPS::MPSAlgorithm::_initializeCG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value) {
-	sg.resize(sgDimZ);
+void MPS::MPSAlgorithm::_initializeCG(std::vector<std::vector<std::vector<std::vector<float>>>>& cg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const int& NC, const float& value) {
+	cg.resize(sgDimZ);
 	for (int z=0; z<sgDimZ; z++) {
-		sg[z].resize(sgDimY);
+		cg[z].resize(sgDimY);
 		for (int y=0; y<sgDimY; y++) {
-			sg[z][y].resize(sgDimX);
+			cg[z][y].resize(sgDimX);
 			for (int x=0; x<sgDimX; x++) {
-				sg[z][y][x] = value;
+				cg[z][y][x].resize(NC);			
+				for (int n=0; n<NC; n++) {	
+					cg[z][y][x][n] = value;
+				}
 			}
 		}
 	}
@@ -885,7 +888,11 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 		if (_doEstimation == true) {
 				// ESTIMATION --> Initialize a grid for storing condtitional estimates
-				_initializeSG(_cg, _sgDimX, _sgDimY, _sgDimZ);
+				int NC;
+				NC = _softDataCategories.size();
+				std::cout <<"NC="<< NC << std::endl;
+				//_initializeSG(_cg, _sgDimX, _sgDimY, _sgDimZ);
+				_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC, 1);
 
 		}
 
@@ -1121,8 +1128,26 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			//MPS::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 		}
 
+		// Write estimation to file
 		if (_doEstimation == true)  {
-			MPS::io::writeToGSLIBFile(outputFilename + "_cg_" + std::to_string(n) + ".gslib", _cg, _sgDimX, _sgDimY, _sgDimZ);
+			std::vector<std::vector<std::vector<float>>> ttg;
+			_initializeSG(ttg, _sgDimX, _sgDimY, _sgDimZ);
+
+			int NCat;
+			NCat = _softDataCategories.size();
+			int nc;
+			nc=0;
+
+			for (int nc=0; nc<NCat; nc++) {
+				for (int z=0; z<_sgDimZ; z++) {
+					for (int y=0; y<_sgDimY; y++) {
+						for (int x=0; x<_sgDimX; x++) {
+							ttg[z][y][x] = _cg[z][y][x][nc];
+						}
+					}
+				}				
+				MPS::io::writeToGSLIBFile(outputFilename + "_cg_" + std::to_string(nc) + ".gslib", ttg, _sgDimX, _sgDimY, _sgDimZ);
+			}			
 		}
 
 

@@ -895,10 +895,11 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 
 			int ncat=0;
 			for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {				
+				//if (ncat==1) {
+				_cg[sgIdxZ][sgIdxY][sgIdxX][ncat] = iter->second;					
+				//}
 				ncat=ncat+1;
-				if (ncat==1) {
-					_cg[sgIdxZ][sgIdxY][sgIdxX] = iter->second;					
-				}
+				
 				//std::cout << ncat << ">" << iter->first << " " << iter->second << std::endl;								
 			}
 

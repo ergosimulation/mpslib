@@ -134,8 +134,8 @@ protected:
 	/**
 	* @brief grid storing conditional (same size as soft data grid)
 	*/
-	std::vector<std::vector<std::vector<float>>> _cg;
-	//std::vector<std::vector<std::vector<std::vector<float>>>> _cg;
+	//std::vector<std::vector<std::vector<float>>> _cg;
+	std::vector<std::vector<std::vector<std::vector<float>>>> _cg;
 	
 	/**
 	* @brief hard data search radius for multiple grids
@@ -385,7 +385,9 @@ protected:
 	* @param nCategories number of categorie
 	* @param value value of each grid node default is NAN
 	*/
-	void _initializeCG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value = std::numeric_limits<float>::quiet_NaN());
+	//void _initializeCG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value = std::numeric_limits<float>::quiet_NaN());
+	void _initializeCG(std::vector<std::vector<std::vector<std::vector<float>>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const int& NC, const float& value);
+
 	
 	
 	/**
