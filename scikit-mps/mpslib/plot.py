@@ -80,6 +80,30 @@ def plot_3d(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filena
     plot_3d_pyvista(Data, slice, origin, spacing, threshold, filename, header )
 
 
+def numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1)):
+    '''
+    Convert 3D numpy array to pyvista uniform grid
+    
+    '''
+    import numpy as np 
+    
+    if module_exists('pyvista',1):
+        import pyvista
+    else:
+        return 1
+    # Create the spatial reference
+    grid = pyvista.UniformGrid()
+    # Set the grid dimensions: shape + 1 because we want to inject our values on the CELL data
+    grid.dimensions = np.array(Data.shape) + 1
+    # Edit the spatial reference
+    grid.origin = origin # The bottom left corner of the data set
+    grid.spacing = spacing # These are the cell sizes along each axis
+    # Add the data values to the cell data
+    grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
+
+    return grid
+
+
 def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
     '''
     plot 3D cube using 'pyvista' 
@@ -91,16 +115,11 @@ def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=()
     else:
         return 1
     print(filename)
-    # Create the spatial reference
-    grid = pyvista.UniformGrid()
-    # Set the grid dimensions: shape + 1 because we want to inject our values on the CELL data
-    grid.dimensions = np.array(Data.shape) + 1
-    # Edit the spatial reference
-    grid.origin = origin # The bottom left corner of the data set
-    grid.spacing = spacing # These are the cell sizes along each axis
-    # Add the data values to the cell data
-    grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
-    # Now plot the grid!
+    
+    # create uniform grid 
+    grid = numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1))
+    
+        # Now plot the grid!
     if (len(threshold)==2):
         plot = pyvista.BackgroundPlotter() # interactive
         #plot = pyvista.Plotter() # interactive

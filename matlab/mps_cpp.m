@@ -366,7 +366,7 @@ O.z=[0:1:(O.simulation_grid_size(3)-1)].*O.grid_cell_size(3)+O.origin(3);
 
 %%
 if ~isfield(O,'clean'), O.clean=1; end
-if (O.clean)
+if (O.clean)  
     mps_cpp_clean(O);
 end
 
