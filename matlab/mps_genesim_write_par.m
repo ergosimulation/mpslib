@@ -33,7 +33,8 @@ if ~isfield(O,'shuffle_simulation_grid');O.shuffle_simulation_grid=1;end
 if ~isfield(O,'entropyfactor_simulation_grid');O.entropyfactor_simulation_grid=4;end
 if ~isfield(O,'shuffle_ti_grid');O.shuffle_ti_grid=1;end
 if ~isfield(O,'hard_data_filename');O.hard_data_filename='conditional.dat';end
-if ~isfield(O,'hard_data_search_radius');O.hard_data_search_radius=1;end
+if ~isfield(O,'hard_data_search_radius');O.hard_data_search_radius=100000;end
+%if ~isfield(O,'soft_data_search_radius');O.soft_data_search_radius=O.hard_data_search_radius;end
 if ~isfield(O,'soft_data_categories');O.soft_data_categories='0;1';end
 if ~isfield(O,'soft_data_filename');O.soft_data_filename='soft.dat';end
 if isfield(O,'soft_data_fnam');O.soft_data_filename=O.soft_data_fnam,end
@@ -46,7 +47,7 @@ if ~isfield(O,'distance_pow');O.distance_pow=0;end
 
 if ~isfield(O,'colocated_dimension');O.colocated_dimension=0;end
 
-if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
+%if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
 
 if ~isfield(O,'doEstimation');O.doEstimation=0;end
 

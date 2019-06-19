@@ -926,8 +926,11 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 	// DONE SIMULATING
 	
 	// At this point set the local soft data as NaN to avoid simulate it again
+	// But, do not do this in estimation mode!
 	if (!_softDataGrids.empty()) {
-		_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+		if (_doEstimation == 0) {
+			_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+		}
 		// Check if there are any more soft data left. If so, empty the _softDataGrid!
 	}
 
