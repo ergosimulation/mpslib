@@ -48,12 +48,15 @@ if ~isfield(O,'colocated_dimension');O.colocated_dimension=0;end
 
 if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
 
+if ~isfield(O,'doEstimation');O.doEstimation=0;end
+
 % multiple grids are not used by enesim
 %if (O.n_multiple_grids~=0);
     %disp(sprintf('%s: Setting nmulgrids to ZERO to avoid relocation',mfilename));
     %O.n_multiple_grids=0;
 %end
-    
+   
+
 %% WRITE STRUCTURE TO PARAMETER FILE
 fid=fopen_retry(O.parameter_filename,'w');
 
@@ -110,5 +113,7 @@ fprintf(fid,'Number of threads (minimum 1, maximum 8 - depend on your CPU) # %d\
 fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n',O.debug);
 % MASK GRID
 fprintf(fid,'Mask grid # %s\n',O.mask_filename);
+% doESTIMATION?
+fprintf(fid,'doEstimation # %d\n',O.doEstimation);
 
 fclose(fid);

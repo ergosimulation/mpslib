@@ -242,6 +242,15 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		std::cout << "readpar: _maskDataFileName=" << _maskDataFileName << std::endl;
 	}
 
+	// DEBUG MODE
+	_readLineConfiguration(file, ss, data, s, str);
+	_doEstimation = stoi(data[1]);
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
+	}
+	
+
+
 }
 
 /**
@@ -879,8 +888,31 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 
 	} else {
 		// SIMULTATE DIRECTLY FROM CONDITIONAL
-		// obtain conditional and generate a realization wihtout soft data
+		// obtain conditional and generate a realization without soft data
 		_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
+		if (_doEstimation == true ) {
+			//std::cout << "SoftProbability = " << SoftProbability << std::endl;
+
+			int ncat=0;
+			for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {				
+				ncat=ncat+1;
+				if (ncat==1) {
+					_cg[sgIdxZ][sgIdxY][sgIdxX] = iter->second;
+					std::cout << "X="<<sgIdxX << "Y="<<sgIdxY << "Z="<<sgIdxZ << std::endl;
+				}
+				std::cout << ncat << ">" << iter->first << " " << iter->second << std::endl;								
+			}
+
+			//std::cout << "_dataCategories are: ";
+			//for (unsigned int i = 0; i < _dataCategories.size(); i++) {
+			//	std::cout << _dataCategories[i] << " ";
+			//}
+			//std::cout << std::endl;
+			
+
+			// SHOW THE CONDITIONAL AND UPDATE _cg
+		}
+
 		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 
 	}
@@ -924,8 +956,6 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 		
 	}
     
-	
-	
 	return simulatedValue;
 }
 

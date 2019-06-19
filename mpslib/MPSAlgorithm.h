@@ -128,9 +128,15 @@ protected:
 	*/
 	std::vector<std::vector<std::vector<float>>> _tg4;
 	/**
-	* @brief Temporary grid 4 - meaning define by type of sim-algorithm (same size as simulation grid)
+	* @brief Temporary grid 5 - meaning define by type of sim-algorithm (same size as simulation grid)
 	*/
 	std::vector<std::vector<std::vector<float>>> _tg5;
+	/**
+	* @brief grid storing conditional (same size as soft data grid)
+	*/
+	std::vector<std::vector<std::vector<float>>> _cg;
+	//std::vector<std::vector<std::vector<std::vector<float>>>> _cg;
+	
 	/**
 	* @brief hard data search radius for multiple grids
 	*/
@@ -277,6 +283,11 @@ protected:
 	*/
 	std::string _maskDataFileName;
 	/**
+	* @brief Make a random training image path
+	*/
+	bool _doEstimation = true;
+
+	/**
 	* @brief Soft data categories
 	*/
 	std::vector<float> _softDataCategories;
@@ -364,6 +375,19 @@ protected:
 	* @param path output simulation path
 	*/
 		void _initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path);
+	
+	/**
+	* @brief Initialize the Conditional Grid with a value, default is NaN
+	* @param sg the simulation GRID
+	* @param sgDimX dimension X of the grid
+	* @param sgDimY dimension Y of the gri
+	* @param sgDimZ dimension Z of the grid
+	* @param nCategories number of categorie
+	* @param value value of each grid node default is NAN
+	*/
+	void _initializeCG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value = std::numeric_limits<float>::quiet_NaN());
+	
+	
 	/**
 	* @brief Initialize the Simulation Grid with a value, default is NaN
 	* @param sg the simulation GRID

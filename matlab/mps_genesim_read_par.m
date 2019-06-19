@@ -114,6 +114,13 @@ try
     O.mask_filename=strip_space(l);
 end
 
+try
+    l=line_strip_char(fgetl(fid),'#');
+    O.doEstimation=str2num(l);
+end
+
+
+
 %%
 % set x,y, and z parameters
 O.x=[0:(O.simulation_grid_size(1)-1)].*O.grid_cell_size(1)+O.origin(1);

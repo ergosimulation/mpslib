@@ -77,6 +77,30 @@ void MPS::MPSAlgorithm::_initializeHDG(std::vector<std::vector<std::vector<float
 	}
 }
 
+
+/**
+* @brief Initialize the Conditional Grid 
+* @param sg the simulation GRID
+* @param sgDimX dimension X of the grid
+* @param sgDimY dimension Y of the gri
+* @param sgDimZ dimension Z of the grid
+* @param nCategories number of categories
+* @param value value of each grid node default is NAN
+*/
+void MPS::MPSAlgorithm::_initializeCG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value) {
+	sg.resize(sgDimZ);
+	for (int z=0; z<sgDimZ; z++) {
+		sg[z].resize(sgDimY);
+		for (int y=0; y<sgDimY; y++) {
+			sg[z][y].resize(sgDimX);
+			for (int x=0; x<sgDimX; x++) {
+				sg[z][y][x] = value;
+			}
+		}
+	}
+	//std::cout << "SG (X, Y, Z): " << SG[0][0].size() << " " << SG[0].size() << " " << SG.size() << " " << SG[0][0][0]<< std::endl;
+}
+
 /**
 * @brief Initialize the Simulation Grid with a value, default is NaN
 * @param sg the simulation GRID
@@ -859,6 +883,12 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			_initializeSG(_tg5, _sgDimX, _sgDimY, _sgDimZ);
 		}
 
+		if (_doEstimation == true) {
+				// ESTIMATION --> Initialize a grid for storing condtitional estimates
+				_initializeSG(_cg, _sgDimX, _sgDimY, _sgDimZ);
+
+		}
+
 		/*if(!_hdg.empty()) {
 		std::cout << "Initialize from hard data " << _hardDataFileNames << std::endl;
 		_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ, _hdg, std::numeric_limits<float>::quiet_NaN());
@@ -978,6 +1008,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			int totalNodes = (int)_simulationPath.size();
 
 			int SG_idxX, SG_idxY, SG_idxZ;
+
+			float sim; // simulated value
+
 			if (_debugMode > 1) {
 				std::cout << "________________________________________" << std::endl;
 				std::cout << "_______ START SIMULATION _______________" << std::endl; 
@@ -1001,7 +1034,13 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 				//Performing simulation for non NaN value ...
 				if (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
-					_sg[SG_idxZ][SG_idxY][SG_idxX] = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);
+					sim = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);
+					if (_doEstimation == false) {
+						// SIMULATE --> Update simulation grid with simulated value
+						_sg[SG_idxZ][SG_idxY][SG_idxX] = sim;
+					} else {
+						// ESTIMATE --> do not store simulated value
+					}
 
 				
 				if (_debugMode > -1) {
@@ -1077,6 +1116,10 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			//MPS::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 			//MPS::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 			//MPS::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+		}
+
+		if (_doEstimation == true)  {
+			MPS::io::writeToGSLIBFile(outputFilename + "_cg_" + std::to_string(n) + ".gslib", _cg, _sgDimX, _sgDimY, _sgDimZ);
 		}
 
 

@@ -252,6 +252,20 @@ for i=1:O.n_real
   
 end
 
+%% Read conditional estimated grid
+if isfield(O,'doEstimation');
+    if O.doEstimation==1;
+        fname=sprintf('%s%s%s%s_cg_%d.gslib',O.output_folder,filesep,f,e,i-1);  
+        try
+            D=read_eas_matrix(fname);
+            O.cg=D;            
+        catch
+            disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
+        end
+        
+    end
+end
+
 %% READ TEMPORARY GRID VALUES
 if (O.debug>1)
     for i=1:O.n_real
