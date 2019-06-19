@@ -1009,7 +1009,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 			int SG_idxX, SG_idxY, SG_idxZ;
 
-			float sim; // simulated value
+			
 
 			if (_debugMode > 1) {
 				std::cout << "________________________________________" << std::endl;
@@ -1034,15 +1034,18 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 				//Performing simulation for non NaN value ...
 				if (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
-					sim = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);
+					
 					if (_doEstimation == false) {
 						// SIMULATE --> Update simulation grid with simulated value
-						_sg[SG_idxZ][SG_idxY][SG_idxX] = sim;
-					} else {
+						_sg[SG_idxZ][SG_idxY][SG_idxX] = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);						
+					} else  {
 						// ESTIMATE --> do not store simulated value
+						//std::cout << "ESTIMATE" << std::endl;
+						float sim; // simulated value					
+						sim = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);													
 					}
+						
 
-				
 				if (_debugMode > -1) {
 					//Doing the progression
 					//Print progression on screen

@@ -242,7 +242,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		std::cout << "readpar: _maskDataFileName=" << _maskDataFileName << std::endl;
 	}
 
-	// DEBUG MODE
+	// doEstimate
 	_readLineConfiguration(file, ss, data, s, str);
 	_doEstimation = stoi(data[1]);
 	if (_debugMode>-1) {
@@ -897,10 +897,9 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 			for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {				
 				ncat=ncat+1;
 				if (ncat==1) {
-					_cg[sgIdxZ][sgIdxY][sgIdxX] = iter->second;
-					std::cout << "X="<<sgIdxX << "Y="<<sgIdxY << "Z="<<sgIdxZ << std::endl;
+					_cg[sgIdxZ][sgIdxY][sgIdxX] = iter->second;					
 				}
-				std::cout << ncat << ">" << iter->first << " " << iter->second << std::endl;								
+				//std::cout << ncat << ">" << iter->first << " " << iter->second << std::endl;								
 			}
 
 			//std::cout << "_dataCategories are: ";

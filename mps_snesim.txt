@@ -26,3 +26,4 @@ Soft datafilenames (separated by ; only need (number_categories - 1) grids) # so
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
 Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1
 Mask grid # dummyMaskGrid.grd3
+doEstimate # 0

@@ -193,6 +193,12 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 		data[1].erase(std::remove_if(data[1].begin(), data[1].end(), [](char x) {return std::isspace(x); }), data[1].end()); //Removing spaces
 		_maskDataFileName = data[1];
 	}
+	// doEstimate
+	_readLineConfiguration(file, ss, data, s, str);
+	_doEstimation = stoi(data[1]);
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
+	}
 }
 
 /**

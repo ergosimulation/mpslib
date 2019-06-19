@@ -285,7 +285,7 @@ protected:
 	/**
 	* @brief Make a random training image path
 	*/
-	bool _doEstimation = true;
+	bool _doEstimation = false;
 
 	/**
 	* @brief Soft data categories
