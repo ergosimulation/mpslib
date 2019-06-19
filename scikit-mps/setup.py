@@ -32,10 +32,9 @@ setup(
     classifiers = [
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
     ],
     packages=find_packages(exclude=['contrib', 'docs', 'tests']), # Required
-    install_requires=['numpy >= 1.0.2', 'matplotlib >= 1.0.0' ],
+    install_requires=['numpy >= 1.0.2', 'matplotlib >= 1.0.0', 'pyvista > 0.20.0' ],
 )
 

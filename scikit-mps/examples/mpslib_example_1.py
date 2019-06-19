@@ -2,6 +2,9 @@
 # example of using mpslib
 
 #%%
+import os
+os.environ["DISPLAY"] = '127.0.0.1:0'
+
 import mpslib as mps
 import matplotlib.pyplot as plt
 plt.set_cmap('hot')
@@ -36,7 +39,6 @@ plt.show()
 #plt.figure(2)
 #O1.plot_reals()
 #plt.savefig(O1.method+'.png', dpi=600)
-
 
 #%% RUN GENESIM
 # or consider
