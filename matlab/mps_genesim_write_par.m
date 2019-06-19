@@ -37,7 +37,6 @@ if ~isfield(O,'hard_data_search_radius');O.hard_data_search_radius=100000;end
 %if ~isfield(O,'soft_data_search_radius');O.soft_data_search_radius=O.hard_data_search_radius;end
 if ~isfield(O,'soft_data_categories');O.soft_data_categories='0;1';end
 if ~isfield(O,'soft_data_filename');O.soft_data_filename='soft.dat';end
-if isfield(O,'soft_data_fnam');O.soft_data_filename=O.soft_data_fnam,end
 if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
  

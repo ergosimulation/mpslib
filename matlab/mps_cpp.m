@@ -147,10 +147,10 @@ end
 
 % WRITE SOFT DATA IF SET AS VARIABLE
 if isfield(O,'d_soft');
-    if ~isfield(O,'d_soft_fnam');
-        O.soft_data_fnam='d_soft.dat';
+    if ~isfield(O,'soft_data_filename');
+        O.soft_data_filename='d_soft.dat';
     end
-    write_eas(O.soft_data_fnam,O.d_soft);
+    write_eas(O.soft_data_filename,O.d_soft);
 end
 
 %%
