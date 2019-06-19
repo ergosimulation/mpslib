@@ -4,3 +4,10 @@ mps_genesim
 mps_snesim_list
 mps_snesim_tree
 *.a
+*.dat
+*.gslib
+*.txt
+*.png
+*.par
+.vscode
+*.zip

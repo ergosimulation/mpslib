@@ -723,35 +723,50 @@ class mpslib:
         self.d_hard = d_hard
         return d_hard
 
+
+    def set_nan(self, nanval=-9977799):
+        if hasattr(self,'sim'):
+            N=len(self.sim)
+            for i in range(N):
+                self.sim[i][self.sim[i]==nanval] = np.nan
+
     def hard_data_from_sim(self, i=0, nanval=-997799):
         #i_use = [self.sim[i]==nanval] 
         #np.isnan(O1.sim[0])
         iz=0
         n=0
-        d_hard = np.array([[0,0,0,0]])
+        n_nonnan =  np.count_nonzero(~np.isnan(self.sim[i]))
+        print("Number of non-nan data: %d" % (n_nonnan))
+        
+        # MAKE sure nans are set
+        self.set_nan()
+        
+        d_hard = np.zeros((n_nonnan,4))
+        
         for ix in range(self.par['simulation_grid_size'][0]):
             for iy in range(self.par['simulation_grid_size'][1]):
                 for iz in range(self.par['simulation_grid_size'][2]):
-                    if (len(self.sim[0].shape)==1):
+                    if (len(self.sim[i].shape)==1):
                         val = self.sim[i][ix]
-                    elif (len(self.sim[0].shape)==2):
-                        val = self.sim[i][ix,iy]
+                    elif (len(self.sim[i].shape)==2):
+                        val = self.sim[i][ix, iy]
                     else:
-                       d = np.array([[self.x[ix],self.y[iy],self.z[iz],val]])                        
-                        
+                       val = self.sim[i][ix, iy, iz]
+
+#                    d = np.array([[self.x[ix],self.y[iy],self.z[iz],val]])
+                    d = np.array([self.x[ix],self.y[iy],self.z[iz],val])
                     if not np.isnan(val):
                         #d = np.array([[self.x(ix), self.y(iy), self.z(ix), self.sim(iy.ix)]])
-                        if n==0:
-
-                            d_hard = d                        
-                        else:
-                            d_hard=np.append(d_hard,d,axis=0)
+                        d_hard[n,:]=d                        
                         n=n+1
+                        
+                        
+        #print(n)
         return d_hard
                 
-    # plot realizations using vista 2D/3D
+    # plot realizations using pyvista 2D/3D
     def plot_reals_3d(self, nshow=9):
-        plot.plot_3d_reals_vista(self, nshow=nshow) 
+        plot.plot_3d_reals_pyvista(self, nshow=nshow)
         
     # plot realizations using matplotlib in 2D
     def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals', nanval=-997799, filternan=1):
@@ -766,13 +781,13 @@ class mpslib:
         nr = np.min((self.par['n_real'], nr))
         nsp = int(np.ceil(np.sqrt(nr)))
 
-        fig = plt.figure(1)
+        fig = plt.gcf()
         sp = gridspec.GridSpec(nsp, nsp, wspace=0.1, hspace=0.1)
         plt.set_cmap('hot')
         for i in range(0, nr):
             ax1 = plt.Subplot(fig, sp[i])
             fig.add_subplot(ax1)
-            if filternan==1:
+            if filternan == 1:
                 self.sim[i][self.sim[i]==nanval] = np.nan
                 
             D=squeeze(np.transpose(self.sim[i]))
@@ -960,7 +975,7 @@ class mpslib:
             plt.plot(self.marg1D_ti,np.zeros(len(self.marg1D_ti)),'*', markersize=50)
             plt.xlabel('1D marginal Probability of category form simulations and ti')
             
-            plt.figure(2)
+            plt.gcf()
             plt.clf()
             for icat in range(ncat):
                 plt.plot(self.marg1D_sim[:,icat], label='Cat=%d'%(cat[icat]) )

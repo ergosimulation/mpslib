@@ -6,6 +6,8 @@ Example of parsing hard and soft data to MPSLIB algorithms
 
 import mpslib as mps
 import numpy as np
+import matplotlib as plt
+plt.ion()
 
 if __name__ == '__main__':
     
@@ -76,6 +78,7 @@ if __name__ == '__main__':
     
     O1.plot_reals()
     O1.plot_etype()
+    plt.show()
     
     #%% 
     D=np.zeros((len(O1.sim),3))

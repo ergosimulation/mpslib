@@ -1,11 +1,42 @@
-UNAME_S := $(shell uname -s)
 export CPPFLAGS+= -O3 -std=c++11
-ifeq ($(UNAME_S),Linux)
+
+UNAME_S := $(shell uname -s)
+UNAME_P := $(shell uname -p)
+ifeq ($(OS),Windows_NT)
 	export CPPFLAGS += -static -Wl,--no-as-needed
+else
+    #UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+		export CPPFLAGS += -Wl,--no-as-needed
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        #export CPPFLAGS += -static -Wl,--no-as-needed
+    endif
+    #UNAME_P := $(shell uname -p)
+    #ifeq ($(UNAME_P),x86_64)
+    #    CCFLAGS += -D AMD64
+    #endif
+    #ifneq ($(filter %86,$(UNAME_P)),)
+    #    CCFLAGS += -D IA32
+    #endif
+    #ifneq ($(filter arm%,$(UNAME_P)),)
+    #    CCFLAGS += -D ARM
+    #endif
 endif
-ifeq ($(UNAME_S),MINGW64_NT-10.0)
-	export CPPFLAGS += -static -Wl,--no-as-needed
-endif
+
+
+
+#ifeq ($(UNAME_S),Linux)#
+#	export CPPFLAGS += -static -Wl,--no-as-needed
+#endif
+#ifeq ($(OS),MINGW64_NT-10.0ll)
+	#export CPPFLAGS += -static -Wl,--no-as-needed
+#endif
+#ifeq ($(OS),Windows_NT)
+#	export CPPFLAGS += -static -Wl,--no-as-needed
+#endif
+
+#echo ${OSTYPE}
 
 # NAME OF LIBRARY
 MPSLIB = mpslib/mpslib.a
@@ -14,6 +45,9 @@ MPSLIB = mpslib/mpslib.a
 LDLIBS =  -lstdc++ -lpthread
 
 all: mps_genesim mps_snesim_list mps_snesim_tree
+	@echo $(OS)
+	@echo $(UNAME_S)
+	@echo $(UNAME_P)
 
 .PHONY: mpslib
 mpslib:
@@ -27,7 +61,6 @@ mps_snesim_tree: mpslib
 
 mps_snesim_list: mpslib
 	$(CXX) $(CPPFLAGS) mps_snesim_list.cpp SNESIMList.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
-
 
 .PHONY: clean
 clean:

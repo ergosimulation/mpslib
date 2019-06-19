@@ -37,6 +37,7 @@ O = mps.mpslib(method='mps_snesim_tree',
 O.par['debug_level']=-1
 O.par['n_cond']=49
 O.par['simulation_grid_size']=grid_size
+O.delete_hard_data()
 
 
 #%% USE MASK
@@ -63,14 +64,14 @@ plt.show()
 
 #%% Simulation in region/mask 1
 O1=copy.deepcopy(O)
-O1.delete_hard_data()
 O1.par['mask_fnam']=mask_fnam1;
 #O1.par['ti_fnam']=TI_filename1;
 O1.ti=TI1
 O1.run()
 O1.plot_reals()
-d_hard = O1.hard_data_from_sim()
 #%% SImulation in region/mask 2
+d_hard = O1.hard_data_from_sim()
+#%%
 O2=copy.deepcopy(O)
 O2.parameter_filename='mps_mask2.par'
 O2.par['mask_fnam']=mask_fnam2;

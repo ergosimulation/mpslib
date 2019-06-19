@@ -25,12 +25,12 @@ def module_exists(module_name,show_info=0):
 
 def plot_3d_reals(O, nshow=4):
     '''Plot realizations in in O.sim in 3D
-    Currently simply a wrapper to plot_3d_reals_vista()'''
-    plot_3d_reals_vista(O, nshow)
+    Currently simply a wrapper to plot_3d_reals_pyvista()'''
+    plot_3d_reals_pyvista(O, nshow)
 
 
-def plot_3d_reals_vista(O, nshow=4):
-    '''Plot realizations in in O.sim in 3D using vista
+def plot_3d_reals_pyvista(O, nshow=4):
+    '''Plot realizations in in O.sim in 3D using pyvista
     
     Paramaters
     ----------
@@ -40,7 +40,7 @@ def plot_3d_reals_vista(O, nshow=4):
         show a maxmimum of 'nshow' realizations
     '''
     import numpy as np
-    import vista
+    import pyvista
     
     if not(hasattr(O,'sim')):
         print('No data to plot (no "sim" attribute)')
@@ -55,12 +55,12 @@ def plot_3d_reals_vista(O, nshow=4):
     
     nxy = np.ceil(np.sqrt(nshow)).astype('int')
     
-    plotter = vista.Plotter( shape=(nxy,nxy))
+    plotter = pyvista.Plotter( shape=(nxy,nxy))
     for i in range(nshow):
         plotter.subplot(0,i)
         
         Data = O.sim[i]
-        grid = vista.UniformGrid()
+        grid = pyvista.UniformGrid()
         grid.dimensions = np.array(Data.shape) + 1
         
         grid.origin = O.par['origin']
@@ -76,23 +76,23 @@ def plot_3d_reals_vista(O, nshow=4):
 
 def plot_3d(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
     '''Plot 3D volumes
-    A wrapper for plot_3d_vista'''
-    plot_3d_vista(Data, slice, origin, spacing, threshold, filename, header )
+    A wrapper for plot_3d_pyvista'''
+    plot_3d_pyvista(Data, slice, origin, spacing, threshold, filename, header )
 
 
-def plot_3d_vista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
+def numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1)):
     '''
-    plot 3D cube using 'vista' 
+    Convert 3D numpy array to pyvista uniform grid
+    
     '''
     import numpy as np 
     
-    if module_exists('vista',1):
-        import vista
+    if module_exists('pyvista',1):
+        import pyvista
     else:
         return 1
-    print(filename)
     # Create the spatial reference
-    grid = vista.UniformGrid()
+    grid = pyvista.UniformGrid()
     # Set the grid dimensions: shape + 1 because we want to inject our values on the CELL data
     grid.dimensions = np.array(Data.shape) + 1
     # Edit the spatial reference
@@ -100,10 +100,29 @@ def plot_3d_vista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), 
     grid.spacing = spacing # These are the cell sizes along each axis
     # Add the data values to the cell data
     grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
-    # Now plot the grid!
+
+    return grid
+
+
+def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
+    '''
+    plot 3D cube using 'pyvista' 
+    '''
+    import numpy as np 
+    
+    if module_exists('pyvista',1):
+        import pyvista
+    else:
+        return 1
+    print(filename)
+    
+    # create uniform grid 
+    grid = numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1))
+    
+        # Now plot the grid!
     if (len(threshold)==2):
-        plot = vista.BackgroundPlotter() # interactive
-        #plot = vista.Plotter() # interactive
+        plot = pyvista.BackgroundPlotter() # interactive
+        #plot = pyvista.Plotter() # interactive
         grid_threshold = grid.threshold(threshold)   
         try:
             pass
@@ -117,8 +136,8 @@ def plot_3d_vista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), 
         plot.show()
     
     elif (slice==1):
-        # plot = vista.Plotter() # static
-        plot = vista.BackgroundPlotter() # interactive
+        # plot = pyvista.Plotter() # static
+        plot = pyvista.BackgroundPlotter() # interactive
         
         grid_slice = grid.slice_orthogonal()
         plot.add_mesh(grid_slice)
@@ -146,7 +165,7 @@ def plot_3d_mpl(Data):
     # This import registers the 3D projection, but is otherwise unused.
     from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 
-    print('USE THIS WITH CAUTION.. ONLY SUITABLE FOR SMALLE 3D MODELS. USE the vista interface instead')
+    print('USE THIS WITH CAUTION.. ONLY SUITABLE FOR SMALLE 3D MODELS. USE the pyvista interface instead')
 
     cat0 = Data<.5
     cat1 = Data>=.5
@@ -167,14 +186,14 @@ def plot_3d_mpl(Data):
 #%%
 def plot_3d_real(O,ireal=0,slice=0):
     '''
-    plot 3D relization using vista
+    plot 3D relization using pyvista
     O [MPSlib object]
     ireal [int] number of realizations
     slice [int] =1, slice volume
                 =0, 3D cube
     '''
     
-    plot_3d_vista(O.sim[ireal], slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
+    plot_3d_pyvista(O.sim[ireal], slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
     
 #%%
 def plot_eas(Deas):
@@ -218,7 +237,7 @@ def plot_eas(Deas):
                 plt.xlabel('Y')
                 plt.xlabel('Z')
         else:
-            plot_3d_vista(Deas['Dmat'])
+            plot_3d_pyvista(Deas['Dmat'])
     else:
         # scatter plot
         print('EAS scatter plot not yet implemented')        

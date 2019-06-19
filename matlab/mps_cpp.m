@@ -69,11 +69,11 @@ if ~isfield(O,'rseed');O.rseed=1;end
 if ~isfield(O,'output_folder');O.output_folder='.';end
 
 %% write ti
-%if exist([pwd,filesep,O.ti_filename],'file')
-%    O.WriteTI=0;
-%else
-%    O.WriteTI=1;
-%end
+if isfield(O,'ti_filename') 
+    if ~exist([pwd,filesep,O.ti_filename],'file')
+        O.WriteTI=1;
+    end
+end
 if ~isfield(O,'WriteTI')
     O.WriteTI=1;
 end
@@ -85,6 +85,7 @@ if O.WriteTI==1;
         disp(sprintf('%s: writing ti %s',mfilename,O.ti_filename))
     end
     write_eas_matrix(O.ti_filename,TI);
+    O.WriteTI=1;
 end
 
 %% write simulation grid
@@ -365,7 +366,7 @@ O.z=[0:1:(O.simulation_grid_size(3)-1)].*O.grid_cell_size(3)+O.origin(3);
 
 %%
 if ~isfield(O,'clean'), O.clean=1; end
-if (O.clean)
+if (O.clean)  
     mps_cpp_clean(O);
 end
 
