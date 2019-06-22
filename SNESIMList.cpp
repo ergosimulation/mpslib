@@ -237,7 +237,11 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		}
 
 		//Get the value from cpdf
-		foundValue = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
+		if (_doEstimation == true) {
+			_cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
+		} else {
+			foundValue = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
+		}
 	}
 	return foundValue;
 }

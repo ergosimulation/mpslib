@@ -390,6 +390,21 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 		}
 	}
 
+
+	// probabilitiesCombined represents the conditional distribution
+	if (_doEstimation == true ) {
+		int ncat=0;
+		float cpdf_val_old = 0;
+		float cpdf_val;
+		for(std::map<float,float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {				
+			cpdf_val = iter->first;
+			_cg[z][y][x][ncat] = 	cpdf_val - cpdf_val_old;
+			//	std::cout << ncat << "> cond_pdf=" << _cg[z][y][x][ncat] << " " << iter->second << std::endl;				
+			ncat=ncat+1;
+			cpdf_val_old=cpdf_val;
+		}
+	} 
+
 	//Getting the probability distribution value
 	//Random possible value between 0 and 1 then scale into the maximum probability
 	float randomValue = ((float) rand() / (RAND_MAX));

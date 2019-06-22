@@ -227,6 +227,7 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		int offset = int(std::pow(2, level));
 		int sgX, sgY, sgZ;
 		int deltaX, deltaY, deltaZ;
+		float tmp;
 		foundValue = std::numeric_limits<float>::quiet_NaN();
 		int maxConditionalPoints = -1, conditionPointsUsedCnt = 0;
 		//Initialize a value
@@ -322,7 +323,12 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
             _tg3[sgIdxZ][sgIdxY][sgIdxX] =  sumCounters;
 		}
 		//Get the value from cpdf
-		foundValue = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
+		if (_doEstimation == true) {
+			// Estimate --> not store simulated value
+			tmp = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
+		} else {
+			foundValue = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
+		}
 		//std::cout << std::endl;
 	}
 	return foundValue;

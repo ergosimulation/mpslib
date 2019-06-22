@@ -46,7 +46,7 @@ if ~isfield(O,'soft_data_filename');O.soft_data_filename='soft.dat';end
 if isfield(O,'soft_data_fnam');O.soft_data_filename=O.soft_data_fnam,end
 if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
-  
+if ~isfield(O,'doEstimation');O.doEstimation=0;end
 %% WRITE STRUCTURE TO PARAMETER FILE
 fid=fopen(O.parameter_filename,'w');
 
@@ -56,7 +56,7 @@ fprintf(fid,'Number of mulitple grids (start from 0) # %d\n',O.n_multiple_grids)
 
 % TEMPLATE SIZE
 fprintf(fid,'Min Node count (0 if not set any limit)# %d\n',O.n_min_node_count);
-fprintf(fid,'Maximum number condtitional data (0: all) # %d\n',O.n_cond);
+fprintf(fid,'Maximum number condtitional data (0: all) # %d\n',O.n_cond(1));
 for i=1:3;
     if prod(size(O.template_size))==6;
         % VARYING TEMPLATE
@@ -95,6 +95,7 @@ fprintf(fid,'Number of threads (minimum 1, maximum 8 - depend on your CPU) # %d\
 fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n',O.debug);
 % mask
 fprintf(fid,'Mask grid # %s\n',O.mask_filename);
-
+% doESTIMATION?
+fprintf(fid,'doEstimation # %d\n',O.doEstimation);
 
 fclose(fid);

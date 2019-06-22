@@ -947,8 +947,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 								MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
 								_simulationPath.push_back(sg1DIdx);
 							}
-						}
-						else { //No mask data, just do the simulation like before
+						}		else { //No mask data, just do the simulation like before
 							MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
 							_simulationPath.push_back(sg1DIdx);
 						}
