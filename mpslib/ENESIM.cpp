@@ -906,7 +906,7 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 			}
 		}
 
-		// Compute entropy from probabilitiesCombined, wich is a 'cumulative PDF' !
+		// Compute entropy from conditionalPdfFromTi.
 		if (_doEntropy == true) {
 			int NCat = _softDataCategories.size();
 			float P;
@@ -914,13 +914,11 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 			float Esum=0;
 			for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {	
 				P = iter->second;				
-				E = -1*P*(std::log(P)/std::log(NCat));
-				if (!MPS::utility::is_nan(E) {
-					std::cout << "P=" << P << ", E=" << E << std::endl;
-
-				}
-
+				E = -1*P*(std::log(P)/std::log(NCat));			
 				Esum = Esum + E;				
+			}
+			if (MPS::utility::is_nan(Esum)) {
+				Esum = 0;
 			}
 			_ent[sgIdxZ][sgIdxY][sgIdxX]=Esum;
 		} 
