@@ -136,7 +136,16 @@ protected:
 	*/
 	//std::vector<std::vector<std::vector<float>>> _cg;
 	std::vector<std::vector<std::vector<std::vector<float>>>> _cg;
+	/**
+	* @brief Entropy grid 5 - 1D condtional entropy 
+	*/
+	std::vector<float> _selfEnt;
+	/**
+	* @brief Entropy grid 5 - 1D condtional entropy 
+	*/
+	std::vector<std::vector<std::vector<float>>> _ent;
 	
+
 	/**
 	* @brief hard data search radius for multiple grids
 	*/
@@ -286,6 +295,10 @@ protected:
 	* @brief Make a random training image path
 	*/
 	bool _doEstimation = false;
+	/**
+	* @brief Make a random training image path
+	*/
+	bool _doEntropy = true;
 
 	/**
 	* @brief Soft data categories

@@ -49,6 +49,7 @@ if ~isfield(O,'colocated_dimension');O.colocated_dimension=0;end
 %if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
 
 if ~isfield(O,'doEstimation');O.doEstimation=0;end
+if ~isfield(O,'doEntropy');O.doEntropy=0;end
 
 % multiple grids are not used by enesim
 %if (O.n_multiple_grids~=0);
@@ -115,5 +116,6 @@ fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1:
 fprintf(fid,'Mask grid # %s\n',O.mask_filename);
 % doESTIMATION?
 fprintf(fid,'doEstimation # %d\n',O.doEstimation);
+fprintf(fid,'doEntropy # %d\n',O.doEntropy);
 
 fclose(fid);

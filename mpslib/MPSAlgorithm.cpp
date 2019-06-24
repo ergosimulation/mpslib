@@ -860,11 +860,19 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	// SOFT DATA RELOCATION
 	std::list<MPS::Coords3D> allocatedNodesFromSoftData; //Using to allocate the multiple grid with closest hd values
 
-
 	lastProgress = 0;
 	int nodeCnt = 0, totalNodes = 0;
 	int sg1DIdx, offset;
 
+	// Initialize Entropy
+	if (_doEntropy == true) {
+		_selfEnt.resize(_realizationNumbers);
+		for (int i=0; i<_realizationNumbers; i++) {
+			_selfEnt[i]=0;
+		}
+	}
+	
+	// start loop over number of realizations
 	for (int n=0; n<_realizationNumbers; n++) {
 
 		if (_debugMode >= 2) {
@@ -895,6 +903,10 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC,  std::numeric_limits<double>::quiet_NaN());
 				//_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC, -1);
 
+		}
+
+		if (_doEntropy == true) {
+				_initializeSG(_ent, _sgDimX, _sgDimY, _sgDimZ, 0);			
 		}
 
 		/*if(!_hdg.empty()) {
@@ -1162,6 +1174,14 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			//MPS::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 			//MPS::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 			//MPS::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+
+			if (_doEntropy == true)  {
+				MPS::io::writeToGSLIBFile(outputFilename + "_ent_" + std::to_string(n) + ".gslib", _ent, _sgDimX, _sgDimY, _sgDimZ);
+			}
+		
+		
+		
+		
 		}
 
 		// Write estimation to file
@@ -1183,9 +1203,23 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}				
 				MPS::io::writeToGSLIBFile(outputFilename + "_cg_" + std::to_string(nc) + ".gslib", ttg, _sgDimX, _sgDimY, _sgDimZ);
-			}			
-		}
+			}
 
+		} // End loop over number of model parameters
+
+
+		// update selfEntropy
+		if (_doEntropy == true) {
+			float E=0;
+			for (int z=0; z<_sgDimZ; z++) {
+				for (int y=0; y<_sgDimY; y++) {
+					for (int x=0; x<_sgDimX; x++) {
+						E = E + _ent[z][y][x];
+					}
+				}
+			}
+			_selfEnt[n] = E;
+		}
 
 		if (_debugMode>1) {
 			//Write temporary grids to  file
@@ -1202,6 +1236,21 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			MPS::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + ".gslib", _simulationPath, _sgDimX, _sgDimY, _sgDimZ);
 		}
 	}
+
+
+	// Store Entropy
+	if (_doEntropy == true) {
+		float E = 0;
+		for (int i=0; i<_realizationNumbers; i++) {
+			E=E+_selfEnt[i];
+			//std::cout << "E(real#" << i << ")=" <<_selfEnt[i] << std::endl;
+		}
+		E=E/_realizationNumbers;
+		if (_debugMode>-1) {
+			std::cout << "Entropy=" << E << std::endl;
+		}
+	}
+	
 
 	if (_debugMode > -1) {
 		MPS::utility::secondsToHrMnSec((int)(totalSecs/_realizationNumbers), hours, minutes, seconds);

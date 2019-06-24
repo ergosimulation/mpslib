@@ -188,7 +188,7 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	// DEBUG MODE
 	_readLineConfiguration(file, ss, data, s, str);
 	_debugMode = stoi(data[1]);
-	std::cout << "readpar: _debugMode=" << _debugMode << std::endl;
+	//std::cout << "readpar: _debugMode=" << _debugMode << std::endl;
 	
 	// Mask data grid
 	if (_readLineConfiguration(file, ss, data, s, str)) {
@@ -201,6 +201,14 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	if (_debugMode>-1) {
 		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
 	}
+
+	// doEntropy
+	_readLineConfiguration(file, ss, data, s, str);
+	_doEntropy = stoi(data[1]);
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
+	}
+
 }
 
 /**
@@ -411,6 +419,24 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 			ncat=ncat+1;
 			cpdf_val_old=cpdf_val;
 		}
+	} 
+
+	// Compute entropy from probabilitiesCombined, wich is a 'cumulative PDF' !
+	if (_doEntropy == true) {
+		int NCat = _softDataCategories.size();
+		float P;
+		float E;
+		float Esum=0;
+		float cpdf_val_old = 0;
+		float cpdf_val;
+		for(std::map<float,float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {	
+			cpdf_val = iter->first;
+			P = cpdf_val - cpdf_val_old; // pdf from cpdf value 
+			E = -1*P*(std::log(P)/std::log(NCat));
+			Esum = Esum + E;
+			cpdf_val_old=cpdf_val;
+		}
+		_ent[z][y][x]=Esum;
 	} 
 
 	//Getting the probability distribution value

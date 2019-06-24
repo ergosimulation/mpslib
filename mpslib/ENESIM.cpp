@@ -249,8 +249,13 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
 	}
 	
-
-
+	// doEntropy
+	_readLineConfiguration(file, ss, data, s, str);
+	_doEntropy = stoi(data[1]);
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
+	}
+	
 }
 
 /**
@@ -890,28 +895,35 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 		// SIMULTATE DIRECTLY FROM CONDITIONAL
 		// obtain conditional and generate a realization without soft data
 		_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
+
 		if (_doEstimation == true ) {
 			//std::cout << "SoftProbability = " << SoftProbability << std::endl;
 
 			int ncat=0;
 			for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {				
-				//if (ncat==1) {
 				_cg[sgIdxZ][sgIdxY][sgIdxX][ncat] = iter->second;					
-				//}
 				ncat=ncat+1;
-				
-				//std::cout << ncat << ">" << iter->first << " " << iter->second << std::endl;								
 			}
-
-			//std::cout << "_dataCategories are: ";
-			//for (unsigned int i = 0; i < _dataCategories.size(); i++) {
-			//	std::cout << _dataCategories[i] << " ";
-			//}
-			//std::cout << std::endl;
-			
-
-			// SHOW THE CONDITIONAL AND UPDATE _cg
 		}
+
+		// Compute entropy from probabilitiesCombined, wich is a 'cumulative PDF' !
+		if (_doEntropy == true) {
+			int NCat = _softDataCategories.size();
+			float P;
+			float E=0;
+			float Esum=0;
+			for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {	
+				P = iter->second;				
+				E = -1*P*(std::log(P)/std::log(NCat));
+				if (!MPS::utility::is_nan(E) {
+					std::cout << "P=" << P << ", E=" << E << std::endl;
+
+				}
+
+				Esum = Esum + E;				
+			}
+			_ent[sgIdxZ][sgIdxY][sgIdxX]=Esum;
+		} 
 
 		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 

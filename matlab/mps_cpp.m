@@ -281,6 +281,32 @@ if isfield(O,'doEstimation');
     end
 end
 
+%% READ ENTROPY
+if (O.doEntropy>0)
+    for i=1:O.n_real        
+         
+         fname=sprintf('%s%s%s%s_ent_%d.gslib',O.output_folder,filesep,f,e,i-1);
+         try
+             D=read_eas_matrix(fname);
+             O.selfE(i)=nansum(D(:));
+         catch
+             disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
+         end
+         
+         if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
+             % 1D
+             O.E(i,:)=D;
+         elseif (O.simulation_grid_size(3)==1)
+             % 2D
+             O.E(:,:,i)=D;
+         else
+             % 3D
+             O.E(:,:,:,i)=D;
+         end
+     end
+end
+
+
 %% READ TEMPORARY GRID VALUES
 if (O.debug>1)
     for i=1:O.n_real

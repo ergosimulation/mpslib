@@ -47,6 +47,7 @@ if isfield(O,'soft_data_fnam');O.soft_data_filename=O.soft_data_fnam,end
 if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
 if ~isfield(O,'doEstimation');O.doEstimation=0;end
+if ~isfield(O,'doEntropy');O.doEntropy=0;end
 %% WRITE STRUCTURE TO PARAMETER FILE
 fid=fopen(O.parameter_filename,'w');
 
@@ -97,5 +98,7 @@ fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1:
 fprintf(fid,'Mask grid # %s\n',O.mask_filename);
 % doESTIMATION?
 fprintf(fid,'doEstimation # %d\n',O.doEstimation);
+% doEntropy
+fprintf(fid,'doEntropy # %d\n',O.doEntropy);
 
 fclose(fid);
