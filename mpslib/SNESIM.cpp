@@ -188,6 +188,8 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	// DEBUG MODE
 	_readLineConfiguration(file, ss, data, s, str);
 	_debugMode = stoi(data[1]);
+	std::cout << "readpar: _debugMode=" << _debugMode << std::endl;
+	
 	// Mask data grid
 	if (_readLineConfiguration(file, ss, data, s, str)) {
 		data[1].erase(std::remove_if(data[1].begin(), data[1].end(), [](char x) {return std::isspace(x); }), data[1].end()); //Removing spaces
@@ -393,13 +395,19 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 
 	// probabilitiesCombined represents the conditional distribution
 	if (_doEstimation == true ) {
+		// Perhaps only store the conditional when the number of conditional points is larger than 0
+		// In this case a NaN value would be stored in _cg (default) instead of the 1D marginal of the TI
+
 		int ncat=0;
 		float cpdf_val_old = 0;
 		float cpdf_val;
 		for(std::map<float,float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {				
 			cpdf_val = iter->first;
 			_cg[z][y][x][ncat] = 	cpdf_val - cpdf_val_old;
-			//	std::cout << ncat << "> cond_pdf=" << _cg[z][y][x][ncat] << " " << iter->second << std::endl;				
+			//std::cout << "iter->first=" << iter->first << std::endl;
+			//std::cout << "iter->second=" << iter->second << std::endl;
+			//std::cout << "_cg=" << _cg[z][y][x][ncat] << std::endl;
+			//std::cout << ncat << "> cond_pdf=" << _cg[z][y][x][ncat] << " " << iter->second << std::endl;				
 			ncat=ncat+1;
 			cpdf_val_old=cpdf_val;
 		}

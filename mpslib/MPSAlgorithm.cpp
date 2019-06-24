@@ -891,8 +891,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				int NC;
 				NC = _softDataCategories.size();
 				std::cout <<"NC="<< NC << std::endl;
-				//_initializeSG(_cg, _sgDimX, _sgDimY, _sgDimZ);
-				_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC, 1);
+				//_initializeSG(_cg, _sgDimX, _sgDimY, _sgDimZ);				 
+				_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC,  std::numeric_limits<double>::quiet_NaN());
+				//_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC, -1);
 
 		}
 
@@ -1038,8 +1039,18 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					std::cout << "at node = "<< ii <<"/"<< _simulationPath.size()<< std::endl;
 				}
 
-				//Performing simulation for non NaN value ...
-				if (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
+				// Performing simulation for non NaN value ...
+				// In estimation mode, only do estimation if the conditinal is NaN (otherwise it has allready been computed...)
+				bool conditionalNan;
+				conditionalNan = false;
+				if (_doEstimation == true) {
+					if (MPS::utility::is_nan(_cg[SG_idxZ][SG_idxY][SG_idxX][0])) {
+						conditionalNan = false;
+					} else {
+						conditionalNan = true;
+					}
+				}
+				if ( (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX])) && (conditionalNan == false) )
 					
 					if (_doEstimation == false) {
 						// SIMULATE --> Update simulation grid with simulated value
@@ -1073,6 +1084,32 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				std::cout << "After simulation" << std::endl;
 				_showSG();
 			}
+
+			// Write estimation to file
+			if (_debugMode > 2) {
+				if (_doEstimation == true)  {
+					
+					int NCat;
+					NCat = _softDataCategories.size();
+					int nc;
+					nc=0;
+
+					for (int nc=0; nc<NCat; nc++) {
+						std::vector<std::vector<std::vector<float>>> ttg;
+						_initializeSG(ttg, _sgDimX, _sgDimY, _sgDimZ);
+						for (int z=0; z<_sgDimZ; z++) {
+							for (int y=0; y<_sgDimY; y++) {
+								for (int x=0; x<_sgDimX; x++) {
+									ttg[z][y][x] = _cg[z][y][x][nc];
+								}
+							}
+						}				
+						MPS::io::writeToGSLIBFile(outputFilename + "_cg_" + std::to_string(nc) + "_level_" + std::to_string(level) + ".gslib", ttg, _sgDimX, _sgDimY, _sgDimZ);
+					}			
+				}
+			}
+
+
 
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
@@ -1129,8 +1166,6 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 		// Write estimation to file
 		if (_doEstimation == true)  {
-			std::vector<std::vector<std::vector<float>>> ttg;
-			_initializeSG(ttg, _sgDimX, _sgDimY, _sgDimZ);
 
 			int NCat;
 			NCat = _softDataCategories.size();
@@ -1138,6 +1173,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			nc=0;
 
 			for (int nc=0; nc<NCat; nc++) {
+				std::vector<std::vector<std::vector<float>>> ttg;
+				_initializeSG(ttg, _sgDimX, _sgDimY, _sgDimZ);
 				for (int z=0; z<_sgDimZ; z++) {
 					for (int y=0; y<_sgDimY; y++) {
 						for (int x=0; x<_sgDimX; x++) {
