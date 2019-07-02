@@ -46,7 +46,7 @@ if ~isfield(O,'distance_pow');O.distance_pow=0;end
 
 if ~isfield(O,'colocated_dimension');O.colocated_dimension=0;end
 
-%if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
+if ~isfield(O,'max_search_radius');O.max_search_radius=[1 1].*1e+6;end
 
 if ~isfield(O,'doEstimation');O.doEstimation=0;end
 if ~isfield(O,'doEntropy');O.doEntropy=0;end
