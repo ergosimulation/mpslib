@@ -311,7 +311,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
 
 	if (_debugMode>2) {
-		std::cout << "  location in sim grid, Gxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
+		std::cout << "  location in sim grid, SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
 		std::cout << "  Found conditional data=" << L_c.size() << " (_maxNeighbours =" << _maxNeighbours;
 		std::cout << ", _maxSearchRadius=" << _maxSearchRadius << ")" << std::endl;
 	}
@@ -427,7 +427,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 
 
 				if (_debugMode > 3) {
-					std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
+					std::cout << "  --> Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
 				}
 				// MAKE SURE TO RESET LC_dist_min
 				LC_dist_min = 1e+9;
@@ -578,7 +578,8 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 		
 		if (_debugMode > 2) {
 			std::cout << "  " << "i_ti_path=" << i_ti_path << " ===";
-			std::cout << "  TI	xyz=(" << TI_idxX << "," << TI_idxY << "," << TI_idxZ << ")";
+			std::cout << "  TI_xyz=(" << TI_idxX << "," << TI_idxY << "," << TI_idxZ << ")";
+			std::cout << " V_center_ti=" << V_center_ti;
 			std::cout << " - LC_dist=" << LC_dist << " min(LC_dist)=" << LC_dist_current;
 			std::cout << std::endl;
 		}

@@ -1048,7 +1048,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 				if (_debugMode > 2) {
 					std::cout << " " << std::endl;
-					std::cout << "at node = "<< ii <<"/"<< _simulationPath.size()<< std::endl;
+					std::cout << "at node = "<< ii+1 <<"/"<< _simulationPath.size()<< std::endl;
 				}
 
 				// Performing simulation for non NaN value ...
@@ -1319,13 +1319,22 @@ bool MPS::MPSAlgorithm::_addingData(const std::vector<std::vector<std::vector<fl
 * @return true if foundCnt is greater than max neighbors allowed
 */
 void MPS::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V) {
+	if (_debugMode>3) {
+		std::cout << "[idxX,idxY,idxZ]=  " << idxX << "," << idxY << "," << idxZ << std::endl;					
+		std::cout << "[sgIdxX,sgIdxY,sgIdxZ]=  " << sgIdxX << "," << sgIdxY << "," << sgIdxZ << std::endl;					
+		std::cout << "[xOffset, yOffset, zOffset]=  " << xOffset << "," << yOffset << "," << zOffset << std::endl;					
+		std::cout << "direction=  " << direction << std::endl;					
+	}	
+
 	if(direction == 0) { //Direction X
 		for(int k=-yOffset; k<=yOffset; k++) {
 			idxY = sgIdxY + k;
 			for(int j=-zOffset; j<=zOffset; j++) {
 				idxZ = sgIdxZ + j;
 				//Adding value inside viewport only
+				//std::cout << "[x,y,z]=  " << idxX << "," << idxY << "," << idxZ << "," << std::endl;					
 				if((idxX >= 0 && idxX < _sgDimX) && (idxY >= 0 && idxY < _sgDimY) && (idxZ >= 0 && idxZ < _sgDimZ)) {
+					//std::cout << "  [x,y,z]=" << idxX << "," << idxY << "," << idxZ << "," << std::endl;
 					if (_addingData(grid, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, sgIdxX, sgIdxY, sgIdxZ, L, V)) break;
 				}
 			}
@@ -1336,7 +1345,9 @@ void MPS::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector<std
 			for(int j=-zOffset+1; j<zOffset; j++) {
 				idxZ = sgIdxZ + j;
 				//Adding value inside viewport only
+				//std::cout << "[x,y,z]=  " << idxX << "," << idxY << "," << idxZ << "," << std::endl;					
 				if((idxX >= 0 && idxX < _sgDimX) && (idxY >= 0 && idxY < _sgDimY) && (idxZ >= 0 && idxZ < _sgDimZ)) {
+					//std::cout << "  [x,y,z]=" << idxX << "," << idxY << "," << idxZ << "," << std::endl;
 					if (_addingData(grid, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, sgIdxX, sgIdxY, sgIdxZ, L, V)) break;
 				}
 			}
@@ -1347,12 +1358,19 @@ void MPS::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector<std
 			for(int j=-yOffset+1; j<yOffset; j++) {
 				idxY = sgIdxY + j;
 				//Adding value inside viewport only
+				//std::cout << "[x,y,z]=  " << idxX << "," << idxY << "," << idxZ << "," << std::endl;					
 				if((idxX >= 0 && idxX < _sgDimX) && (idxY >= 0 && idxY < _sgDimY) && (idxZ >= 0 && idxZ < _sgDimZ)) {
+					//std::cout << "  [x,y,z]=" << idxX << "," << idxY << "," << idxZ << "," << std::endl;
 					if (_addingData(grid, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, sgIdxX, sgIdxY, sgIdxZ, L, V)) break;
 				}
 			}
 		}
 	}
+	if (_debugMode > 3) {
+		std::cout << " foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit << ", L.size=" << L.size();
+		std::cout << ", direction=" << direction << std::endl;
+}
+		
 }
 
 
@@ -1388,7 +1406,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 	//random direction
 	//int randomDirection;
 
-	for(int i=1; i<maxDim; i++) {
+	for(int i=1; i<=maxDim; i++) {
   	//maximum neighbor count check
 		if (foundCnt > maxNeighboursLimit) break;
 		//if (L.size() > maxNeighboursLimit) break;
@@ -1401,37 +1419,42 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 
 		// //Get a random search direction
 		// randomDirection = rand() % 6;
-		// if (_debugMode > 2) {
-			// std::cout << "_circularSearch: i=" << i << ", maxDim=" << maxDim << ", Random search direction = " << randomDirection;
-			// std::cout << ", foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit;
-			// std::cout << ", L.size=" << L.size() << std::endl;
-		// }
+		if (_debugMode > 3) {
+			std::cout << "maxRadiusLimit=" << maxRadiusLimit << std::endl;
+			std::cout << "_circularSearch: i=" << i << ", maxDim=" << maxDim << std::endl;
+			//", Random search direction = " << randomDirection;
+			std::cout << ", foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit;
+			std::cout << ", L.size=" << L.size() << std::endl;
+			std::cout << "xOffset = " << xOffset << std::endl;
+		}
 		// switch (randomDirection) {
 		// case 0 : //X Y Z
-				//direction +X
-				idxX = sgIdxX + xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		//direction +X
+		idxX = sgIdxX + xOffset;
+		_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		
+		//direction -X
+		idxX = sgIdxX - xOffset;
+		_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		
+		//direction +Y
+		idxY = sgIdxY + yOffset;
+		_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -X
-				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		//direction -Y
+		idxY = sgIdxY - yOffset;
+		_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Y
-				idxY = sgIdxY + yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		//direction +Z
+		idxZ = sgIdxZ + zOffset;
+		_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Y
-				idxY = sgIdxY - yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		//direction -Z
+		idxZ = sgIdxZ - zOffset;
+		_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Z
-				idxZ = sgIdxZ + zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Z
-				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-		// case 1 : //X Z Y
+// case 1 : //X Z Y
 				// //direction +X
 				// idxX = sgIdxX + xOffset;
 				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);

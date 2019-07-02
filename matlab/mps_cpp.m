@@ -258,7 +258,7 @@ if isfield(O,'doEstimation');
         nc=1;
         fname=sprintf('%s%s%s%s_cg_%d.gslib',O.output_folder,filesep,f,e,nc-1);            
         while (exist(fname,'file'))
-            disp(fname)
+            %disp(fname)
             try
                 D=read_eas_matrix(fname);                
             catch
