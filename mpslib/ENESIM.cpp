@@ -852,7 +852,7 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 			conditionalPdfFromTi.clear();
 			SoftProbability = 1;
 
-			_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
+			_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);			
 			simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 			randomValue = ((float)rand() / (RAND_MAX));
 			pAcc = SoftProbability;
@@ -907,25 +907,46 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 				ncat=ncat+1;
 			}
 		}
-
+		
+		float simulatedProbability=0;
+		simulatedValue = _sampleFromPdf(conditionalPdfFromTi, simulatedProbability);
+		//simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
+		
 		// Compute entropy from conditionalPdfFromTi.
+		// This can be done from both the self-entropy (SI=-log(P_out)) 
+		// or the self-entropy (E(SI))
 		if (_doEntropy == true) {
-			int NCat = _softDataCategories.size();
-			float P;
-			float E=0;
-			float Esum=0;
-			for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {	
-				P = iter->second;				
-				E = -1*P*(std::log(P)/std::log(NCat));			
-				Esum = Esum + E;				
+			int NCat = _dataCategories.size();
+			int computeSelfInformation=1;
+			if (computeSelfInformation) {
+				float I;
+				// Compute CONDITIONAL SELF-INFORMATION
+				if (simulatedProbability==0) {
+					// This should not happen, as it suggest a value has been
+					// accepted with probability of 0!
+					I=0;
+				} else {
+					I = -1*(std::log(simulatedProbability)/std::log(NCat));			
+				}
+				_ent[sgIdxZ][sgIdxY][sgIdxX]=I;
+			} else {
+				// Compute CONDITIONAL SELF-ENTROPY				
+				float P=0;
+				float E=0;
+				float Esum=0;
+				for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {	
+					P = iter->second;				
+					E = -1*P*(std::log(P)/std::log(NCat));			
+					Esum = Esum + E;				
+				}
+				if (MPS::utility::is_nan(Esum)) {
+					Esum = 0;
+				}
+				_ent[sgIdxZ][sgIdxY][sgIdxX]=Esum;
 			}
-			if (MPS::utility::is_nan(Esum)) {
-				Esum = 0;
-			}
-			_ent[sgIdxZ][sgIdxY][sgIdxX]=Esum;
 		} 
+		
 
-		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 
 	}
 

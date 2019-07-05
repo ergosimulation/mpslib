@@ -180,6 +180,18 @@ void MPS::MPSAlgorithm::_initilizePath(const int& sgDimX, const int& sgDimY, con
 */
 float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 	float simulatedValue;
+	float simulatedProbability;
+	simulatedValue = _sampleFromPdf(Pdf, simulatedProbability);
+	return simulatedValue;
+}
+/**
+* @brief Generate a realization from a PDF defined as a map
+* @param the pdf as a std::map
+* @param The probabilty of the outcome
+* @param a realization from the pdf
+*/
+float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf, float& simulatedProbability) {
+	float simulatedValue;
 	float randomValue	;
 	randomValue = ((float) rand() / (RAND_MAX));
 
@@ -190,6 +202,7 @@ float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 		if (cumsum_pdf >= randomValue) {
 			//std::cout << "   randomValue=" << randomValue << "<=" <<  cumsum_pdf << ", THEN index=" << iter->first << std::endl;
 			simulatedValue = iter->first;
+			simulatedProbability = iter->second;
 			break;
 		}
 	}
@@ -1243,7 +1256,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 	// Store Entropy
 	if (_doEntropy == true) {
-		MPS::io::writeToASCIIFile(outputFilename + "selfInf" + ".dat", _selfEnt);
+		MPS::io::writeToASCIIFile(outputFilename + "_selfInf" + ".dat", _selfEnt);
 		float E = 0;
 		for (int i=0; i<_realizationNumbers; i++) {
 			E=E+_selfEnt[i];			

@@ -451,9 +451,11 @@ protected:
 	/**
 	* @brief Generate a realization from a PDF defined as a map
 	* @param the pdf as a std::map
+	* @param simulatedProbability of the realized outcome
 	* @param a realization from the pdf
 	*/
 	float _sampleFromPdf(std::map<float, float>& Pdf);
+	float _sampleFromPdf(std::map<float, float>& Pdf, float& simulatedProbability);
 	/**
 	* @brief Compute cpdf from softdata
 	* @param x coordinate X of the current node

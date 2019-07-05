@@ -283,8 +283,15 @@ end
 
 %% READ ENTROPY
 if (O.doEntropy>0)
-    for i=1:O.n_real        
-         
+    
+    try
+        fname=sprintf('%s%s%s%s_selfInf.dat',O.output_folder,filesep,f,e);
+        O.SI=load(fname);
+    catch
+        disp(sprintf('Could not load %s',fname));
+    end       
+    
+    for i=1:O.n_real                 
          fname=sprintf('%s%s%s%s_ent_%d.gslib',O.output_folder,filesep,f,e,i-1);
          try
              D=read_eas_matrix(fname);
