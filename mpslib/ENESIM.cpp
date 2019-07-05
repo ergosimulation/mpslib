@@ -242,6 +242,13 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		std::cout << "readpar: _maskDataFileName=" << _maskDataFileName << std::endl;
 	}
 
+	// doEntropy
+	_readLineConfiguration(file, ss, data, s, str);
+	_doEntropy = stoi(data[1]);
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
+	}
+	
 	// doEstimate
 	_readLineConfiguration(file, ss, data, s, str);
 	_doEstimation = stoi(data[1]);
@@ -249,12 +256,6 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
 	}
 	
-	// doEntropy
-	_readLineConfiguration(file, ss, data, s, str);
-	_doEntropy = stoi(data[1]);
-	if (_debugMode>-1) {
-		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
-	}
 	
 }
 

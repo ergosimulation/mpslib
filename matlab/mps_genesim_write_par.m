@@ -114,8 +114,9 @@ fprintf(fid,'Number of threads (minimum 1, maximum 8 - depend on your CPU) # %d\
 fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n',O.debug);
 % MASK GRID
 fprintf(fid,'Mask grid # %s\n',O.mask_filename);
+% doEntropy?
+fprintf(fid,'doEntropy # %d\n',O.doEntropy);
 % doESTIMATION?
 fprintf(fid,'doEstimation # %d\n',O.doEstimation);
-fprintf(fid,'doEntropy # %d\n',O.doEntropy);
 
 fclose(fid);

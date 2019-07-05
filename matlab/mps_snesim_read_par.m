@@ -100,11 +100,12 @@ end
 
 try
     l=line_strip_char(fgetl(fid),'#');
-    O.doEstimation=str2num(l);
+    O.doEntropy=str2num(l);
 end
+
 try
     l=line_strip_char(fgetl(fid),'#');
-    O.doEntropy=str2num(l);
+    O.doEstimation=str2num(l);
 end
 
 %%

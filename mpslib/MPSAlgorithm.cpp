@@ -1219,6 +1219,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				}
 			}
 			_selfEnt[n] = E;
+			if (_debugMode>-2) {
+				std::cout << "E(real#" << n << ") = " <<_selfEnt[n] << std::endl;				
+			}
 		}
 
 		if (_debugMode>1) {
@@ -1240,14 +1243,11 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 	// Store Entropy
 	if (_doEntropy == true) {
+		MPS::io::writeToASCIIFile(outputFilename + "selfInf" + ".dat", _selfEnt);
 		float E = 0;
 		for (int i=0; i<_realizationNumbers; i++) {
-			E=E+_selfEnt[i];
-			if (_debugMode>-2) {
-				std::cout << "E(real#" << i << ")=" <<_selfEnt[i] << std::endl;
-			}
+			E=E+_selfEnt[i];			
 		}
-		MPS::io::writeToASCIIFile(outputFilename + "selfInf" + ".dat", _selfEnt);
 		E=E/_realizationNumbers;
 		if (_debugMode>-2) {
 			std::cout << "H=E(SelfInformation)=" << E << std::endl;
