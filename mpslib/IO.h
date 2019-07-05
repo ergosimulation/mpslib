@@ -208,6 +208,15 @@ namespace MPS {
 			const float& minWorldX=0, const float& minWorldY=0, const float& minWorldZ=0,
 			const float& stepX=1, const float& stepY=1, const float& stepZ=1);
 		/**
+		* @brief Write 1D vector to file
+		*
+		* @param fileName destination's file name
+		* @param d, ad 1D vector
+		*/
+		void writeToASCIIFile(const std::string& fileName, const std::vector<float>& d);
+		
+		
+		/**
 		* @brief Write simulation 3D grid result into a GS3D grd3 file
 		*
 		* @param fileName destination's file name

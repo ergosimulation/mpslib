@@ -1062,18 +1062,18 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 						conditionalNan = true;
 					}
 				}
-				if ( (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX])) && (conditionalNan == false) )
+				if ( (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX])) && (conditionalNan == false) ) {
 					
 					if (_doEstimation == false) {
 						// SIMULATE --> Update simulation grid with simulated value
 						_sg[SG_idxZ][SG_idxY][SG_idxX] = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);						
-					} else  {
+					} else { 
 						// ESTIMATE --> do not store simulated value
 						//std::cout << "ESTIMATE" << std::endl;
 						float sim; // simulated value					
 						sim = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);													
 					}
-						
+				}
 
 				if (_debugMode > -1) {
 					//Doing the progression
@@ -1243,11 +1243,14 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		float E = 0;
 		for (int i=0; i<_realizationNumbers; i++) {
 			E=E+_selfEnt[i];
-			//std::cout << "E(real#" << i << ")=" <<_selfEnt[i] << std::endl;
+			if (_debugMode>-2) {
+				std::cout << "E(real#" << i << ")=" <<_selfEnt[i] << std::endl;
+			}
 		}
+		MPS::io::writeToASCIIFile(outputFilename + "selfInf" + ".dat", _selfEnt);
 		E=E/_realizationNumbers;
-		if (_debugMode>-1) {
-			std::cout << "Entropy=" << E << std::endl;
+		if (_debugMode>-2) {
+			std::cout << "H=E(SelfInformation)=" << E << std::endl;
 		}
 	}
 	
