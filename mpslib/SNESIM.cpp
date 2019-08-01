@@ -197,15 +197,21 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	}
 
 	// doEntropy
-	_readLineConfiguration(file, ss, data, s, str);
-	_doEntropy = stoi(data[1]);
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		_doEntropy = stoi(data[1]);
+	} else {
+		_doEntropy = 0;
+	}
 	if (_debugMode>-1) {
 		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
 	}
 
 	// doEstimate
-	_readLineConfiguration(file, ss, data, s, str);
-	_doEstimation = stoi(data[1]);
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		_doEstimation = stoi(data[1]);
+	} else {
+		_doEstimation = 0;
+	}
 	if (_debugMode>-1) {
 		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
 	}

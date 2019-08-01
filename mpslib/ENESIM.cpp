@@ -243,15 +243,21 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	}
 
 	// doEntropy
-	_readLineConfiguration(file, ss, data, s, str);
-	_doEntropy = stoi(data[1]);
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		_doEntropy = stoi(data[1]);
+	} else {
+		_doEntropy = 0;
+	}
 	if (_debugMode>-1) {
 		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
 	}
 	
 	// doEstimate
-	_readLineConfiguration(file, ss, data, s, str);
-	_doEstimation = stoi(data[1]);
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		_doEstimation = stoi(data[1]);
+	} else {
+		_doEstimation = 0;
+	}
 	if (_debugMode>-1) {
 		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
 	}
@@ -917,7 +923,7 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 		// or the self-entropy (E(SI))
 		if (_doEntropy == true) {
 			int NCat = _dataCategories.size();
-			int computeSelfInformation=1;
+			int computeSelfInformation=0;
 			if (computeSelfInformation) {
 				float I;
 				// Compute CONDITIONAL SELF-INFORMATION
