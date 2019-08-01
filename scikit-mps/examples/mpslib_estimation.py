@@ -1,6 +1,6 @@
 '''
-mpslib_simple:
-The simplest example of running MPSlib from python
+mpslib_estimation:
+Estimation vs simulation
 '''
 import mpslib as mps
 import matplotlib.pyplot as plt

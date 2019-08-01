@@ -549,6 +549,22 @@ class mpslib:
                 print('%s:Could not read gslib output file: %s' % (thread,filename))
                 success = False
 
+        # read entropy information
+        if (self.par['do_entropy']):
+            filename = '%s_selfInf.dat' % (self.par['ti_fnam'])
+            time.sleep(.1) # SOMETIMES NEEEDED WHEN FILES IS NOT YET ACCESSIBLE
+            filename_with_path = os.path.join(self.par['out_folder'], filename)
+            try:
+                SI = np.loadtxt(filename_with_path)
+                self.SI=SI
+                self.H=np.mean(self.SI)
+                self.Hstd=np.std(self.SI)
+                success = True
+            except:
+                print('%s:Could not read selfinformation from: %s' % (thread,filename))
+                success = False
+
+
         # combine gslib output files
         if (self.gslib_combine):
             import os
