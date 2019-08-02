@@ -31,19 +31,6 @@ O.d_hard = d_hard
 O.ti = mps.trainingimages.strebelle(di=3, coarse3d=1)[0]
 #O.plot_ti()
 
-#%% Run MPSlib in simulation mode
-O_sim = copy.deepcopy(O)
-O_sim.parameter_filename='mps_sim.txt'
-O_sim.par['n_real']=30
-O_sim.delete_local_files() # to make sure no old data are floating around
-O_sim.run()
-
-#%% Plot the results
-O_sim.plot_reals(hardcopy=1, hardcopy_filename='sim_reals')
-O_sim.plot_etype(hardcopy=1, hardcopy_filename='sim_etype')
-plt.show()
-
-
 
 #%% Run MPSlib in Estimation mode
 O_est = copy.deepcopy(O)
@@ -69,11 +56,9 @@ H=D_ent['Dmat'][:,:,0]
 H=H.transpose()
 
 plt.figure()
-plt.subplot(121)
 plt.imshow(P1)
-plt.title('P(m_i)=1')
-plt.subplot(122)
-plt.imshow(H)
-plt.title('Conditional Entropy')
-
+mng = plt.get_current_fig_manager()
+mng.full_screen_toggle()
+mng.toolbar.destroy()
 plt.show()
+
