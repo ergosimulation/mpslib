@@ -13,10 +13,12 @@ O2 = mps.mpslib(method='mps_snesim_tree', n_real = 1)
 
 #%%  Load and set training image
 ti = mps.trainingimages.strebelle()[0]
-ti2=np.transpose(ti)
 
 O1.ti=ti
-O2.ti=np.swapaxes(ti,2,1)
+O2.ti=np.swapaxes(ti,0,1)
+
+O1.par['ti_fnam']='ti1.dat'
+O2.par['ti_fnam']='ti2.dat'
 
 #%% SIMULATE
 O1.run()
