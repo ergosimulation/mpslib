@@ -745,8 +745,7 @@ namespace MPS {
 				//Grid value type
 				file.write(reinterpret_cast<const char *>(&valueType), 4);
 				//Blank value
-				double blankValue = std::numeric_limits<float>::quiet_NaN();
-				file.write(reinterpret_cast<const char *>(&blankValue), 8);
+				file.write(reinterpret_cast<const char *>(&gs3Dgrd3BlankFloat), 8); //Not used in GS3D...
 				//Node X
 				file.write(reinterpret_cast<const char *>(&sgDimX), 4);
 				//Node Y
@@ -804,17 +803,37 @@ namespace MPS {
 					for (int y=0; y<sgDimY; y++) {
 						for (int x=0; x<sgDimX; x++) {
 							if(valueSize == 1) {
-								dataChar = (char)sg[z][y][x];
-								file.write(reinterpret_cast<const char *>(&dataChar), valueSize);
+								if (MPS::utility::is_nan(sg[z][y][x])) {
+									dataChar = (char)gs3Dgrd3BlankByte;									
+								}
+								else {
+									dataChar = (char)sg[z][y][x];
+								}
+								file.write(reinterpret_cast<const char*>(&dataChar), valueSize);
 							} else if(valueSize == 2) {
-								dataShort = (short)sg[z][y][x];
-								file.write(reinterpret_cast<const char *>(&dataShort), valueSize);
+								if (MPS::utility::is_nan(sg[z][y][x])) {
+									dataShort = (short)gs3Dgrd3BlankWord;
+								}
+								else {
+									dataShort = (short)sg[z][y][x];
+								}
+								file.write(reinterpret_cast<const char*>(&dataShort), valueSize);
 							} else if(valueSize == 4) {
-								dataInt = (int)sg[z][y][x];
-								file.write(reinterpret_cast<const char *>(&dataInt), valueSize);
+								if (MPS::utility::is_nan(sg[z][y][x])) {
+									dataInt = (int)gs3Dgrd3BlankAscii;
+								}
+								else {
+									dataInt = (int)sg[z][y][x];
+								}
+								file.write(reinterpret_cast<const char*>(&dataInt), valueSize);
 							} else {
-								dataDouble = (double)sg[z][y][x];
-								file.write(reinterpret_cast<const char *>(&dataDouble), valueSize);
+								if (MPS::utility::is_nan(sg[z][y][x])) {
+									dataDouble = (double)gs3Dgrd3BlankFloat;
+								}
+								else {
+									dataDouble = (double)sg[z][y][x];
+								}
+								file.write(reinterpret_cast<const char*>(&dataDouble), valueSize);
 							}
 						}
 					}

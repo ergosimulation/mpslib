@@ -39,10 +39,31 @@ namespace MPS {
 			"i", "I", "j", "J", "k", "K", "l", "L", "m", "M", "n", "N", "p", "P", "q", "Q",
 			"r", "R", "s", "S", "t", "T", "u", "U", "v", "v", "w", "W", ",", ";", ".", ":",
 			"-", "_", "+", "/", "*", "<", ">", "!", "#", "&", "(", ")", "=", "?"};
+
 		/**
 		* @brief An std vector of the static array
 		*/
 		static const std::vector<std::string> onscreenChars(chars, std::end(chars));
+
+		/**
+		* @brief NaN value used when writing GRD3 file to GS3D
+		*/
+		static const double gs3Dgrd3BlankFloat = 1.701410009187828E+38;
+
+		/**
+		* @brief NaN value used when writing GRD3 file to GS3D
+		*/
+		static const double gs3Dgrd3BlankAscii = -9999;
+
+		/**
+		* @brief NaN value used when writing GRD3 file to GS3D
+		*/
+		static const double gs3Dgrd3BlankByte = 255;
+
+		/**
+		* @brief NaN value used when writing GRD3 file to GS3D
+		*/
+		static const double gs3Dgrd3BlankWord = 65535;
 
 		/**
 		* @brief check if file exists
