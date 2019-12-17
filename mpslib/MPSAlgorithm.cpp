@@ -20,6 +20,7 @@
 #include <cctype>       // isspace
 #include <time.h>
 #include <map>
+#include <chrono>
 
 #include "MPSAlgorithm.h"
 #include "Coords3D.h"
@@ -824,8 +825,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 	//Doing the simulation
 	double totalSecs = 0;
-	clock_t endNode, beginRealization, endRealization;
-	double elapsedRealizationSecs, elapsedNodeSecs;
+	std::chrono::time_point<std::chrono::high_resolution_clock> endNode, beginRealization, beginRealizationLocal, endRealization;
+	std::chrono::duration<double> elapsedRealizationSecs, elapsedNodeSecs;
 	int nodeEstimatedSeconds, seconds, hours, minutes, lastProgress;
 	// HARD DATA RELOCATION
 	std::vector<MPS::Coords3D> allocatedNodesFromHardData; //Using to allocate the multiple grid with closest hd values
@@ -844,7 +845,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			std::cout << "MPSLIB: simulation realization " << n + 1 << "/" << _realizationNumbers << std::endl;
 		}
 
-		beginRealization = clock();
+		beginRealization = std::chrono::high_resolution_clock::now();
 		//Initialize the iteration count grid
 		_initializeSG(_sgIterations, _sgDimX, _sgDimY, _sgDimZ, 0);
 		//Initialize Simulation Grid from hard data or with NaN value
@@ -896,6 +897,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 			nodeCnt = 0;
 			totalNodes = (_sgDimX / offset) * (_sgDimY / offset) * (_sgDimZ / offset);
+
 			for (int z=0; z<_sgDimZ; z+=offset) {
 				for (int y=0; y<_sgDimY; y+=offset) {
 					for (int x=0; x<_sgDimX; x+=offset) {
@@ -990,6 +992,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				MPS::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _simulationPath, _simulationPath.size(), 1, 1);
 			}
 
+			beginRealizationLocal = std::chrono::high_resolution_clock::now();
 			for (unsigned int ii=0; ii<_simulationPath.size(); ii++) {
 				//Get node coordinates
 				MPS::utility::oneDTo3D(_simulationPath[ii], _sgDimX, _sgDimY, SG_idxX, SG_idxY, SG_idxZ);
@@ -1011,9 +1014,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					progressionCnt ++;
 					if ((progress % 5) == 0 && progress != lastProgress) { //Report every 5%
 						lastProgress = progress;
-						endNode = clock();
-						elapsedNodeSecs = double(endNode - beginRealization) / CLOCKS_PER_SEC;
-						nodeEstimatedSeconds = (int)((elapsedNodeSecs/(float)(progressionCnt)) * (float)(totalNodes - progressionCnt));
+						endNode = std::chrono::high_resolution_clock::now();
+						elapsedNodeSecs = endNode - beginRealizationLocal;
+						nodeEstimatedSeconds = (int)((elapsedNodeSecs.count()/(float)(progressionCnt)) * (float)(totalNodes - progressionCnt));
 						MPS::utility::secondsToHrMnSec(nodeEstimatedSeconds, hours, minutes, seconds);
 						if (progress > 0) //Ignore first time that cant provide any time estimation
 							std::cout << "Realization: " << n + 1 << "/" << _realizationNumbers << " Level: " << level << " Progression (%): " << progress << " finish in: " << hours << " h " << minutes << " mn " << seconds << " sec" << std::endl;
@@ -1059,10 +1062,10 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		}
 
 		if (_debugMode > -1) {
-			endRealization = clock();
-			elapsedRealizationSecs = double(endRealization - beginRealization) / CLOCKS_PER_SEC;
-			totalSecs += elapsedRealizationSecs;
-			std::cout << "Elapsed time (sec): " << elapsedRealizationSecs << "\t" << " total: " << totalSecs << std::endl;
+			endRealization = std::chrono::high_resolution_clock::now();
+			elapsedRealizationSecs = endRealization - beginRealization;
+			totalSecs += elapsedRealizationSecs.count();
+			std::cout << "Elapsed time (sec): " << elapsedRealizationSecs.count() << "\t" << " total: " << totalSecs << std::endl;
 		}
 
 		if (_debugMode > -2) {
