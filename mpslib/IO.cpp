@@ -711,6 +711,25 @@ namespace MPS {
 				// Close the file stream explicitly
 				aFile.close();
 		}
+
+		/**
+		* @brief Write simulation 3D grid result into an ASCII file
+		*
+		* @param fileName destination's file name
+		* @param sg the simulation grid which is a 3D float vector
+		*/
+		void writeToASCIIFile(const std::string& fileName, const std::vector<float>& d) {
+			std::ofstream aFile (fileName);
+			int N=d.size();
+			for (int i=0; i<N; i++) {
+				aFile << d[i] << std::endl;
+			}
+	
+		
+		}
+		
+
+
 		/**
 		* @brief Write simulation 3D grid result into a GS3D grd3 file
 		*

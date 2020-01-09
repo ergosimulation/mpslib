@@ -242,6 +242,27 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		std::cout << "readpar: _maskDataFileName=" << _maskDataFileName << std::endl;
 	}
 
+	// doEntropy
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		_doEntropy = stoi(data[1]);
+	} else {
+		_doEntropy = 0;
+	}
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
+	}
+	
+	// doEstimate
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		_doEstimation = stoi(data[1]);
+	} else {
+		_doEstimation = 0;
+	}
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
+	}
+	
+	
 }
 
 /**
@@ -297,7 +318,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
 
 	if (_debugMode>2) {
-		std::cout << "  location in sim grid, Gxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
+		std::cout << "  location in sim grid, SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
 		std::cout << "  Found conditional data=" << L_c.size() << " (_maxNeighbours =" << _maxNeighbours;
 		std::cout << ", _maxSearchRadius=" << _maxSearchRadius << ")" << std::endl;
 	}
@@ -413,7 +434,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 
 
 				if (_debugMode > 3) {
-					std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
+					std::cout << "  --> Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
 				}
 				// MAKE SURE TO RESET LC_dist_min
 				LC_dist_min = 1e+9;
@@ -564,7 +585,8 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 		
 		if (_debugMode > 2) {
 			std::cout << "  " << "i_ti_path=" << i_ti_path << " ===";
-			std::cout << "  TI	xyz=(" << TI_idxX << "," << TI_idxY << "," << TI_idxZ << ")";
+			std::cout << "  TI_xyz=(" << TI_idxX << "," << TI_idxY << "," << TI_idxZ << ")";
+			std::cout << " V_center_ti=" << V_center_ti;
 			std::cout << " - LC_dist=" << LC_dist << " min(LC_dist)=" << LC_dist_current;
 			std::cout << std::endl;
 		}
@@ -836,7 +858,7 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 			conditionalPdfFromTi.clear();
 			SoftProbability = 1;
 
-			_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
+			_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);			
 			simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 			randomValue = ((float)rand() / (RAND_MAX));
 			pAcc = SoftProbability;
@@ -879,9 +901,58 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 
 	} else {
 		// SIMULTATE DIRECTLY FROM CONDITIONAL
-		// obtain conditional and generate a realization wihtout soft data
+		// obtain conditional and generate a realization without soft data
 		_getCpdEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
-		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
+
+		if (_doEstimation == true ) {
+			//std::cout << "SoftProbability = " << SoftProbability << std::endl;
+
+			int ncat=0;
+			for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {				
+				_cg[sgIdxZ][sgIdxY][sgIdxX][ncat] = iter->second;					
+				ncat=ncat+1;
+			}
+		}
+		
+		float simulatedProbability=0;
+		simulatedValue = _sampleFromPdf(conditionalPdfFromTi, simulatedProbability);
+		//simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
+		
+		// Compute entropy from conditionalPdfFromTi.
+		// This can be done from both the self-entropy (SI=-log(P_out)) 
+		// or the self-entropy (E(SI))
+		if (_doEntropy == true) {
+			int NCat = _dataCategories.size();
+			int computeSelfInformation=0;
+			if (computeSelfInformation) {
+				float I;
+				// Compute CONDITIONAL SELF-INFORMATION
+				if (simulatedProbability==0) {
+					// This should not happen, as it suggest a value has been
+					// accepted with probability of 0!
+					I=0;
+				} else {
+					I = -1*(std::log(simulatedProbability)/std::log(NCat));			
+				}
+				_ent[sgIdxZ][sgIdxY][sgIdxX]=I;
+			} else {
+				// Compute CONDITIONAL SELF-ENTROPY				
+				float P=0;
+				float E=0;
+				float Esum=0;
+				for(std::map<float,float>::iterator iter = conditionalPdfFromTi.begin(); iter != conditionalPdfFromTi.end(); ++iter) {	
+					P = iter->second;				
+					E = -1*P*(std::log(P)/std::log(NCat));			
+					Esum = Esum + E;				
+				}
+				if (MPS::utility::is_nan(Esum)) {
+					Esum = 0;
+				}
+				_ent[sgIdxZ][sgIdxY][sgIdxX]=Esum;
+			}
+		} 
+		
+
 
 	}
 
@@ -894,8 +965,11 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 	// DONE SIMULATING
 	
 	// At this point set the local soft data as NaN to avoid simulate it again
+	// But, do not do this in estimation mode!
 	if (!_softDataGrids.empty()) {
-		_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+		if (_doEstimation == 0) {
+			_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+		}
 		// Check if there are any more soft data left. If so, empty the _softDataGrid!
 	}
 
@@ -924,8 +998,6 @@ float MPS::ENESIM::_getRealizationFromCpdfEnesim(const int& sgIdxX, const int& s
 		
 	}
     
-	
-	
 	return simulatedValue;
 }
 

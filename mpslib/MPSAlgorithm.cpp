@@ -77,6 +77,33 @@ void MPS::MPSAlgorithm::_initializeHDG(std::vector<std::vector<std::vector<float
 	}
 }
 
+
+/**
+* @brief Initialize the Conditional Grid 
+* @param sg the simulation GRID
+* @param sgDimX dimension X of the grid
+* @param sgDimY dimension Y of the gri
+* @param sgDimZ dimension Z of the grid
+* @param nCategories number of categories
+* @param value value of each grid node default is NAN
+*/
+void MPS::MPSAlgorithm::_initializeCG(std::vector<std::vector<std::vector<std::vector<float>>>>& cg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const int& NC, const float& value) {
+	cg.resize(sgDimZ);
+	for (int z=0; z<sgDimZ; z++) {
+		cg[z].resize(sgDimY);
+		for (int y=0; y<sgDimY; y++) {
+			cg[z][y].resize(sgDimX);
+			for (int x=0; x<sgDimX; x++) {
+				cg[z][y][x].resize(NC);			
+				for (int n=0; n<NC; n++) {	
+					cg[z][y][x][n] = value;
+				}
+			}
+		}
+	}
+	//std::cout << "SG (X, Y, Z): " << SG[0][0].size() << " " << SG[0].size() << " " << SG.size() << " " << SG[0][0][0]<< std::endl;
+}
+
 /**
 * @brief Initialize the Simulation Grid with a value, default is NaN
 * @param sg the simulation GRID
@@ -153,6 +180,18 @@ void MPS::MPSAlgorithm::_initilizePath(const int& sgDimX, const int& sgDimY, con
 */
 float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 	float simulatedValue;
+	float simulatedProbability;
+	simulatedValue = _sampleFromPdf(Pdf, simulatedProbability);
+	return simulatedValue;
+}
+/**
+* @brief Generate a realization from a PDF defined as a map
+* @param the pdf as a std::map
+* @param The probabilty of the outcome
+* @param a realization from the pdf
+*/
+float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf, float& simulatedProbability) {
+	float simulatedValue;
 	float randomValue	;
 	randomValue = ((float) rand() / (RAND_MAX));
 
@@ -163,6 +202,7 @@ float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 		if (cumsum_pdf >= randomValue) {
 			//std::cout << "   randomValue=" << randomValue << "<=" <<  cumsum_pdf << ", THEN index=" << iter->first << std::endl;
 			simulatedValue = iter->first;
+			simulatedProbability = iter->second;
 			break;
 		}
 	}
@@ -833,11 +873,19 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	// SOFT DATA RELOCATION
 	std::list<MPS::Coords3D> allocatedNodesFromSoftData; //Using to allocate the multiple grid with closest hd values
 
-
 	lastProgress = 0;
 	int nodeCnt = 0, totalNodes = 0;
 	int sg1DIdx, offset;
 
+	// Initialize Entropy
+	if (_doEntropy == true) {
+		_selfEnt.resize(_realizationNumbers);
+		for (int i=0; i<_realizationNumbers; i++) {
+			_selfEnt[i]=0;
+		}
+	}
+	
+	// start loop over number of realizations
 	for (int n=0; n<_realizationNumbers; n++) {
 
 		if (_debugMode >= 2) {
@@ -857,6 +905,21 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			_initializeSG(_tg3, _sgDimX, _sgDimY, _sgDimZ);
 			_initializeSG(_tg4, _sgDimX, _sgDimY, _sgDimZ);
 			_initializeSG(_tg5, _sgDimX, _sgDimY, _sgDimZ);
+		}
+
+		if (_doEstimation == true) {
+				// ESTIMATION --> Initialize a grid for storing condtitional estimates
+				int NC;
+				NC = _softDataCategories.size();
+				std::cout <<"NC="<< NC << std::endl;
+				//_initializeSG(_cg, _sgDimX, _sgDimY, _sgDimZ);				 
+				_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC,  std::numeric_limits<double>::quiet_NaN());
+				//_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC, -1);
+
+		}
+
+		if (_doEntropy == true) {
+				_initializeSG(_ent, _sgDimX, _sgDimY, _sgDimZ, 0);			
 		}
 
 		/*if(!_hdg.empty()) {
@@ -910,8 +973,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 								MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
 								_simulationPath.push_back(sg1DIdx);
 							}
-						}
-						else { //No mask data, just do the simulation like before
+						}		else { //No mask data, just do the simulation like before
 							MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
 							_simulationPath.push_back(sg1DIdx);
 						}
@@ -978,6 +1040,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			int totalNodes = (int)_simulationPath.size();
 
 			int SG_idxX, SG_idxY, SG_idxZ;
+
+			
+
 			if (_debugMode > 1) {
 				std::cout << "________________________________________" << std::endl;
 				std::cout << "_______ START SIMULATION _______________" << std::endl; 
@@ -996,14 +1061,33 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 				if (_debugMode > 2) {
 					std::cout << " " << std::endl;
-					std::cout << "at node = "<< ii <<"/"<< _simulationPath.size()<< std::endl;
+					std::cout << "at node = "<< ii+1 <<"/"<< _simulationPath.size()<< std::endl;
 				}
 
-				//Performing simulation for non NaN value ...
-				if (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
-					_sg[SG_idxZ][SG_idxY][SG_idxX] = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);
+				// Performing simulation for non NaN value ...
+				// In estimation mode, only do estimation if the conditinal is NaN (otherwise it has allready been computed...)
+				bool conditionalNan;
+				conditionalNan = false;
+				if (_doEstimation == true) {
+					if (MPS::utility::is_nan(_cg[SG_idxZ][SG_idxY][SG_idxX][0])) {
+						conditionalNan = false;
+					} else {
+						conditionalNan = true;
+					}
+				}
+				if ( (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX])) && (conditionalNan == false) ) {
+					
+					if (_doEstimation == false) {
+						// SIMULATE --> Update simulation grid with simulated value
+						_sg[SG_idxZ][SG_idxY][SG_idxX] = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);						
+					} else { 
+						// ESTIMATE --> do not store simulated value
+						//std::cout << "ESTIMATE" << std::endl;
+						float sim; // simulated value					
+						sim = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);													
+					}
+				}
 
-				
 				if (_debugMode > -1) {
 					//Doing the progression
 					//Print progression on screen
@@ -1025,6 +1109,32 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				std::cout << "After simulation" << std::endl;
 				_showSG();
 			}
+
+			// Write estimation to file
+			if (_debugMode > 2) {
+				if (_doEstimation == true)  {
+					
+					int NCat;
+					NCat = _softDataCategories.size();
+					int nc;
+					nc=0;
+
+					for (int nc=0; nc<NCat; nc++) {
+						std::vector<std::vector<std::vector<float>>> ttg;
+						_initializeSG(ttg, _sgDimX, _sgDimY, _sgDimZ);
+						for (int z=0; z<_sgDimZ; z++) {
+							for (int y=0; y<_sgDimY; y++) {
+								for (int x=0; x<_sgDimX; x++) {
+									ttg[z][y][x] = _cg[z][y][x][nc];
+								}
+							}
+						}				
+						MPS::io::writeToGSLIBFile(outputFilename + "_cg_" + std::to_string(nc) + "_level_" + std::to_string(level) + ".gslib", ttg, _sgDimX, _sgDimY, _sgDimZ);
+					}			
+				}
+			}
+
+
 
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
@@ -1077,8 +1187,55 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			//MPS::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 			//MPS::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 			//MPS::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+
+			if (_doEntropy == true)  {
+				MPS::io::writeToGSLIBFile(outputFilename + "_ent_" + std::to_string(n) + ".gslib", _ent, _sgDimX, _sgDimY, _sgDimZ);
+			}
+		
+		
+		
+		
 		}
 
+		// Write estimation to file
+		if (_doEstimation == true)  {
+
+			int NCat;
+			NCat = _softDataCategories.size();
+			int nc;
+			nc=0;
+
+			for (int nc=0; nc<NCat; nc++) {
+				std::vector<std::vector<std::vector<float>>> ttg;
+				_initializeSG(ttg, _sgDimX, _sgDimY, _sgDimZ);
+				for (int z=0; z<_sgDimZ; z++) {
+					for (int y=0; y<_sgDimY; y++) {
+						for (int x=0; x<_sgDimX; x++) {
+							ttg[z][y][x] = _cg[z][y][x][nc];
+						}
+					}
+				}				
+				MPS::io::writeToGSLIBFile(outputFilename + "_cg_" + std::to_string(nc) + ".gslib", ttg, _sgDimX, _sgDimY, _sgDimZ);
+			}
+
+		} // End loop over number of model parameters
+
+
+		// update selfEntropy
+		if (_doEntropy == true) {
+			float E=0;
+			for (int z=0; z<_sgDimZ; z++) {
+				for (int y=0; y<_sgDimY; y++) {
+					for (int x=0; x<_sgDimX; x++) {
+						E = E + _ent[z][y][x];
+					}
+				}
+			}
+			_selfEnt[n] = E;
+			if (_debugMode>-2) {
+				std::cout << "E(real#" << n << ") = " <<_selfEnt[n] << std::endl;				
+			}
+		}
 
 		if (_debugMode>1) {
 			//Write temporary grids to  file
@@ -1095,6 +1252,21 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			MPS::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + ".gslib", _simulationPath, _sgDimX, _sgDimY, _sgDimZ);
 		}
 	}
+
+
+	// Store Entropy
+	if (_doEntropy == true) {
+		MPS::io::writeToASCIIFile(outputFilename + "_selfInf" + ".dat", _selfEnt);
+		float E = 0;
+		for (int i=0; i<_realizationNumbers; i++) {
+			E=E+_selfEnt[i];			
+		}
+		E=E/_realizationNumbers;
+		if (_debugMode>-2) {
+			std::cout << "H=E(SelfInformation)=" << E << std::endl;
+		}
+	}
+	
 
 	if (_debugMode > -1) {
 		MPS::utility::secondsToHrMnSec((int)(totalSecs/_realizationNumbers), hours, minutes, seconds);
@@ -1163,13 +1335,22 @@ bool MPS::MPSAlgorithm::_addingData(const std::vector<std::vector<std::vector<fl
 * @return true if foundCnt is greater than max neighbors allowed
 */
 void MPS::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V) {
+	if (_debugMode>3) {
+		std::cout << "[idxX,idxY,idxZ]=  " << idxX << "," << idxY << "," << idxZ << std::endl;					
+		std::cout << "[sgIdxX,sgIdxY,sgIdxZ]=  " << sgIdxX << "," << sgIdxY << "," << sgIdxZ << std::endl;					
+		std::cout << "[xOffset, yOffset, zOffset]=  " << xOffset << "," << yOffset << "," << zOffset << std::endl;					
+		std::cout << "direction=  " << direction << std::endl;					
+	}	
+
 	if(direction == 0) { //Direction X
 		for(int k=-yOffset; k<=yOffset; k++) {
 			idxY = sgIdxY + k;
 			for(int j=-zOffset; j<=zOffset; j++) {
 				idxZ = sgIdxZ + j;
 				//Adding value inside viewport only
+				//std::cout << "[x,y,z]=  " << idxX << "," << idxY << "," << idxZ << "," << std::endl;					
 				if((idxX >= 0 && idxX < _sgDimX) && (idxY >= 0 && idxY < _sgDimY) && (idxZ >= 0 && idxZ < _sgDimZ)) {
+					//std::cout << "  [x,y,z]=" << idxX << "," << idxY << "," << idxZ << "," << std::endl;
 					if (_addingData(grid, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, sgIdxX, sgIdxY, sgIdxZ, L, V)) break;
 				}
 			}
@@ -1180,7 +1361,9 @@ void MPS::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector<std
 			for(int j=-zOffset+1; j<zOffset; j++) {
 				idxZ = sgIdxZ + j;
 				//Adding value inside viewport only
+				//std::cout << "[x,y,z]=  " << idxX << "," << idxY << "," << idxZ << "," << std::endl;					
 				if((idxX >= 0 && idxX < _sgDimX) && (idxY >= 0 && idxY < _sgDimY) && (idxZ >= 0 && idxZ < _sgDimZ)) {
+					//std::cout << "  [x,y,z]=" << idxX << "," << idxY << "," << idxZ << "," << std::endl;
 					if (_addingData(grid, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, sgIdxX, sgIdxY, sgIdxZ, L, V)) break;
 				}
 			}
@@ -1191,12 +1374,19 @@ void MPS::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector<std
 			for(int j=-yOffset+1; j<yOffset; j++) {
 				idxY = sgIdxY + j;
 				//Adding value inside viewport only
+				//std::cout << "[x,y,z]=  " << idxX << "," << idxY << "," << idxZ << "," << std::endl;					
 				if((idxX >= 0 && idxX < _sgDimX) && (idxY >= 0 && idxY < _sgDimY) && (idxZ >= 0 && idxZ < _sgDimZ)) {
+					//std::cout << "  [x,y,z]=" << idxX << "," << idxY << "," << idxZ << "," << std::endl;
 					if (_addingData(grid, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, sgIdxX, sgIdxY, sgIdxZ, L, V)) break;
 				}
 			}
 		}
 	}
+	if (_debugMode > 3) {
+		std::cout << " foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit << ", L.size=" << L.size();
+		std::cout << ", direction=" << direction << std::endl;
+}
+		
 }
 
 
@@ -1232,7 +1422,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 	//random direction
 	//int randomDirection;
 
-	for(int i=1; i<maxDim; i++) {
+	for(int i=1; i<=maxDim; i++) {
   	//maximum neighbor count check
 		if (foundCnt > maxNeighboursLimit) break;
 		//if (L.size() > maxNeighboursLimit) break;
@@ -1245,37 +1435,42 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 
 		// //Get a random search direction
 		// randomDirection = rand() % 6;
-		// if (_debugMode > 2) {
-			// std::cout << "_circularSearch: i=" << i << ", maxDim=" << maxDim << ", Random search direction = " << randomDirection;
-			// std::cout << ", foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit;
-			// std::cout << ", L.size=" << L.size() << std::endl;
-		// }
+		if (_debugMode > 3) {
+			std::cout << "maxRadiusLimit=" << maxRadiusLimit << std::endl;
+			std::cout << "_circularSearch: i=" << i << ", maxDim=" << maxDim << std::endl;
+			//", Random search direction = " << randomDirection;
+			std::cout << ", foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit;
+			std::cout << ", L.size=" << L.size() << std::endl;
+			std::cout << "xOffset = " << xOffset << std::endl;
+		}
 		// switch (randomDirection) {
 		// case 0 : //X Y Z
-				//direction +X
-				idxX = sgIdxX + xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		//direction +X
+		idxX = sgIdxX + xOffset;
+		_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		
+		//direction -X
+		idxX = sgIdxX - xOffset;
+		_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		
+		//direction +Y
+		idxY = sgIdxY + yOffset;
+		_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -X
-				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		//direction -Y
+		idxY = sgIdxY - yOffset;
+		_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Y
-				idxY = sgIdxY + yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		//direction +Z
+		idxZ = sgIdxZ + zOffset;
+		_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Y
-				idxY = sgIdxY - yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		//direction -Z
+		idxZ = sgIdxZ - zOffset;
+		_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Z
-				idxZ = sgIdxZ + zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Z
-				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-		// case 1 : //X Z Y
+// case 1 : //X Z Y
 				// //direction +X
 				// idxX = sgIdxX + xOffset;
 				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);

@@ -56,21 +56,25 @@ def plot_3d_reals_pyvista(O, nshow=4):
     nxy = np.ceil(np.sqrt(nshow)).astype('int')
     
     plotter = pyvista.Plotter( shape=(nxy,nxy))
-    for i in range(nshow):
-        plotter.subplot(0,i)
-        
-        Data = O.sim[i]
-        grid = pyvista.UniformGrid()
-        grid.dimensions = np.array(Data.shape) + 1
-        
-        grid.origin = O.par['origin']
-        grid.spacing = O.par['grid_cell_size']
-        grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
-        
-        plotter.add_mesh(grid.slice_orthogonal())
-        plotter.add_text('#%d' % (i+1))
-        plotter.show_grid()
-        
+
+    i=-1
+    for ix in range(nxy):
+        for iy in range(nxy):
+            i=i+1;
+            plotter.subplot(iy,ix)
+
+            Data = O.sim[i]
+            grid = pyvista.UniformGrid()
+            grid.dimensions = np.array(Data.shape) + 1
+
+            grid.origin = O.par['origin']
+            grid.spacing = O.par['grid_cell_size']
+            grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
+
+            plotter.add_mesh(grid.slice_orthogonal())
+            plotter.add_text('#%d' % (i+1))
+            plotter.show_grid()
+
         
     plotter.show()
 

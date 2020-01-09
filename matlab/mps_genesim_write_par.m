@@ -33,10 +33,10 @@ if ~isfield(O,'shuffle_simulation_grid');O.shuffle_simulation_grid=1;end
 if ~isfield(O,'entropyfactor_simulation_grid');O.entropyfactor_simulation_grid=4;end
 if ~isfield(O,'shuffle_ti_grid');O.shuffle_ti_grid=1;end
 if ~isfield(O,'hard_data_filename');O.hard_data_filename='conditional.dat';end
-if ~isfield(O,'hard_data_search_radius');O.hard_data_search_radius=1;end
+if ~isfield(O,'hard_data_search_radius');O.hard_data_search_radius=100000;end
+%if ~isfield(O,'soft_data_search_radius');O.soft_data_search_radius=O.hard_data_search_radius;end
 if ~isfield(O,'soft_data_categories');O.soft_data_categories='0;1';end
 if ~isfield(O,'soft_data_filename');O.soft_data_filename='soft.dat';end
-if isfield(O,'soft_data_fnam');O.soft_data_filename=O.soft_data_fnam,end
 if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
  
@@ -46,14 +46,18 @@ if ~isfield(O,'distance_pow');O.distance_pow=0;end
 
 if ~isfield(O,'colocated_dimension');O.colocated_dimension=0;end
 
-if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
+if ~isfield(O,'max_search_radius');O.max_search_radius=[1 1].*1e+6;end
+
+if ~isfield(O,'doEstimation');O.doEstimation=0;end
+if ~isfield(O,'doEntropy');O.doEntropy=0;end
 
 % multiple grids are not used by enesim
 %if (O.n_multiple_grids~=0);
     %disp(sprintf('%s: Setting nmulgrids to ZERO to avoid relocation',mfilename));
     %O.n_multiple_grids=0;
 %end
-    
+   
+
 %% WRITE STRUCTURE TO PARAMETER FILE
 fid=fopen_retry(O.parameter_filename,'w');
 
@@ -110,5 +114,9 @@ fprintf(fid,'Number of threads (minimum 1, maximum 8 - depend on your CPU) # %d\
 fprintf(fid,'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n',O.debug);
 % MASK GRID
 fprintf(fid,'Mask grid # %s\n',O.mask_filename);
+% doEntropy?
+fprintf(fid,'doEntropy # %d\n',O.doEntropy);
+% doESTIMATION?
+fprintf(fid,'doEstimation # %d\n',O.doEstimation);
 
 fclose(fid);
