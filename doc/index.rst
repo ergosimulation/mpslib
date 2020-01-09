@@ -42,11 +42,11 @@ All algorithms can handle hard and co-loccated soft data. ``mps_genesim`` can al
 
 Entropy
 -------
-The entropy of the (unknown) probability distribution related to a specific choice of 1) training image, 2) simulation algorithm, and 3) options for running the simulation algorithm, can optionally be computed as part of simulation. [HANSEN2019]_.
+The entropy of the (unknown) probability distribution related to a specific choice of 1) training image, 2) simulation algorithm, and 3) options for running the simulation algorithm, can optionally be computed as part of simulation. [HANSEN2020]_.
 
-Estimation
-----------
-All algorithms can otionally be run in *estimation* mode in which the 1D marginal conditional distribution is directly computed (similar to Etype statistics from a number of realizations) [JOHANNSSON2019]_.
+.. Estimation
+.. ----------
+.. All algorithms can otionally be run in *estimation* mode in which the 1D marginal conditional distribution is directly computed (similar to Etype statistics from a number of realizations) [JOHANNSSON2019]_.
 
 
 

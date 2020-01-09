@@ -106,5 +106,18 @@ Debug mode
 -  [ 3]: + Debug information written to screen (results in much slower performance - in general not useful
    for an end-user)
 
+MASK file
+^^^^^^^^^
+
+EAS filename with 4 columns: X, Y, Z, and MASK. 
+A mask files of tha same size as the simulation grid can be supplied. '0' in a node indicates a node that will not be simulated. '1' in a node indicates a node that will be simulated.
+
+Entropy
+^^^^^^^^^
+
+-  [ 0]: No computation of entropy
+-  [ 1]: Compute entropy as part of simulation
+
+See [HANSEN2020]_ for more information.
 
 
