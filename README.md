@@ -18,8 +18,10 @@ Development has been funded by the Danish National Hightech Foundation (now: the
 [Niels Bohr Institute](http://nbi.ku.dk/).
 
 # Try in Google Colab
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb)
-Try out MPSlib using the Python interface (scikit-mps) through Google Colab
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb)
+Try out MPSlib using the Python interface (scikit-mps) through Google Colab.
+
+
 
 # Download
 The latest relases, containing statically compiles binaries for windows and Linux, can be found here:
