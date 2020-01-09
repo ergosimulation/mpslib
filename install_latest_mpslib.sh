@@ -5,6 +5,6 @@ make
 
 # install scikit-mps
 cd scikit-mps
-pip install -e .
-#pip install vista
+pip install -e 
+#pip install pyvista
 
