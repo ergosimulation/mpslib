@@ -36,6 +36,7 @@ class mpslib:
 
         mpslib_py_path, fn = os.path.split(__file__)
         self.mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
+        print("Using MPSlib installed in %s (from %s)" % (self.mpslib_exe_folder,__file__))
         # self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
         self.blank_grid = None
         self.blank_val = np.NaN
