@@ -2,6 +2,9 @@
 # example of using mpslib
 
 #%%
+import os
+os.environ["DISPLAY"] = '127.0.0.1:0'
+
 import mpslib as mps
 
 import matplotlib.pyplot as plt
@@ -29,6 +32,13 @@ plt.savefig(O1.method+'.png', dpi=600)
 plt.show()
 
 
+#%% Use the same modeling parameters, but change simulation methods
+#O1.change_method('mps_snesim_list')
+#O1.run()
+#plt.figure(2)
+#O1.plot_reals()
+#plt.savefig(O1.method+'.png', dpi=600)
+
 #%% RUN GENESIM
 # or consider
 #O1.change_method('mps_genesim')
@@ -43,7 +53,7 @@ O2.run();
 
 plt.figure(3)
 O2.plot_reals()
-plt.savefig("mpslib_exmaple_1_" + O2.method+'.png', dpi=600)
+plt.savefig("mpslib_example_1_" + O2.method+'.png', dpi=600)
 plt.show();
 
 #%%
