@@ -117,6 +117,7 @@ class mpslib:
             if is_exe(program_path_mpslib):
                 return program_path_mpslib
             else:
+                print("File not found in: %s" % (program_path_mpslib) )
                 # Check of executable is located in system path
                 for path in os.environ["PATH"].split(os.pathsep):
                     path = path.strip('"')
