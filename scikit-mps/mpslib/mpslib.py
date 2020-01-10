@@ -31,13 +31,16 @@ class mpslib:
                  remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
                  colocate_dimension=0,
                  do_estimation=0, 
-                 do_entropy=0):
+                 do_entropy=0,
+                 mpslib_exe_folder=''):
         '''Initialize variables in Class'''
 
         mpslib_py_path, fn = os.path.split(__file__)
-        self.mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
-        print("Using MPSlib installed in %s (from %s)" % (self.mpslib_exe_folder,__file__))
-        # self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
+        if len(mpslib_exe_folder)==0:
+            mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
+            print("Using MPSlib installed in %s (from %s)" % (mpslib_exe_folder,__file__))
+            # self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
+        self.mpslib_exe_folder = mpslib_exe_folder
         self.blank_grid = None
         self.blank_val = np.NaN
         self.parameter_filename = parameter_filename.lower()  # change string to lower case
