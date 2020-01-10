@@ -162,6 +162,7 @@ if (length(O.z)==1);
     end
     
     %% RELOCATION GRIDS
+    try
     if O.debug>2
         cmap=cmap_linear([1 1 1; 1 0 0; 0 0 0]);
         cax=[-1 max(max(reals(:)))];
@@ -252,7 +253,7 @@ if (length(O.z)==1);
             print('-dpng',sprintf('%s_soft_data_grid.png',O.ti_filename));
         end
     end
-    
+    end
     
 end
 

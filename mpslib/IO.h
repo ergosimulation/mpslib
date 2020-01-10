@@ -39,10 +39,31 @@ namespace MPS {
 			"i", "I", "j", "J", "k", "K", "l", "L", "m", "M", "n", "N", "p", "P", "q", "Q",
 			"r", "R", "s", "S", "t", "T", "u", "U", "v", "v", "w", "W", ",", ";", ".", ":",
 			"-", "_", "+", "/", "*", "<", ">", "!", "#", "&", "(", ")", "=", "?"};
+
 		/**
 		* @brief An std vector of the static array
 		*/
 		static const std::vector<std::string> onscreenChars(chars, std::end(chars));
+
+		/**
+		* @brief NaN value used when writing GRD3 file to GS3D
+		*/
+		static const double gs3Dgrd3BlankFloat = 1.701410009187828E+38;
+
+		/**
+		* @brief NaN value used when writing GRD3 file to GS3D
+		*/
+		static const double gs3Dgrd3BlankAscii = -9999;
+
+		/**
+		* @brief NaN value used when writing GRD3 file to GS3D
+		*/
+		static const double gs3Dgrd3BlankByte = 255;
+
+		/**
+		* @brief NaN value used when writing GRD3 file to GS3D
+		*/
+		static const double gs3Dgrd3BlankWord = 65535;
 
 		/**
 		* @brief check if file exists
@@ -207,6 +228,15 @@ namespace MPS {
 			const int& sgDimX, const int& sgDimY, const int& sgDimZ,
 			const float& minWorldX=0, const float& minWorldY=0, const float& minWorldZ=0,
 			const float& stepX=1, const float& stepY=1, const float& stepZ=1);
+		/**
+		* @brief Write 1D vector to file
+		*
+		* @param fileName destination's file name
+		* @param d, ad 1D vector
+		*/
+		void writeToASCIIFile(const std::string& fileName, const std::vector<float>& d);
+		
+		
 		/**
 		* @brief Write simulation 3D grid result into a GS3D grd3 file
 		*

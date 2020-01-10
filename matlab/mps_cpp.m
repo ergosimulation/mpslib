@@ -147,10 +147,10 @@ end
 
 % WRITE SOFT DATA IF SET AS VARIABLE
 if isfield(O,'d_soft');
-    if ~isfield(O,'d_soft');
-        O.soft_data_fnam='d_soft.dat';
+    if ~isfield(O,'soft_data_filename');
+        O.soft_data_filename='d_soft.dat';
     end
-    write_eas(O.soft_data_fnam,O.d_soft);
+    write_eas(O.soft_data_filename,O.d_soft);
 end
 
 %%
@@ -251,6 +251,68 @@ for i=1:O.n_real
   end
   
 end
+
+%% Read conditional estimated grid
+if isfield(O,'doEstimation');
+    if O.doEstimation==1;        
+        nc=1;
+        fname=sprintf('%s%s%s%s_cg_%d.gslib',O.output_folder,filesep,f,e,nc-1);            
+        while (exist(fname,'file'))
+            %disp(fname)
+            try
+                D=read_eas_matrix(fname);                
+            catch
+                disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
+            end            
+            if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
+                % 1D
+                O.cg=D;
+            elseif (O.simulation_grid_size(3)==1)
+                % 2D
+                O.cg(:,:,nc)=D;
+            else
+                % 3D
+                O.cg(:,:,:,nc)=D;
+            end
+            nc=nc+1;
+            fname=sprintf('%s%s%s%s_cg_%d.gslib',O.output_folder,filesep,f,e,nc-1);
+            
+        end
+    end
+end
+
+%% READ ENTROPY
+if (O.doEntropy>0)
+    
+    try
+        fname=sprintf('%s%s%s%s_selfInf.dat',O.output_folder,filesep,f,e);
+        O.SI=load(fname);
+    catch
+        disp(sprintf('Could not load %s',fname));
+    end       
+    
+    for i=1:O.n_real                 
+         fname=sprintf('%s%s%s%s_ent_%d.gslib',O.output_folder,filesep,f,e,i-1);
+         try
+             D=read_eas_matrix(fname);
+             O.selfE(i)=nansum(D(:));
+         catch
+             disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
+         end
+         
+         if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
+             % 1D
+             O.E(i,:)=D;
+         elseif (O.simulation_grid_size(3)==1)
+             % 2D
+             O.E(:,:,i)=D;
+         else
+             % 3D
+             O.E(:,:,:,i)=D;
+         end
+     end
+end
+
 
 %% READ TEMPORARY GRID VALUES
 if (O.debug>1)

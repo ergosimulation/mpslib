@@ -6,11 +6,9 @@ import os
 os.environ["DISPLAY"] = '127.0.0.1:0'
 
 import mpslib as mps
+
 import matplotlib.pyplot as plt
 plt.set_cmap('hot')
-
-
-
 #%% MPS_SNESIM_TREE
 
 O1 = mps.mpslib(method='mps_snesim_tree',
@@ -24,6 +22,7 @@ TI, TI_fname = mps.trainingimages.bangladesh()
 #O1.ti=TI
 O1.par['ti_fnam']=TI_fname
 
+O1.delete_local_files() # Deletes soft and hard data files
 O1.run()
 
 #%%
@@ -54,5 +53,9 @@ O2.run();
 
 plt.figure(3)
 O2.plot_reals()
-plt.savefig("mpslib_exmaple_1_" + O2.method+'.png', dpi=600)
+plt.savefig("mpslib_example_1_" + O2.method+'.png', dpi=600)
 plt.show();
+
+#%%
+O2.plot_reals_3d()
+

@@ -29,7 +29,9 @@ class mpslib:
                  n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
                  max_search_radius=10000000, max_search_radius_soft=10000000,                  
                  remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
-                 colocate_dimension=0):
+                 colocate_dimension=0,
+                 do_estimation=0, 
+                 do_entropy=0):
         '''Initialize variables in Class'''
 
         mpslib_py_path, fn = os.path.split(__file__)
@@ -66,6 +68,8 @@ class mpslib:
         self.par['soft_data_fnam'] = soft_data_fnam.lower()  # change string to lower case
         self.par['n_threads'] = n_threads
         self.par['debug_level'] = debug_level
+        self.par['do_estimation'] = do_estimation
+        self.par['do_entropy'] = do_entropy
 
 
         # if the method is GENSIM, add package specific parameters
@@ -215,6 +219,8 @@ class mpslib:
         file.write(
             'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
         file.write('Mask grid filename (same size as the simulation grid)# %s\n' % self.par['mask_fnam'])
+        file.write('do Entropy # %s\n' % self.par['do_entropy'])
+        file.write('do Estimation# %s\n' % self.par['do_estimation'])
 
         file.close()
 
@@ -274,8 +280,9 @@ class mpslib:
         file.write(
             'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
         file.write('Mask grid filename (same size as the simulation grid)# %s\n' % self.par['mask_fnam'])
+        file.write('do Entropy # %s\n' % self.par['do_entropy'])
+        file.write('do Estimation# %s\n' % self.par['do_estimation'])
         file.close()
-
 
     def run_parallel(self):
         '''RUN simulation in parallel
@@ -541,6 +548,22 @@ class mpslib:
             except:
                 print('%s:Could not read gslib output file: %s' % (thread,filename))
                 success = False
+
+        # read entropy information
+        if (self.par['do_entropy']):
+            filename = '%s_selfInf.dat' % (self.par['ti_fnam'])
+            time.sleep(.1) # SOMETIMES NEEEDED WHEN FILES IS NOT YET ACCESSIBLE
+            filename_with_path = os.path.join(self.par['out_folder'], filename)
+            try:
+                SI = np.loadtxt(filename_with_path)
+                self.SI=SI
+                self.H=np.mean(self.SI)
+                self.Hstd=np.std(self.SI)
+                success = True
+            except:
+                print('%s:Could not read selfinformation from: %s' % (thread,filename))
+                success = False
+
 
         # combine gslib output files
         if (self.gslib_combine):

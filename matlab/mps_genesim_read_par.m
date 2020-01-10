@@ -43,7 +43,7 @@ O.colocated_dimension=dd(1);
 % Maximum Search Radius
 l=line_strip_char(fgetl(fid),'#');
 dd=str2num(l);;
-O.max_search_radius=dd(1);
+O.max_search_radius=dd;
 
 % SIMULATION GRID SIZE
 for i=1:3;
@@ -98,7 +98,7 @@ l=line_strip_char(fgetl(fid),'#');
 O.soft_data_categories=strip_space(l);
 
 l=line_strip_char(fgetl(fid),'#');
-O.soft_data_fnam=strip_space(l);
+O.soft_data_filename=strip_space(l);
 
 
 
@@ -113,6 +113,19 @@ try
     l=line_strip_char(fgetl(fid),'#');
     O.mask_filename=strip_space(l);
 end
+
+try
+    l=line_strip_char(fgetl(fid),'#');
+    O.doEntropy=str2num(l);
+end
+
+try
+    l=line_strip_char(fgetl(fid),'#');
+    O.doEstimation=str2num(l);
+end
+
+
+
 
 %%
 % set x,y, and z parameters

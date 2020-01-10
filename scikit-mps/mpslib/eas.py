@@ -32,7 +32,7 @@ import numpy as np
 import os
 debug_level=0
 
-def read(filename='eas.dat'):
+def read(filename='eas.dat', nanval=-997799):
     '''
     eas = eas.read(filename): Reads an EAS/GSLIB formatted file and outputs a dictionary
         eas['D']: The data (2D numpy array)
@@ -84,6 +84,12 @@ def read(filename='eas.dat'):
     except:
         print("eas: COULD NOT READ DATA FROM %s" % filename)
         
+
+    # add NaN values
+    try:
+        eas['D'][eas['D']==nanval]=np.nan        
+    except:
+        print("eas: FAILED TO HANDLE NaN VALUES (%d(" % nanval)
     
     # If dimensions are given in title, then convert to 2D/3D array
     if "dim" in eas:

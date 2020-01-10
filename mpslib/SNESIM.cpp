@@ -188,11 +188,35 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	// DEBUG MODE
 	_readLineConfiguration(file, ss, data, s, str);
 	_debugMode = stoi(data[1]);
+	//std::cout << "readpar: _debugMode=" << _debugMode << std::endl;
+	
 	// Mask data grid
 	if (_readLineConfiguration(file, ss, data, s, str)) {
 		data[1].erase(std::remove_if(data[1].begin(), data[1].end(), [](char x) {return std::isspace(x); }), data[1].end()); //Removing spaces
 		_maskDataFileName = data[1];
 	}
+
+	// doEntropy
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		_doEntropy = stoi(data[1]);
+	} else {
+		_doEntropy = 0;
+	}
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
+	}
+
+	// doEstimate
+	if (_readLineConfiguration(file, ss, data, s, str)) {
+		_doEstimation = stoi(data[1]);
+	} else {
+		_doEstimation = 0;
+	}
+	if (_debugMode>-1) {
+		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
+	}
+
+
 }
 
 /**
@@ -383,6 +407,45 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 			probabilitiesCombined.insert(std::pair<float, float>(cumulateValue, iter->first));
 		}
 	}
+
+
+	// probabilitiesCombined represents the conditional distribution
+	if (_doEstimation == true ) {
+		// Perhaps only store the conditional when the number of conditional points is larger than 0
+		// In this case a NaN value would be stored in _cg (default) instead of the 1D marginal of the TI
+
+		int ncat=0;
+		float cpdf_val_old = 0;
+		float cpdf_val;
+		for(std::map<float,float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {				
+			cpdf_val = iter->first;
+			_cg[z][y][x][ncat] = 	cpdf_val - cpdf_val_old;
+			//std::cout << "iter->first=" << iter->first << std::endl;
+			//std::cout << "iter->second=" << iter->second << std::endl;
+			//std::cout << "_cg=" << _cg[z][y][x][ncat] << std::endl;
+			//std::cout << ncat << "> cond_pdf=" << _cg[z][y][x][ncat] << " " << iter->second << std::endl;				
+			ncat=ncat+1;
+			cpdf_val_old=cpdf_val;
+		}
+	} 
+
+	// Compute entropy from probabilitiesCombined, wich is a 'cumulative PDF' !
+	if (_doEntropy == true) {
+		int NCat = _softDataCategories.size();
+		float P;
+		float E;
+		float Esum=0;
+		float cpdf_val_old = 0;
+		float cpdf_val;
+		for(std::map<float,float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {	
+			cpdf_val = iter->first;
+			P = cpdf_val - cpdf_val_old; // pdf from cpdf value 
+			E = -1*P*(std::log(P)/std::log(NCat));
+			Esum = Esum + E;
+			cpdf_val_old=cpdf_val;
+		}
+		_ent[z][y][x]=Esum;
+	} 
 
 	//Getting the probability distribution value
 	//Random possible value between 0 and 1 then scale into the maximum probability

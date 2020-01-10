@@ -14,7 +14,7 @@ scikit-mps is a Python module that interfaces to MPSlib. It is located in ``mpsl
 ``mps.trainingimages`` provides easy access to 2D and 3D training images.
 ``mps.plot`` provides 2D/3D plotting utilities.
 
-It makes use of matplotlib (for 2D graphics) and vista [http://docs.pyvista.org/] (for 3D graphics).
+It makes use of matplotlib (for 2D graphics) and pyvista [http://docs.pyvista.org/] (for 3D graphics).
 
 
 A simple example of using scikit-mps to generate 4 realizations using ``mps_snesim_tree`` is 
@@ -238,14 +238,14 @@ To load and plot the 3D fluvsim  traning image, use e.g
 ****************************
 mps.plot: Plotting utilities
 ****************************
-''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `vista <https://github.com/pyvista/vista/>`_).
+''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `pyvista <https://docs.pyvista.org/>`_).
 
 
                 
 plot_reals_3d()
 -------------------
 
-To plot several realizations using vista from a mpslib object, use
+To plot several realizations using pyvista from a mpslib object, use
 ::
    import mpslib as mps
    O = mps.mpslib(n_real=4)
@@ -253,7 +253,7 @@ To plot several realizations using vista from a mpslib object, use
    O.plot.plot_reals_3d(O)
 
 
-To plot a 3D numpy array using vista use
+To plot a 3D numpy array using pyvista use
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
