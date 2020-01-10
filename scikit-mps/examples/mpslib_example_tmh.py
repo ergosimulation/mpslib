@@ -1,6 +1,7 @@
 # mpslib_example_tmh
 import matplotlib.pyplot as plt
 import mpslib as mps
+import numpy as np
 
 #%% MPS_SNESIM_TREE
 O1=mps.mpslib(method='mps_snesim_tree')
@@ -38,10 +39,15 @@ O1.plot_reals()
 O1.plot_etype()
 plt.savefig("ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
 
+#%%
+
 plt.figure(3)
 plt.subplot(3, 3, 1)
-plt.imshow(TI, interpolation='none')
+plt.imshow(np.squeeze(TI), interpolation='none')
 plt.title(O1.par['ti_fnam'])
 
 
 plt.show()
+
+
+#%%

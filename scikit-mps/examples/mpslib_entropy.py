@@ -2,6 +2,7 @@
 mpslib_entropy:
 Compute selfinformation for each realizations and then the Entropy
 '''
+#%%
 import mpslib as mps
 import matplotlib.pyplot as plt
 import numpy as np

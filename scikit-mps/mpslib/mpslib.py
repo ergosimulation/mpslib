@@ -149,6 +149,7 @@ class mpslib:
         self.par.setdefault('distance_pow', 0)
         self.par.setdefault('max_search_radius', 1000000)
         self.par.setdefault('max_search_radius_soft', 1000000)
+        self.par.setdefault('colocate_dimension',0)
 
     # % Check parameter file setting using  SNESIM
     def parfile_check_snesim(self):
