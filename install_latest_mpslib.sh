@@ -1,6 +1,6 @@
 # Install conda environment
 #conda remove --name mpslib_test --all
-#conda create -y -n mpslib_test python=3.7 numpy matplotlib
+#conda create -y -n mpslib_test python=3.7 numpy matplotlib ipython
 #conda activate mpslib_test 
 #conda install -y -c conda-forge pyvista
 
@@ -12,4 +12,4 @@ make
 
 # install scikit-mps
 cd scikit-mps
-pip install -e .
+pip install .
