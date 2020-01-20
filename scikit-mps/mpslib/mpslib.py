@@ -597,6 +597,14 @@ class mpslib:
             except:
                 print('%s:Could read combine gslib output files - perhaps empty output?' % (thread) )
 
+        # Load conditional Entropy
+        if self.par['do_entropy']==1:
+            self.load_conditional_entropy()
+
+        # Load local estimation
+        if self.par['do_estimation']==1:
+            self.load_estimation()
+
         # remove gslib output files
         if (self.remove_gslib_after_simulation):
             self.delete_gslib()
@@ -631,7 +639,7 @@ class mpslib:
     def load_sim(self):
         # Check if simulation results are already imported
         if self.sim is not None:
-            s = 'Simulation reaults already imported'
+            s = 'Simulation results already imported'
             raise Exception(s)
 
         self.sim = []
@@ -646,6 +654,42 @@ class mpslib:
             if (self.verbose_level > 0):
                 print('mpslib: Reading: %s' % (filename))
             self.sim.append(OUT['Dmat'])
+
+    # Loads entropy
+    def load_conditional_entropy(self):
+        # Check if entropy results are already imported
+        if hasattr(self, 'Hcond'):
+            print('Entropy results already imported - overwriting')
+            
+        if (self.par['do_entropy']==1):
+            filename = '%s_ent_0.gslib' % (self.par['ti_fnam'])
+            if os.path.isfile(filename) is False:
+                s = '{} file not found'.format(filename)
+            else:
+                print('loading entropy from %s' % (filename) )
+                OUT = eas.read(filename)
+                self.Hcond = OUT['Dmat']
+        else:                        
+            print('Cannot load entropy results, as entropy is not performed')
+            
+            
+    def load_estimation(self):
+        #if hasattr(self, 'est'):
+        #    s = 'Estimationresults already imported'
+        #    raise Exception(s)
+        if (self.par['do_estimation']==1):
+            NC=len(self.par['soft_data_categories'])
+            self.est=[]
+            for i in range(NC):
+                filename = '%s_cg_%d.gslib' % (self.par['ti_fnam'],i)
+                if os.path.isfile(filename) is False:
+                    print('%s: file note founr' % (filename))
+                else:
+                    print('loading entropy from %s' % (filename) )
+                    OUT = eas.read(filename)
+                    self.est.append(OUT['Dmat'])
+        else:                        
+            print('Cannot load estimation results, as estimation is not performed')
 
     # delete gslib files
     def delete_gslib(self, remove_all_gslib=0):
@@ -830,6 +874,24 @@ class mpslib:
         plt.show(block=False)
 
     # plot etypes (only in 2D so far)
+    
+    def etype(self):
+        '''
+        Compute Etype
+        '''
+        import numpy as np
+        from scipy import stats
+        from scipy import squeeze
+       
+        # compute Etype
+        emean =squeeze(np.mean(self.sim, axis=0))
+        estd = squeeze(np.std(self.sim, axis=0))
+        emode,dummy = squeeze(stats.mode(self.sim, axis=0))
+        emode = squeeze(emode)
+        return emean, estd, emode
+        
+        
+    
     def plot_etype(self, title='', hardcopy=0, hardcopy_filename='etype'):
         '''
         Plot Etype mean and variance from simulation
@@ -841,7 +903,7 @@ class mpslib:
         from scipy import stats
         from scipy import squeeze
    
-     # read soft data ('check if it exist')
+        # read soft data ('check if it exist')
         use_soft = 0
         if (hasattr(self, 'd_soft')):
             use_soft = 1
@@ -862,6 +924,9 @@ class mpslib:
         # compute Etype
         emean = np.transpose(squeeze(np.mean(self.sim, axis=0)))
         estd = np.transpose(squeeze(np.std(self.sim, axis=0)))
+        
+        emean, estd, emode = self.etype()
+        
         #emode = squeeze(stats.mode(self.sim, axis=0))
         #emode = squeeze(emode[0][0])
 
@@ -877,7 +942,7 @@ class mpslib:
         plt.subplot(1, 2, 1)
         dx=self.par['grid_cell_size'][1]
         dy=self.par['grid_cell_size'][1]
-        im = plt.imshow(emean, 
+        im = plt.imshow(emean.T, 
                         extent=[self.x[0]-dx/2, self.x[-1]+dx/2, self.y[-1]-dy/2, self.y[0]+dy/2], 
                         zorder=-1,
                         vmin=vmin,
@@ -894,7 +959,7 @@ class mpslib:
         plt.title('Etype Mean')
 
         plt.subplot(1, 2, 2)
-        im = plt.imshow(estd, 
+        im = plt.imshow(estd.T, 
                         extent=[self.x[0]-dx/2, self.x[-1]+dx/2, self.y[-1]-dy/2, self.y[0]+dy/2],
                         cmap='hot', vmin=0);
         plt.colorbar(im, fraction=0.046, pad=0.04)

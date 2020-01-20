@@ -1,0 +1,31 @@
+Number of realizations # 10
+Random Seed (0 `random` seed) # 1
+Number of mulitple grids (start from 0) # 1
+Min Node count (0 if not set any limit)# 0
+Maximum number condtitional data (0: all) # -1
+Search template size X # 8
+Search template size Y # 8
+Search template size Z # 1
+Simulation grid size X # 20
+Simulation grid size Y # 30
+Simulation grid size Z # 1
+Simulation grid world/origin X # 0
+Simulation grid world/origin Y # 0
+Simulation grid world/origin Z # 0
+Simulation grid grid cell size X # 1
+Simulation grid grid cell size Y # 1
+Simulation grid grid cell size Z # 1
+Training image file (spaces not allowed) # ti/ti_strebelle_125_125_1.dat
+Output folder (spaces in name not allowed) # .
+Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential, EF) # 1 4
+Shuffle Training Image path (1 : random, 0 : sequential) # 1
+HardData filename  (same size as the simulation grid)# d_hard.dat
+HardData seach radius (world units) # 1
+Softdata categories (separated by ;) # 0;1
+Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft.dat
+Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # -1
+Mask grid # mask.dat
+doEntropy # 1
+doEstimation # 0
+
