@@ -1,4 +1,5 @@
 % figure_1_data
+TI = read_eas_matrix('ti.dat');
 m_ref = read_eas_matrix('m_ref.dat');
 
 figure(1);clf,

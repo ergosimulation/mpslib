@@ -278,6 +278,21 @@ if isfield(O,'doEstimation');
             fname=sprintf('%s%s%s%s_cg_%d.gslib',O.output_folder,filesep,f,e,nc-1);
             
         end
+        
+        % replace NaN with 0,1
+        % only works in 2D
+        if isfield(O,'d_hard')&&(O.simulation_grid_size(3)==1);
+            s=size(O.cg);nc=s(end);
+            vals=[0:1:nc-1];
+            for i=1:size(O.d_hard,1);
+                P=zeros(1,nc);
+                P(O.d_hard(i,4)==vals)=1;
+                for ic=1:nc
+                    O.cg(O.d_hard(i,2),O.d_hard(i,1),ic)=P(ic);
+                end
+            end
+        end
+        
     end
 end
 
