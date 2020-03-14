@@ -1,4 +1,14 @@
-clear all;
+%
+% Compare ENESIM style simulation and estimation
+% 
+% 1. nreal VERY large (n_real should not be an issue)
+%    ENESIM
+%
+% 2. ENESIM sim STATS as a function of N_REALS!!! How many to obtain
+% credible stats?
+%
+%
+clear all;close all
 x=1:1:30;nx=length(x);
 y=1:1:30;ny=length(y);
 
@@ -44,6 +54,7 @@ end
 O.d_hard=d_hard;
 
 cond_arr=[0,1,2,4,8,16,32,64];
+%cond_arr=[0,1,2,4];
 
 for icond = 1:length(cond_arr);
     disp(sprintf('n_cond=%d',cond_arr(icond)))
@@ -65,13 +76,14 @@ for icond = 1:length(cond_arr);
     P_channel_est{icond} = O_est{icond}.cg(:,:,2);
     H_channel_est{icond} = O_est{icond}.H;
     
+    %%
     figure(1);
     subplot(2,4,icond)
     imagesc(x,y,P_channel_est{icond});axis image
     caxis([0 1]);colormap(gca,hot)
     title(sprintf('N_c = %d',O_est{icond}.n_cond));
     drawnow;
-    print_mul(sprintf('Pchannel_est_ic%d',idata))
+    print_mul(sprintf('Pchannel_est_id%d',idata))
     
     figure(2);
     subplot(2,4,icond)
@@ -79,19 +91,19 @@ for icond = 1:length(cond_arr);
     caxis([0 1]);colormap(gca,hot)
     title(sprintf('N_c = %d',O_est{icond}.n_cond));
     drawnow;
-    print_mul(sprintf('H_est_ic%d',idata))
+    print_mul(sprintf('H_est_id%d',idata))
     
 end
-return
 
+save(sprintf('EST_nreal%d_ncarr%d',O.n_real,length(cond_arr)))
 
 %% SIM
 
 O.doEstimation=0
-O.n_real=20;
+O.n_real=1000;
 clear reals
 
-for icond = 7;1:length(cond_arr);
+for icond = 1:length(cond_arr);
     disp(sprintf('n_cond=%d',cond_arr(icond)))
     O.n_cond=cond_arr(icond);
     
@@ -118,7 +130,7 @@ for icond = 7;1:length(cond_arr);
     caxis([0 1]);colormap(gca,hot)
     title(sprintf('N_c = %d',O_sim{icond}.n_cond));
     drawnow;
-    print_mul(sprintf('Pchannel_sim_ic%d',idata))
+    print_mul(sprintf('Pchannel_sim_id%d',idata))
     
     figure(4);
     subplot(2,4,icond)
@@ -126,7 +138,57 @@ for icond = 7;1:length(cond_arr);
     caxis([0 1]);colormap(gca,hot)
     title(sprintf('N_c = %d',O_sim{icond}.n_cond));
     drawnow;
-    print_mul(sprintf('H_sim_ic%d',idata))
+    print_mul(sprintf('H_sim_id%d',idata))
     
     
 end
+
+save(sprintf('SIM_nreal%d_ncarr%d',O.n_real,length(cond_arr)))
+
+save SIM
+
+%% PLOT
+if ~exist('H_channel_sim');
+    load SIM_nreal200_ncarr4
+end
+
+for icond = 1:length(cond_arr)
+    
+    
+    figure(1);
+    subplot(2,4,icond)
+    imagesc(x,y,P_channel_est{icond});axis image
+    caxis([0 1]);colormap(gca,hot)
+    title(sprintf('N_c = %d',O_est{icond}.n_cond));
+    drawnow;
+    
+    figure(2);
+    subplot(2,4,icond)
+    imagesc(x,y,H_channel_est{icond});axis image
+    caxis([0 1]);colormap(gca,hot)
+    title(sprintf('N_c = %d',O_est{icond}.n_cond));
+    drawnow;
+ 
+    figure(3);
+    subplot(2,4,icond)
+    imagesc(x,y,P_channel_sim{icond});axis image
+    caxis([0 1]);colormap(gca,hot)
+    title(sprintf('N_c = %d',O_sim{icond}.n_cond));
+    drawnow;
+    
+    figure(4);
+    subplot(2,4,icond)
+    imagesc(x,y,H_channel_sim{icond});axis image
+    caxis([0 1]);colormap(gca,hot)
+    title(sprintf('N_c = %d',O_sim{icond}.n_cond));
+    drawnow;
+    
+
+
+end
+
+figure(1); print_mul(sprintf('Pchannel_est_id%d',idata))
+figure(2); print_mul(sprintf('H_est_id%d',idata))
+figure(3); print_mul(sprintf('Pchannel_sim_id%d',idata))
+figure(4); print_mul(sprintf('H_sim_id%d',idata))
+   
