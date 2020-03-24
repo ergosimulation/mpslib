@@ -20,7 +20,7 @@ a training image:
 
 The algorithms
 ==============
-These simulation methods are implemented in two types of algorithms that differ in the way information is inferred from the training image. ENESIM type algorithms samples directly from the training image during simulation, while SNESIM type algorithms scan the training image prior to simulation, and stores the statistics in memory. 
+The above list of algorithms are implemented in two types of algorithms that differ in the way information is inferred from the training image. ENESIM type algorithms samples directly from the training image during simulation, while SNESIM type algorithms scan the training image prior to simulation, and stores the statistics in memory. 
 
 - GENESIM:: :doc:`mps_genesim <Algorithms/chapGenesim/mps_genesim>`
 
