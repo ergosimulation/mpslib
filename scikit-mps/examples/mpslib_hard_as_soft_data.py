@@ -60,8 +60,10 @@ if __name__ == '__main__':
     
     #%%
     O.remove_gslib_after_simulation=1;
-    O.par['n_cond']=36
-    O.par['n_real']=400
+    #O.par['n_cond']=36
+    #O.par['n_real']=400
+    O.par['n_cond']=16
+    O.par['n_real']=40
     O.par['rseed']=1
     O.par['simulation_grid_size'][0]=30
     O.par['simulation_grid_size'][1]=30
