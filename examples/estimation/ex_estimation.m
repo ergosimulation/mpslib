@@ -34,7 +34,9 @@ TI=channels(4,1);
 SIM = ones(ny,nx).*NaN;
 
 
-O.method='mps_genesim'; % MPS algorithm to run
+O.method='mps_snesim_tree'; % MPS algorithm to run
+O.n_multiple_grids=1;
+O.template_size=[10,10,1]';
 O.origin=[1 1 0];
 O.n_cond = n_cond; % number of conditional points
 O.n_max_cpdf_count=10000; % Set below \inf to improve CPU
@@ -100,7 +102,7 @@ save(sprintf('EST_nreal%d_ncarr%d',O.n_real,length(cond_arr)))
 %% SIM
 
 O.doEstimation=0
-O.n_real=1000;
+O.n_real=100;
 clear reals
 
 for icond = 1:length(cond_arr);

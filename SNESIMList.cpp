@@ -157,11 +157,13 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		int offset = int(std::pow(2, level));			
 		int sgX, sgY, sgZ;
 		int deltaX, deltaY, deltaZ;
+		float tmp;
 		foundValue = std::numeric_limits<float>::quiet_NaN();
 		int maxConditionalPoints = -1, conditionPointsUsedCnt = 0;
 		//Initialize a value
 		std::vector<float> nodeTemplate;
 		//Building a template based on the neighbor points
+		int n_cond_found = 0;
 		for (unsigned int i=1; i<_templateFaces.size(); i++) { //For all the set of templates available except the first one at the template center 	
 			//For each template faces
 			deltaX = offset * _templateFaces[i].getX();
@@ -170,16 +172,18 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 			sgX = sgIdxX + deltaX;
 			sgY = sgIdxY + deltaY;
 			sgZ = sgIdxZ + deltaZ;
+
 			if (!(sgX < 0 || sgX >= _sgDimX) && !(sgY < 0 || sgY >= _sgDimY) && !(sgZ < 0 || sgZ >= _sgDimZ)) { 
 				//not overflow
-				if (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX])) {
+				if ((_maxCondData > n_cond_found  ) && (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX]))) {
 					nodeTemplate.push_back(_sg[sgZ][sgY][sgX]);
+					n_cond_found++;
 				} else { //NaN value
 					nodeTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
 				}
 			} else nodeTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
 		}
-
+		
 		//Adding the first value to complete the template
 		std::vector<float> dictionaryTemplate;
 		bool perfectMatched = false;
@@ -238,7 +242,7 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 
 		//Get the value from cpdf
 		if (_doEstimation == true) {
-			_cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
+			tmp = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
 		} else {
 			foundValue = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
 		}

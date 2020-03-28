@@ -38,7 +38,6 @@ MPS::SNESIMTree::~SNESIMTree(void) {
 
 }
 
-
 /**
 * @brief Initialize the simulation from a configuration file
 * @param configurationFile configuration file name
