@@ -32,7 +32,7 @@ if __name__ == '__main__':
     O1.par['n_multiple_grids']=0;
     O1.par['n_cond']=25
     O1.par['n_cond_soft']=3
-    O1.par['n_real']=5
+    O1.par['n_real']=500
     O1.par['debug_level']=-1
     O1.par['simulation_grid_size'][0]=38
     O1.par['simulation_grid_size'][1]=33
@@ -76,9 +76,9 @@ if __name__ == '__main__':
     
     
     #O1.remove_gslib_after_simulation=0;
-    O1.par['n_threads']=4;
-    O1.run()
-    #O1.run_parallel()
+    O1.par['n_threads']=64;
+    #O1.run()
+    O1.run_parallel()
     
     s=np.std(O1.sim, axis=0)
     m=np.mean(O1.sim, axis=0)
