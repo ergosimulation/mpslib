@@ -142,7 +142,7 @@ void MPS::SNESIMList::startSimulation(void) {
 }
 
 /**
-* @brief MPS dsim simulation algorithm main function
+* @brief MPS simulation algorithm main function
 * @param sgIdxX index X of a node inside the simulation grind
 * @param sgIdxY index Y of a node inside the simulation grind
 * @param sgIdxZ index Z of a node inside the simulation grind
@@ -160,9 +160,10 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		float tmp;
 		foundValue = std::numeric_limits<float>::quiet_NaN();
 		int maxConditionalPoints = -1, conditionPointsUsedCnt = 0;
-		//Initialize a value
+
+		// 1. Find the conditioning event (nodeTemplate) in the neighborhood/template 
 		std::vector<float> nodeTemplate;
-		//Building a template based on the neighbor points
+		std::vector<int> nodeNonNan;
 		int n_cond_found = 0;
 		for (unsigned int i=1; i<_templateFaces.size(); i++) { //For all the set of templates available except the first one at the template center 	
 			//For each template faces
@@ -177,13 +178,14 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 				//not overflow
 				if ((_maxCondData > n_cond_found  ) && (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX]))) {
 					nodeTemplate.push_back(_sg[sgZ][sgY][sgX]);
+					nodeNonNan.push_back(i);
 					n_cond_found++;
 				} else { //NaN value
 					nodeTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
 				}
 			} else nodeTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
 		}
-		
+			
 		//Adding the first value to complete the template
 		std::vector<float> dictionaryTemplate;
 		bool perfectMatched = false;
@@ -192,14 +194,23 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		//Searching the template inside the dictionary
 		std::map<float, int> conditionalPoints;
 		//std::vector<std::pair<float, int>> conditionalPoints;
+
+		// 2 Loop over the list (_patternsDictionary[level]) to find entries of the conditional event (nodeTemplate)
+		//std::cout << "DICT SIZE"  <<_patternsDictionary[level].size() << std::endl;
 		for(std::map<std::vector<float>,int>::iterator iter = _patternsDictionary[level].begin(); iter != _patternsDictionary[level].end(); ++iter) {
 			dictionaryTemplate = iter->first;
 			//Compare the fullTemplate with the one in dictionary
 			//Could be done parallele here
 			sumCounters = iter->second;
-			conditionPointsUsedCnt = 0;
+			conditionPointsUsedCnt = 0; 
 			//maxLevel = 0;
-			for(std::string::size_type i = 0; i < nodeTemplate.size(); ++i) {
+
+			// Next line: Old implementation, checks all entries in nodeTemplate
+			//for(std::string::size_type i = 0; i < nodeTemplate.size(); ++i) {
+			// Next line: New implementation, checks only nonNan entries in nodeTemplate 
+			int i;
+			for(std::vector <int> :: iterator it = nodeNonNan.begin(); it != nodeNonNan.end(); ++it){
+				i=*it-1;
 				if ((dictionaryTemplate[i + 1] == nodeTemplate[i]) && (!MPS::utility::is_nan(nodeTemplate[i]))) { //Is a matched
 					currentLevel = i;
 					//Template found so go to higher level node
@@ -214,8 +225,8 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 					//}
 					conditionPointsUsedCnt ++;
 				}
+				
 			}
-
 			//Only keep the highest conditional points used
 			if (conditionPointsUsedCnt > maxConditionalPoints && currentLevel == maxLevel) {
 				//maxLevel = currentLevel;
@@ -224,6 +235,7 @@ float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 				//Adding points to the list
 				conditionalPoints.insert ( std::pair<float, int>(dictionaryTemplate[0], sumCounters) );
 				maxConditionalPoints = conditionPointsUsedCnt;
+				//std::cout << "    --> conditionPointsUsedCnt" << conditionPointsUsedCnt << std::endl;
 			} else if(conditionPointsUsedCnt == maxConditionalPoints) {
 				auto itr = conditionalPoints.find(dictionaryTemplate[0]);
 				if (itr != conditionalPoints.end()) { //found 
