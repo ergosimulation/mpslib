@@ -226,6 +226,9 @@ if (O.debug>0),
 end
 
 %%
+O.x=[0:1:(O.simulation_grid_size(1)-1)].*O.grid_cell_size(1)+O.origin(1);
+O.y=[0:1:(O.simulation_grid_size(2)-1)].*O.grid_cell_size(2)+O.origin(2);
+O.z=[0:1:(O.simulation_grid_size(3)-1)].*O.grid_cell_size(3)+O.origin(3);
 
 %% READ DATA
 [p,f,e]=fileparts(O.ti_filename);
@@ -263,7 +266,8 @@ if isfield(O,'doEstimation');
                 D=read_eas_matrix(fname);                
             catch
                 disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
-            end            
+            end     
+            try
             if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
                 % 1D
                 O.cg=D;
@@ -273,6 +277,9 @@ if isfield(O,'doEstimation');
             else
                 % 3D
                 O.cg(:,:,:,nc)=D;
+            end
+            catch
+                disp(sprintf('%s: COULD NOT HANDLE %s',mfilename,fname))
             end
             nc=nc+1;
             fname=sprintf('%s%s%s%s_cg_%d.gslib',O.output_folder,filesep,f,e,nc-1);
@@ -287,8 +294,18 @@ if isfield(O,'doEstimation');
             for i=1:size(O.d_hard,1);
                 P=zeros(1,nc);
                 P(O.d_hard(i,4)==vals)=1;
+                if O.grid_cell_size(1)~=1
+                    ix1=ceil((O.d_hard(i,1)-O.origin(1))/O.grid_cell_size(1));
+                else
+                    ix1=O.d_hard(i,1);
+                end
+                if O.grid_cell_size(2)~=1
+                    iy1=ceil((O.d_hard(i,2)-O.origin(2))/O.grid_cell_size(2));
+                else
+                    iy1=O.d_hard(i,1);
+                end
                 for ic=1:nc
-                    O.cg(O.d_hard(i,2),O.d_hard(i,1),ic)=P(ic);
+                    O.cg(iy1,ix1,ic)=P(ic);
                 end
             end
         end
@@ -437,9 +454,7 @@ if (O.debug>1)
 end
 
 
-O.x=[0:1:(O.simulation_grid_size(1)-1)].*O.grid_cell_size(1)+O.origin(1);
-O.y=[0:1:(O.simulation_grid_size(2)-1)].*O.grid_cell_size(2)+O.origin(2);
-O.z=[0:1:(O.simulation_grid_size(3)-1)].*O.grid_cell_size(3)+O.origin(3);
+
 
 %%
 if ~isfield(O,'clean'), O.clean=1; end

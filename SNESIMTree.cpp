@@ -178,26 +178,26 @@ void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
 	}
 	if (_debugMode > -1) {
 		std::cout << "Finish building search tree" << std::endl;
+		std::cout << "Total nodes: " << nodeCnt << std::endl;
+		//std::cout << "Dictionary info: " << std::endl;
+		//td::cout << "Level: " << level << std::endl;
 	}
-	//std::cout << "Total nodes: " << nodeCnt << std::endl;
 	//Check out dictionary
-	//std::cout << "Dictionary info: " << std::endl;
-	//std::cout << "Level: " << level << std::endl;
-	////Showing the search tree for debugging
-	//std::list<std::vector<TreeNode>*> nodesToCheck;
-	//nodesToCheck.push_back(&_searchTree[level]); //Put the root node in the list node to be checked
-	////Looping through all the node from top to bottom
-	//while(nodesToCheck.size() > 0) {
-	//	currentTreeNode = nodesToCheck.back();
-	//	nodesToCheck.pop_back();
-	//	//Showing the current node value and counter
-	//	for (int i=0; i<currentTreeNode->size(); i++) {
-	//		std::cout << currentTreeNode->operator[](i).level << " " << currentTreeNode->operator[](i).value << " " << currentTreeNode->operator[](i).counter << std::endl;
-	//		//Adding the children node to the list node to be checked
-	//		nodesToCheck.push_front(&(currentTreeNode->operator[](i).children));
-	//	}
-	//	//std::cout << "list size: " << nodesToCheck.size() << std::endl;
-	//}
+	// ////Showing the search tree for debugging
+	// std::list<std::vector<TreeNode>*> nodesToCheck;
+	// nodesToCheck.push_back(&_searchTree[level]); //Put the root node in the list node to be checked
+	// //Looping through all the node from top to bottom
+	// while(nodesToCheck.size() > 0) {
+	// 	currentTreeNode = nodesToCheck.back();
+	// 	nodesToCheck.pop_back();
+	// 	//Showing the current node value and counter
+	// 	for (int i=0; i<currentTreeNode->size(); i++) {
+	// 		std::cout << currentTreeNode->operator[](i).level << " " << currentTreeNode->operator[](i).value << " " << currentTreeNode->operator[](i).counter << std::endl;
+	// 		//Adding the children node to the list node to be checked
+	// 		nodesToCheck.push_front(&(currentTreeNode->operator[](i).children));
+	// 	}
+	// 	//std::cout << "list size: " << nodesToCheck.size() << std::endl;
+	// }
 
 }
 
@@ -228,11 +228,13 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		int deltaX, deltaY, deltaZ;
 		float tmp;
 		foundValue = std::numeric_limits<float>::quiet_NaN();
-		int maxConditionalPoints = -1, conditionPointsUsedCnt = 0;
+		int maxConditionalPoints = -1, 
+		conditionPointsUsedCnt = 0;
 		//Initialize a value
 		std::vector<float> aPartialTemplate;
 		//Building a template based on the neighbor points
 		// Find conditional data
+		int NinT = -1; // counter for number of found conditional data in _templateFaces
 		for (unsigned int i=1; i<_templateFaces.size(); i++) { //For all the set of templates available except the first one at the template center
 			//For each template faces
 			deltaX = offset * _templateFaces[i].getX();
@@ -243,19 +245,14 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 			sgZ = sgIdxZ + deltaZ;
 			if (!(sgX < 0 || sgX >= _sgDimX) && !(sgY < 0 || sgY >= _sgDimY) && !(sgZ < 0 || sgZ >= _sgDimZ)) {
 				//not overflow
-				if (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX])) {
+				if ( (NinT<_maxCondData) && (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX])) ) {
+					//NinT++;
 					aPartialTemplate.push_back(_sg[sgZ][sgY][sgX]);
 				} else { //NaN value
 					aPartialTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
 				}
 			} else aPartialTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
 		}
-
-		//for (unsigned int i=0; i<aPartialTemplate.size(); i++) {
-		//	std::cout << aPartialTemplate[i] << " " ;
-		//}
-		//std::cout << std::endl;
-
 		//Going through the search tree and get the value of the current template
 		std::vector<TreeNode>* currentTreeNode;
 		std::list<std::vector<TreeNode>*> nodesToCheck;

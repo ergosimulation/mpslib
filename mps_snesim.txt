@@ -1,13 +1,13 @@
-Number of realizations # 10
-Random Seed (0 `random` seed) # 1
-Number of mulitple grids (start from 0) # 1
+Number of realizations # 1
+Random Seed (0 `random` seed) # 3
+Number of mulitple grids (start from 0) # 0
 Min Node count (0 if not set any limit)# 0
-Maximum number condtitional data (0: all) # -1
+Maximum number conditional data (0: all) # 0
 Search template size X # 8
 Search template size Y # 8
 Search template size Z # 1
-Simulation grid size X # 20
-Simulation grid size Y # 30
+Simulation grid size X # 12
+Simulation grid size Y # 22
 Simulation grid size Z # 1
 Simulation grid world/origin X # 0
 Simulation grid world/origin Y # 0
@@ -24,8 +24,8 @@ HardData seach radius (world units) # 1
 Softdata categories (separated by ;) # 0;1
 Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft.dat
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
-Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # -1
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 2
 Mask grid # mask.dat
-doEntropy # 1
+doEntropy # 0
 doEstimation # 0
 
