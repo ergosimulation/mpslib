@@ -1,4 +1,4 @@
-// (c) 2015-2016 I-GIS (www.i-gis.dk) and Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)
+// (c) 2015-2020 I-GIS (www.i-gis.dk) and Thomas Mejer Hansen (thomas.mejer.hansen@gmail.com)
 //
 //    This file is part of MPSlib.
 //
@@ -373,25 +373,25 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	bool readSucessfull = false;
 	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
 
-	if (_debugMode>0) {
+	if (_debugMode>1) {
 		std::cout << "READING TI: " << _tiFilename << std::endl;
 	}
 	// Read TI
 	_readTIFromFiles();
 
-	if (_debugMode>0) {
+	if (_debugMode>1) {
 		std::cout << "READING HARD DATA: " << _hardDataFileNames << std::endl;
 	}
 	//Reading Hard conditional data
 	_readHardDataFromFiles();
 
-	if (_debugMode>0) {
+	if (_debugMode>1) {
 		std::cout << "READING SOFT DATA: " << _softDataFileNames[0] << std::endl;
 	}
 	//Reading Soft conditional data
 	_readSoftDataFromFiles();
 
-	if (_debugMode>0) {
+	if (_debugMode>1) {
 		std::cout << "READING MASK: " << _maskDataFileName << std::endl;
 	}
 	//Reading Mask data
@@ -542,7 +542,7 @@ void MPS::MPSAlgorithm::_getCategories(void) {
   
   if (_dataCategories.size() < 20 ) {
 
-		if (_debugMode>-1) {
+		if (_debugMode>1) {
 			std::cout << "_dataCategories are: ";
 			for (unsigned int i = 0; i < _dataCategories.size(); i++) {
 				std::cout << _dataCategories[i] << " ";
@@ -557,7 +557,7 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 			std::cout << std::endl;
 		}
 	} else {
-		if (_debugMode>-1) {
+		if (_debugMode>1) {
 			std::cout << "-- probably a continious training image!";		
 		}
 	}
@@ -844,8 +844,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	if (_debugMode>-1) {
 		std::cout << "__________________________________________________________________________________" << std::endl;
 	 	std::cout << "MPSlib: a C++ library for multiple point simulation" << std::endl;
-	 	std::cout << "(c) 2015-2016 I-GIS (www.i-gis.dk) and" << std::endl;
-		std::cout << "              Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)" << std::endl;
+	 	std::cout << "(c) 2015-2020 I-GIS (www.i-gis.dk) and" << std::endl;
+		std::cout << "              Thomas Mejer Hansen (thomas.mejer.hansen@gmail.com)" << std::endl;
 		std::cout << "This program comes with ABSOLUTELY NO WARRANTY;"  << std::endl;
     	std::cout << "This is free software, and you are welcome to redistribute it"  << std::endl;
     	std::cout << "under certain conditions. See 'COPYING.LESSER'for details."  << std::endl;
