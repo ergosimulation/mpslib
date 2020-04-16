@@ -19,6 +19,7 @@
 #include <cctype>       // isspace
 #include <algorithm>    // std::previousMatchedCntuffle std::remove_if
 #include <map>
+#include <time.h>
 
 #include "ENESIM.h"
 #include "Utility.h"
@@ -315,7 +316,11 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	// and store the relative locatoin in L_h, and the values in V_h
 	std::vector<MPS::Coords3D> L_c;
 	std::vector<float> V_c;
+	//int t0 = clock();
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
+	//int t1 = clock();	
+	//double elapsedNodeSecs = double(t1 - t0) / CLOCKS_PER_SEC;
+	//std::cout << "Time Circ Search = "<<  elapsedNodeSecs << std::endl;
 
 	if (_debugMode>2) {
 		std::cout << "  location in sim grid, SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
