@@ -148,12 +148,10 @@ protected:
 	* @param TIi_dxX coordinate X of the current node in TI
 	* @param TIi_dxY coordinate Y of the current node in TI
 	* @param TIi_dxZ coordinate Z of the current node in TI
-	* @param L_dist : Precomputed distance
 	* @return distance
 	*/
-	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ,  std::vector<float>& L_dist);
-	//float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
-
+	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
+	
 public:
 	/**
 	* @brief Constructors default and empty parameters
