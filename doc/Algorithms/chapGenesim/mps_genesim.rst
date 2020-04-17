@@ -18,7 +18,7 @@ An example of a parameter file for ``mps_genesim``:
     Maximum number of counts for conditional pdf # 1
     Max number of conditional point # 25
     Max number of iterations # 10000
-    Distance Measure (0: discrete, 1: continious), minimum distance, power # 1 0 0
+    Distance Measure (0: discrete, 1: continious), maximum distance, power # 1 0 0
     ColocateDimension # 0
     Maximum Search Radius # 1000000
     Simulation grid size X # 18
@@ -52,7 +52,7 @@ line 3: Maximum number of counts for conditional pdf, ``n_max_count_cpdf``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``n_max_count_cpdf`` defines the maximum number of counts in the
-conditional distribtion obtained from the training image. When
+conditional distribution obtained from the training image. When
 ´n\_max\_count\_cpdf´ has been reached the scanning of the training
 image stops.
 
@@ -62,7 +62,7 @@ line 4: Max number for conditional points, ``n_cond``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 | A maximum of ``n_cond`` conditional data are considered at each
-  iteration when infering the
+  iteration when inferring the
 | conditional pdf from the training image.
 
 line 5:Max number of iterations, ``n_max_ite``
@@ -73,17 +73,17 @@ image are performed.
 
 if\ ``n_max_ite<0`` the full training image is scanned.
 
-line 6: distance\_measure, and, ``distance_measure``, minimum distance, ``distance_min``, and ``distance_pow``
+line 6: distance\_measure, and, ``distance_measure``, maximum distance, ``distance_max``, and ``distance_pow``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``distance_measure`` used:
 
 1: Number of matching pixels (Discrete TI)
 
-2: Euclidean distance (Continious TI)
+2: Euclidean distance (Continuous TI)
 
-The minimum distance what will lead to accepting a conditional template
-match is set by ``distance_min. If not set, is set to distance_min=0``,
+The maximum distance what will lead to accepting a conditional template
+match is set by ``distance_max. If not set, is set to distance_max=0``,
 which means that a perfect match is searched for!
 
 | Distance power is used to weight the conditioning data as a function
@@ -102,7 +102,7 @@ line 7:'colocate\_dimension'
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For a 3D TI make sure the order matters in the last dimensions (allow
-performing 2D cosimulation with conditional data in the third dimension)
+performing 2D co-simulation with conditional data in the third dimension)
 
 debug mode
 ^^^^^^^^^^
@@ -136,7 +136,7 @@ In this case the full training image will be scanned at each iteration
 to establish a conditional probability density.
 
 ENESIM leads to a very slow algorithm, but the full/most accurate
-conditional distribtion is computed a each iteration. This can be
+conditional distribtuion is computed at each iteration. This can be
 usefull when performing simulation conditional to soft data. If not,
 then the Direct Sampling algorithm is much more efficient
 (``n_max_count_cpdf=inf)``
@@ -147,7 +147,7 @@ GENESIM
 In case\ ``0<n_max_count_cpdf<infinity``, ``mps_genesim`` will behave
 intermediate between ENESIM and Direct Sampling.
 
-GENESIM is useful in case the local conditional distribtuion is needed,
+GENESIM is useful in case the local conditional distribution is needed,
 as is the case when conditioning to soft data. In this case, the GENESIM
 may be much faster than ENESIM.
 
@@ -159,7 +159,7 @@ the direct sampling algorithm. The computational efficiency can further
 be controlled using ``n_max_ite,``\ to be set a value smaller than the
 number of pixels in the training image.
 
-As the full local conditional distirbution is not available (it is never
+As the full local conditional distribution is not available (it is never
 computed/inferred), conditioning to soft data is done using the
 rejection sampler (Hansen et al. 20xx, submitted)
 
@@ -167,11 +167,11 @@ Temporary Grids
 ---------------
 
 If the verbose level is higher than one 5 temporary grids are written do
-disk. In case the training image has the name 'ti.dat' the follwing
+disk. In case the training image has the name 'ti.dat' the following
 grids are exported as EAS files :
 
 ti.dat\_tg1\_0.gslib: The distance for the last accepted match, when
-scanninng the training image.
+scanning the training image.
 
 ti.dat\_tg2\_0.gslib: The number of counts used to set up the
 conditional probability density. When using Direct Sampling,

@@ -76,7 +76,7 @@ multiple grid. The last number refer to the template size at the finest
 grid (simulated last). The template size for intermediate grid sizes is
 found by linear interpolation, and output to the screen if the debug
 mode is above 0. The use of varying template sizes can reduce
-computation time considerable, witj only little effect on the pattern
+computation time considerable, with only little effect on the pattern
 reproduction.
 
 For example the following defines a 9x9x1 template at the coarsest grid,

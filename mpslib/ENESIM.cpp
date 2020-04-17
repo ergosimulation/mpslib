@@ -101,7 +101,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	}
 	
 
-	// Distance Measure and minimum distance
+	// Distance Measure and maximum distance allowed
 	_readLineConfiguration_mul(file, ss, data, s, str);
 	_distance_measure = stoi(data[1]);
 	// optional. Template size x - base when n_mulgrid=0
