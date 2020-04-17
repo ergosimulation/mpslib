@@ -249,7 +249,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_doEntropy = 0;
 	}
-	if (_debugMode>-1) {
+	if (_debugMode>1) {
 		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
 	}
 	
@@ -259,7 +259,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_doEstimation = 0;
 	}
-	if (_debugMode>-1) {
+	if (_debugMode>1) {
 		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
 	}
 	

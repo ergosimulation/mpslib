@@ -415,7 +415,7 @@ void MPS::MPSAlgorithm::_readHardDataFromFiles(void) {
 	else if (fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_hardDataFileNames, _hdg);
 	else if (fileExtension == "dat") readSucessfull = MPS::io::readHardDataFromEASFile(_hardDataFileNames, -999, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, _hdg);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_hardDataFileNames, _hdg);
-	if ((!readSucessfull)&(_debugMode>-1)) {
+	if ((!readSucessfull)&(_debugMode>0)) {
 		std::cout << "Error reading harddata " << _hardDataFileNames << std::endl;
 	}
 }
@@ -436,7 +436,7 @@ void MPS::MPSAlgorithm::_readSoftDataFromFiles(void) {
 		else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_softDataFileNames[i], _softDataGrids[i]);
 		if (!readSucessfull) {
 			_softDataGrids.clear();
-			if (_debugMode>-1) {
+			if (_debugMode>0) {
 				std::cout << "Error reading softdata " << _softDataFileNames[i] << std::endl;
 			}
 		}
@@ -482,7 +482,7 @@ void MPS::MPSAlgorithm::_readMaskDataFromFile(void) {
 	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_maskDataFileName, _maskDataGrid);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_maskDataFileName, _maskDataGrid);
 	if (!readSucessfull) {
-		if (_debugMode>-1) {
+		if (_debugMode>0) {
 			std::cout << "Mask Data is missing" << _maskDataFileName << std::endl;
 		}
 	}
@@ -532,7 +532,7 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 	// 
 
 	if (_debugMode>-1) {
-		std::cout << "Found " << _dataCategories.size() << " unique categories" << std::endl;
+		std::cout << "_getCategories: Found " << _dataCategories.size() << " unique categories" << std::endl;
 	}
 	
 	// Update the soft data categories read in par file
@@ -1232,8 +1232,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				}
 			}
 			_selfEnt[n] = E;
-			if (_debugMode>-2) {
-				std::cout << "E(real#" << n << ") = " <<_selfEnt[n] << std::endl;				
+			if (_debugMode>0) {
+				std::cout << "SI(real#" << n << ") = " <<_selfEnt[n] << std::endl;				
 			}
 		}
 
@@ -1262,7 +1262,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			E=E+_selfEnt[i];			
 		}
 		E=E/_realizationNumbers;
-		if (_debugMode>-2) {
+		if (_debugMode>0) {
 			std::cout << "H=E(SelfInformation)=" << E << std::endl;
 		}
 	}
@@ -1274,8 +1274,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		std::cout << "Average time for " << _realizationNumbers << " simulations (hours:minutes:seconds) : " << hours << ":" << minutes << ":" << seconds << std::endl;
 	}
 
-	if(_debugMode > -1 ) {
-		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
+	if(_debugMode > 0 ) {
+		// std::cout << "Number of threads: " << _numberOfThreads << std::endl;
 		// std::cout << "_maxNeighbours: " << _maxNeighbours << std::endl;
 		// std::cout << " maxIterations: " << _maxIterations << std::endl;
 		std::cout << "SG: " << _sgDimX << " " << _sgDimY << " " << _sgDimZ << std::endl;

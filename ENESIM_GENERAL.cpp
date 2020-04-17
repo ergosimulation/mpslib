@@ -69,7 +69,9 @@ void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 	_jobDone = false;
 
 	
-	if(_debugMode > -1 ) {
+	if(_debugMode > 0 ) {
+		std::cout << "______________________________________" << std::endl;
+		std::cout << "____________ENESIM____________________" << std::endl;
 		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
 		std::cout << "Conditional points: " << _maxNeighbours << std::endl;
 		std::cout << "Max iterations: " << _maxIterations << std::endl;

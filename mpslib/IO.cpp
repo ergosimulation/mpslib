@@ -250,7 +250,7 @@ namespace MPS {
 			std::ifstream file;
 			file.open(fileName, std::ios::binary);
 			if (!file.is_open()) {
-				std::cerr << "Can't open " << fileName << " !\n";
+				//std::cerr << "Can't open " << fileName << " !\n";
 				return false;
 			}
 			int tiSizeX, tiSizeY, tiSizeZ;
