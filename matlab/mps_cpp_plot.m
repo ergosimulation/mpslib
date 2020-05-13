@@ -155,7 +155,7 @@ if (length(O.z)==1);
         figure;clf;
         imagesc(O.x,O.y,O.I_PATH);
         axis image
-        caxis([0 8])
+        caxis([0 80]);colorbar
         title('Path')
         
         if hardcopy==1; 

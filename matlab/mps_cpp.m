@@ -357,11 +357,16 @@ if (O.debug>1)
         end
     end
     
-    
-    fname=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
+    % PATH
+    fname=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,0);    
     if exist(fname,'file')
-        O.(sprintf('I_PATH'))=read_eas_matrix(fname);
+        O.i_path=read_eas(fname)
+        for i=1:length(O.i_path)
+            [ix,iy]=ind2sub([O.simulation_grid_size(1),O.simulation_grid_size(2)],O.i_path(i)+1);
+            O.I_PATH(iy,ix)=i;
+        end
     end
+    
     
 end
 
@@ -418,12 +423,10 @@ end
 
 
 
-%%
+%% WHAT IS THIS
 if (O.debug>1)
     for i=1:O.n_real
         fname_path=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
-        
-        
         
         try
             PP=read_eas(fname_path);
@@ -442,9 +445,9 @@ if (O.debug>1)
                 O.P=read_eas_matrix(fname_path);
             end
             [ix,iy]=ind2sub([O.simulation_grid_size(2),O.simulation_grid_size(1)],PP(:)+1);
-            for j=1:length(ix);
-                O.I_PATH(iy(j),ix(j),i)=j;
-            end
+            %for j=1:length(ix);
+            %    O.I_PATH(iy(j),ix(j),i)=j;
+            %end
         else
             % 3D
         end
