@@ -55,7 +55,7 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 	_tiDimZ = (int)_TI.size();
 
 
-	if (_debugMode > -1) {
+	if (_debugMode > 2) {
 		std::cout << "TI size (X,Y,Z): " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << std::endl;
 		if (_shuffleSgPath==0) {
 			std::cout << "Path type: unilateral"<< std::endl;

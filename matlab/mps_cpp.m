@@ -294,16 +294,16 @@ if isfield(O,'doEstimation');
             for i=1:size(O.d_hard,1);
                 P=zeros(1,nc);
                 P(O.d_hard(i,4)==vals)=1;
-                if O.grid_cell_size(1)~=1
-                    ix1=ceil((O.d_hard(i,1)-O.origin(1))/O.grid_cell_size(1));
-                else
-                    ix1=O.d_hard(i,1);
-                end
-                if O.grid_cell_size(2)~=1
-                    iy1=ceil((O.d_hard(i,2)-O.origin(2))/O.grid_cell_size(2));
-                else
-                    iy1=O.d_hard(i,1);
-                end
+                %if O.grid_cell_size(1)~=1
+                    ix1=1+ceil((O.d_hard(i,1)-O.origin(1))/O.grid_cell_size(1));
+                %else
+                %    ix1=O.d_hard(i,1);
+                %end
+                %if O.grid_cell_size(2)~=1
+                    iy1=1+ceil((O.d_hard(i,2)-O.origin(2))/O.grid_cell_size(2));
+                %else
+                %    iy1=O.d_hard(i,1);
+                %end
                 for ic=1:nc
                     O.cg(iy1,ix1,ic)=P(ic);
                 end

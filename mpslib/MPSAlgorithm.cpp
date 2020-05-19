@@ -340,7 +340,7 @@ bool MPS::MPSAlgorithm::_getCpdfFromSoftData(const int& x, const int& y, const i
 	//Last categorie
 	softPdf.insert(std::pair<float, float>(_softDataCategories[lastIndex], 1 - sumProbability));
 
-	if (_debugMode>1) {
+	if (_debugMode>2) {
 		std::cout << "_getCpdfFromSoftData->[x,y,z]=" << x << "," << y << "," << z  << " ### closest #### ";
 		std::cout << "" << closestCoords.getX() << "," << closestCoords.getY() << "," << closestCoords.getZ() << std::endl;
 		std::cout << "_getCpdfFromSoftData->  -  [" << softPdf[0] << ","<< softPdf[1] << "]"<<std::endl;
@@ -504,6 +504,8 @@ void MPS::MPSAlgorithm::_readMaskDataFromFile(void) {
 }
 
 void MPS::MPSAlgorithm::_getCategories(void) {
+	// removes the necessity to privde category index
+ 	// for soft data in config files
 
 	_dataCategories.clear();
 	
@@ -531,7 +533,7 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 	std::sort (_dataCategories.begin(), _dataCategories.end() );
 	// 
 
-	if (_debugMode>-1) {
+	if (_debugMode>2) {
 		std::cout << "_getCategories: Found " << _dataCategories.size() << " unique categories" << std::endl;
 	}
 	
@@ -782,7 +784,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, s
 						// the importance of Entropy
 						randomValue = randomValue - 1 - facEntropy*I;
 
-						if (_debugMode>1) {
+						if (_debugMode>2) {
 							std::cout <<  "SOFT DATA -- ";
 							std::cout << "cnt=" << node1DIdx << " x=" << x << " y=" << y << " z=" << z;
 							std::cout << " -- E=" << E;
@@ -821,13 +823,14 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, s
 		i++;
 	}
 
-	if (_debugMode>1) {
+	if (_debugMode>2) {
 		std::cout << "PATH = " << std::endl;
 		int tmpX, tmpY, tmpZ;
 
 		for (auto i = _simulationPath.begin(); i != _simulationPath.end(); ++i) {
 			MPS::utility::oneDTo3D(*i, _sgDimX, _sgDimY, tmpX, tmpY, tmpZ);
 			std::cout << tmpX << "," << tmpY << "," << tmpZ << "  ";
+			std::cout << std::endl;
 		}
 		std::cout << std::endl << "PATH END" << std::endl;
 	}
