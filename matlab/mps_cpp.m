@@ -153,6 +153,20 @@ if isfield(O,'d_soft');
     write_eas(O.soft_data_filename,O.d_soft);
 end
 
+% WRITE MASK GRID IF SET AS VARIABLE
+if isfield(O,'d_mask');
+    if ~isfield(O,'mask_filename');
+        O.soft_data_filename='d_mask.dat';
+    end
+    write_eas_matrix(O.mask_filename,O.d_mask);
+end
+
+
+
+
+
+
+
 %%
 if ~isfield(O,'method');
     O.method='mps_snesim_tree';
