@@ -18,27 +18,27 @@ The subsurface is considered to consists of one of two lithologies, identified b
 Training image
 ##############
 
-`kasted_ti.dat` (EAS format) 632x291 pixel training image. Each pixel is of size 50x50 meter.
+`kasted_ti.dat` (EAS matrix format) 632x291 pixel training image. Each pixel is of size 50x50 meter.
 
 
 Soft data
 #########
 
-``kasted_welllog.dat`` (GSLIB format) Probability of sand (column 4) and clay (column 5) estimated from welllog analysis at 1254 locations.
+``kasted_welllog.dat`` (EAS/GSLIB format) Probability of sand (column 4) and clay (column 5) estimated from welllog analysis at 1254 locations.
 
 
 Hard data
 #########
-``kasted_welllog_hard.dat`` (GSLIB format) 122 observations of clay or sand from welllog analysis. These data have been created from the 'soft well log data', described below, where the most certain observations of clay and sand, are considered hard data.  
+``kasted_welllog_hard.dat`` (EAS/GSLIB format) 122 observations of clay or sand from welllog analysis. These data have been created from the 'soft well log data', described below, where the most certain observations of clay and sand, are considered hard data.  
 
 
 Other data
 ##########
 
-``kasted_elevation.dat`` (GSLIB format). Elevation data for the area. A slight positive correlation between elevation and probability of channel is expected
+``kasted_elevation.dat`` (EAS/GSLIB format). Elevation data for the area. A slight positive correlation between elevation and probability of channel is expected
 
 
-``kasted_resistivity_0_5.dat`` (GSLIB format). Airborne SkyTEM data inverted to resistivity in from 0 to 5m depth. High resistivity is indicative of sand/buried valley.
+``kasted_resistivity_0_5.dat`` (EAS/GSLIB format). Airborne SkyTEM data inverted to resistivity in from 0 to 5m depth. High resistivity is indicative of sand/buried valley.
 
 
 
