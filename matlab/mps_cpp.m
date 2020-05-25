@@ -102,10 +102,16 @@ if doSetSIM==1;
         O.simulation_grid_size=[nx ny nz];
     end
     if ~isfield(O,'origin');
-        O.origin=[0 0 0];
+        if isfield(O,'x'); o1=O.x(1);else o1=0;end
+        if isfield(O,'y'); o2=O.y(1);else o2=0;end
+        if isfield(O,'z'); o3=O.z(1);else o3=0;end
+        O.origin=[o1 o2 o3];
     end
     if ~isfield(O,'grid_cell_size');
-        O.grid_cell_size=[1 1 1];
+        if isfield(O,'x'); dx=O.x(2)-O.x(1);else dx=1;end
+        if isfield(O,'y'); dy=O.y(2)-O.y(1);else dy=1;end
+        if isfield(O,'z'); dz=O.z(2)-O.z(1);else dz=1;end
+        O.grid_cell_size=[dx dy dz];
     end
 end
 
