@@ -22,6 +22,12 @@
 %   % set as d_soft parameter:
 %   O.d_soft [x y z prob_0 prob_1 ...]
 %
+% % MASK
+%   % set MASK
+%   MASK=zeros(size(SIM));;
+%   MASK(1:5,1:5)=1; % only simulate these data
+%   O.d_mask=MASK; [ny nx]
+%
 %
 % % optional
 %   O.exe_root: sets the path the folder containing the MPS binary files
@@ -156,16 +162,10 @@ end
 % WRITE MASK GRID IF SET AS VARIABLE
 if isfield(O,'d_mask');
     if ~isfield(O,'mask_filename');
-        O.soft_data_filename='d_mask.dat';
+        O.soft_data_filename='mask.dat';
     end
     write_eas_matrix(O.mask_filename,O.d_mask);
 end
-
-
-
-
-
-
 
 %%
 if ~isfield(O,'method');

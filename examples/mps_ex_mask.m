@@ -5,6 +5,8 @@ SIM=zeros(180,160).*NaN; %  simulation grid
 O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree')
 %O.method='mps_snesim_list'; %
 %O.method='mps_genesim'; %
+%O.distance_min=0.01;
+%O.distance_pow=1;
 
 MASK1=zeros(size(SIM));
 MASK1(70:130,40:100)=1;
