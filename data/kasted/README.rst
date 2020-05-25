@@ -35,10 +35,10 @@ Hard data
 Other data
 ##########
 
-``kasted_elevation.dat`` (GSLIB format). Elevation data for the area. A slight postivie correlation between elevation and probability of channel is expected
+``kasted_elevation.dat`` (GSLIB format). Elevation data for the area. A slight positive correlation between elevation and probability of channel is expected
 
 
-``kasted_resistivity_0_5.dat`` (GSLIB format). Airborne SkyTEM data inverted to resisitivity in from 0 to 5m depth. High resistivity is indcative of sand/buried valley.
+``kasted_resistivity_0_5.dat`` (GSLIB format). Airborne SkyTEM data inverted to resistivity in from 0 to 5m depth. High resistivity is indicative of sand/buried valley.
 
 
 
@@ -49,10 +49,6 @@ Other data
     :alt: alternate text
     :figclass: align-center
 
-    figure are like images but with a caption
+    Kasted data
 
-    and whatever else youwish to add
-
-    .. code-block:: python
-
-        import image
+    
