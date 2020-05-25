@@ -29,7 +29,7 @@ Soft data
 
 Hard data
 #########
-``kasted_welllog.dat`` (GSLIB format) 122 observations of clay or sand from welllog analysis. These data have been created from the 'soft well log data', described below, where the most certain observations of clay and sand, are considered hard data.  
+``kasted_welllog_hard.dat`` (GSLIB format) 122 observations of clay or sand from welllog analysis. These data have been created from the 'soft well log data', described below, where the most certain observations of clay and sand, are considered hard data.  
 
 
 Other data
