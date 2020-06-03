@@ -2,7 +2,6 @@
 clear all;close all;
 di=4;
 dx=0.075*di;
-dx=0.08*di;
 TI=channels(di,1);           %  training image
 x_ti=dx*[1:1:size(TI,2)];
 y_ti=dx*[1:1:size(TI,1)];
