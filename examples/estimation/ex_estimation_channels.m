@@ -1,6 +1,6 @@
 
 clear all;close all;
-di=4;
+di=1;
 dx=0.075*di;
 TI=channels(di,1);           %  training image
 x_ti=dx*[1:1:size(TI,2)];
@@ -22,7 +22,7 @@ O.distnace_measure=1;
 O.template_size=[9 9 1];
 O.x=x;
 O.y=y;
-n_real=6;
+n_real=100;
 d_hard=[1 6 0 1;6 6 0 1];
 
 
@@ -41,6 +41,7 @@ Oc.d_hard=d_hard;
 %% CONDitional estimation
 Oest=O;
 Oest.d_hard=d_hard;
+%d_hard_single=[3.5 6 0 1];Oest.d_hard=d_hard_single;
 Oest.doEstimation=1;
 
 Oest.n_max_cpdf_count=1e+9;
