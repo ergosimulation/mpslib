@@ -745,7 +745,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, s
 					float Ei; // Partial Entropy
 					float I; // Information content
 					float p; // probability
-					float q; // a priori 1D marginal
+					//float q; // a priori 1D marginal
 					if (!isAlreadyAllocated) {
 						isRelocated = x != closestCoords.getX() || y != closestCoords.getY() || z != closestCoords.getZ();
 						E=0;
@@ -912,9 +912,15 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 		if (_doEstimation == true) {
 				// ESTIMATION --> Initialize a grid for storing condtitional estimates
+				// This should probabl
 				int NC;
 				NC = _softDataCategories.size();
-				std::cout <<"NC="<< NC << std::endl;
+				int NC2;
+				NC2 = _dataCategories.size();
+				if (_debugMode>0) {
+					std::cout <<"NSoftCategories NC="<< NC << std::endl;
+					std::cout <<"NdataCategories NC2="<< NC2 << std::endl;
+				}
 				//_initializeSG(_cg, _sgDimX, _sgDimY, _sgDimZ);				 
 				_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC,  std::numeric_limits<double>::quiet_NaN());
 				//_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC, -1);
