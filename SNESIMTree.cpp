@@ -55,7 +55,7 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 	_tiDimZ = (int)_TI.size();
 
 
-	if (_debugMode > -1) {
+	if (_debugMode > 2) {
 		std::cout << "TI size (X,Y,Z): " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << std::endl;
 		if (_shuffleSgPath==0) {
 			std::cout << "Path type: unilateral"<< std::endl;
@@ -246,13 +246,24 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 			if (!(sgX < 0 || sgX >= _sgDimX) && !(sgY < 0 || sgY >= _sgDimY) && !(sgZ < 0 || sgZ >= _sgDimZ)) {
 				//not overflow
 				if ( (NinT<_maxCondData) && (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX])) ) {
-					//NinT++;
+					NinT = NinT + 1;
 					aPartialTemplate.push_back(_sg[sgZ][sgY][sgX]);
 				} else { //NaN value
 					aPartialTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
 				}
 			} else aPartialTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
 		}
+
+
+		//std::cout << ".........." << std::endl;
+		//std::cout << std::endl;
+		//for (std::vector<float>::const_iterator i = aPartialTemplate.begin(); i != aPartialTemplate.end(); ++i)
+    	//	std::cout << *i << ' ';
+
+
+		//std::cout << "NinT=" << NinT << std::endl;
+		//std::cout << "_maxCondData=" << _maxCondData << std::endl;
+		//std::cout << aPartialTemplate.size() << std::endl;
 		//Going through the search tree and get the value of the current template
 		std::vector<TreeNode>* currentTreeNode;
 		std::list<std::vector<TreeNode>*> nodesToCheck;
@@ -269,6 +280,7 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 			conditionPointsUsedCnt = 0;
 			maxLevel = 0;
 			sumCounters = _searchTree[j].counter;
+			//std::cout << "sumCounters=" << sumCounters << std::endl;
 			nodesToCheck.clear();
 			nodesToCheck.push_back(&_searchTree[j].children); //Initialize at children in first level
 			//Looping through all the node from top to bottom
@@ -301,7 +313,10 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 					}
 				}
 			}
-			//std::cout << _searchTree[level][j].value << " " << sumCounters << " " << maxLevel << std::endl;
+			//std::cout << "j=" << j << " " ;
+			//std::cout << "conditionPointsUsedCnt=" << conditionPointsUsedCnt << " " ;
+			//std::cout << "maxConditionalPoints=" << maxConditionalPoints << " :: " ;
+			//std::cout << _searchTree[j].value << " " << sumCounters << " " << maxLevel << std::endl;
 			//finish searching for a value, now do the sum
 			if (conditionPointsUsedCnt > maxConditionalPoints) {
 				conditionalPoints.clear();

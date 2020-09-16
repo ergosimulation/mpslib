@@ -15,7 +15,7 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # ti/ti_strebelle_125_125_1.dat
+Training image file (spaces not allowed) # data/ti/ti_strebelle_125_125_1.dat
 Output folder (spaces in name not allowed) # .
 Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential, EF) # 1 4
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
