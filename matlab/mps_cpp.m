@@ -326,7 +326,11 @@ if isfield(O,'doEstimation');
                 %    iy1=O.d_hard(i,1);
                 %end
                 for ic=1:nc
-                    O.cg(iy1,ix1,ic)=P(ic);
+                    try
+                        O.cg(iy1,ix1,ic)=P(ic);
+                    catch
+                        keyboard
+                    end
                 end
             end
             catch
