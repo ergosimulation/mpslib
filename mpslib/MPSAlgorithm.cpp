@@ -1,4 +1,4 @@
-// (c) 2015-2016 I-GIS (www.i-gis.dk) and Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)
+// (c) 2015-2020 I-GIS (www.i-gis.dk) and Thomas Mejer Hansen (thomas.mejer.hansen@gmail.com)
 //
 //    This file is part of MPSlib.
 //
@@ -340,7 +340,7 @@ bool MPS::MPSAlgorithm::_getCpdfFromSoftData(const int& x, const int& y, const i
 	//Last categorie
 	softPdf.insert(std::pair<float, float>(_softDataCategories[lastIndex], 1 - sumProbability));
 
-	if (_debugMode>1) {
+	if (_debugMode>2) {
 		std::cout << "_getCpdfFromSoftData->[x,y,z]=" << x << "," << y << "," << z  << " ### closest #### ";
 		std::cout << "" << closestCoords.getX() << "," << closestCoords.getY() << "," << closestCoords.getZ() << std::endl;
 		std::cout << "_getCpdfFromSoftData->  -  [" << softPdf[0] << ","<< softPdf[1] << "]"<<std::endl;
@@ -373,25 +373,25 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	bool readSucessfull = false;
 	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
 
-	if (_debugMode>0) {
+	if (_debugMode>1) {
 		std::cout << "READING TI: " << _tiFilename << std::endl;
 	}
 	// Read TI
 	_readTIFromFiles();
 
-	if (_debugMode>0) {
+	if (_debugMode>1) {
 		std::cout << "READING HARD DATA: " << _hardDataFileNames << std::endl;
 	}
 	//Reading Hard conditional data
 	_readHardDataFromFiles();
 
-	if (_debugMode>0) {
+	if (_debugMode>1) {
 		std::cout << "READING SOFT DATA: " << _softDataFileNames[0] << std::endl;
 	}
 	//Reading Soft conditional data
 	_readSoftDataFromFiles();
 
-	if (_debugMode>0) {
+	if (_debugMode>1) {
 		std::cout << "READING MASK: " << _maskDataFileName << std::endl;
 	}
 	//Reading Mask data
@@ -415,7 +415,7 @@ void MPS::MPSAlgorithm::_readHardDataFromFiles(void) {
 	else if (fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_hardDataFileNames, _hdg);
 	else if (fileExtension == "dat") readSucessfull = MPS::io::readHardDataFromEASFile(_hardDataFileNames, -999, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, _hdg);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_hardDataFileNames, _hdg);
-	if ((!readSucessfull)&(_debugMode>-1)) {
+	if ((!readSucessfull)&(_debugMode>0)) {
 		std::cout << "Error reading harddata " << _hardDataFileNames << std::endl;
 	}
 }
@@ -436,7 +436,7 @@ void MPS::MPSAlgorithm::_readSoftDataFromFiles(void) {
 		else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_softDataFileNames[i], _softDataGrids[i]);
 		if (!readSucessfull) {
 			_softDataGrids.clear();
-			if (_debugMode>-1) {
+			if (_debugMode>0) {
 				std::cout << "Error reading softdata " << _softDataFileNames[i] << std::endl;
 			}
 		}
@@ -482,7 +482,7 @@ void MPS::MPSAlgorithm::_readMaskDataFromFile(void) {
 	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_maskDataFileName, _maskDataGrid);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_maskDataFileName, _maskDataGrid);
 	if (!readSucessfull) {
-		if (_debugMode>-1) {
+		if (_debugMode>0) {
 			std::cout << "Mask Data is missing" << _maskDataFileName << std::endl;
 		}
 	}
@@ -504,6 +504,8 @@ void MPS::MPSAlgorithm::_readMaskDataFromFile(void) {
 }
 
 void MPS::MPSAlgorithm::_getCategories(void) {
+	// removes the necessity to privde category index
+ 	// for soft data in config files
 
 	_dataCategories.clear();
 	
@@ -531,8 +533,8 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 	std::sort (_dataCategories.begin(), _dataCategories.end() );
 	// 
 
-	if (_debugMode>-1) {
-		std::cout << "Found " << _dataCategories.size() << " unique categories" << std::endl;
+	if (_debugMode>2) {
+		std::cout << "_getCategories: Found " << _dataCategories.size() << " unique categories" << std::endl;
 	}
 	
 	// Update the soft data categories read in par file
@@ -542,7 +544,7 @@ void MPS::MPSAlgorithm::_getCategories(void) {
   
   if (_dataCategories.size() < 20 ) {
 
-		if (_debugMode>-1) {
+		if (_debugMode>1) {
 			std::cout << "_dataCategories are: ";
 			for (unsigned int i = 0; i < _dataCategories.size(); i++) {
 				std::cout << _dataCategories[i] << " ";
@@ -557,7 +559,7 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 			std::cout << std::endl;
 		}
 	} else {
-		if (_debugMode>-1) {
+		if (_debugMode>1) {
 			std::cout << "-- probably a continious training image!";		
 		}
 	}
@@ -743,7 +745,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, s
 					float Ei; // Partial Entropy
 					float I; // Information content
 					float p; // probability
-					float q; // a priori 1D marginal
+					//float q; // a priori 1D marginal
 					if (!isAlreadyAllocated) {
 						isRelocated = x != closestCoords.getX() || y != closestCoords.getY() || z != closestCoords.getZ();
 						E=0;
@@ -782,7 +784,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, s
 						// the importance of Entropy
 						randomValue = randomValue - 1 - facEntropy*I;
 
-						if (_debugMode>1) {
+						if (_debugMode>2) {
 							std::cout <<  "SOFT DATA -- ";
 							std::cout << "cnt=" << node1DIdx << " x=" << x << " y=" << y << " z=" << z;
 							std::cout << " -- E=" << E;
@@ -821,13 +823,14 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, s
 		i++;
 	}
 
-	if (_debugMode>1) {
+	if (_debugMode>2) {
 		std::cout << "PATH = " << std::endl;
 		int tmpX, tmpY, tmpZ;
 
 		for (auto i = _simulationPath.begin(); i != _simulationPath.end(); ++i) {
 			MPS::utility::oneDTo3D(*i, _sgDimX, _sgDimY, tmpX, tmpY, tmpZ);
 			std::cout << tmpX << "," << tmpY << "," << tmpZ << "  ";
+			std::cout << std::endl;
 		}
 		std::cout << std::endl << "PATH END" << std::endl;
 	}
@@ -844,8 +847,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	if (_debugMode>-1) {
 		std::cout << "__________________________________________________________________________________" << std::endl;
 	 	std::cout << "MPSlib: a C++ library for multiple point simulation" << std::endl;
-	 	std::cout << "(c) 2015-2016 I-GIS (www.i-gis.dk) and" << std::endl;
-		std::cout << "              Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)" << std::endl;
+	 	std::cout << "(c) 2015-2020 I-GIS (www.i-gis.dk) and" << std::endl;
+		std::cout << "              Thomas Mejer Hansen (thomas.mejer.hansen@gmail.com)" << std::endl;
 		std::cout << "This program comes with ABSOLUTELY NO WARRANTY;"  << std::endl;
     	std::cout << "This is free software, and you are welcome to redistribute it"  << std::endl;
     	std::cout << "under certain conditions. See 'COPYING.LESSER'for details."  << std::endl;
@@ -909,9 +912,15 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 		if (_doEstimation == true) {
 				// ESTIMATION --> Initialize a grid for storing condtitional estimates
+				// This should probabl
 				int NC;
 				NC = _softDataCategories.size();
-				std::cout <<"NC="<< NC << std::endl;
+				int NC2;
+				NC2 = _dataCategories.size();
+				if (_debugMode>0) {
+					std::cout <<"NSoftCategories NC="<< NC << std::endl;
+					std::cout <<"NdataCategories NC2="<< NC2 << std::endl;
+				}
 				//_initializeSG(_cg, _sgDimX, _sgDimY, _sgDimZ);				 
 				_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC,  std::numeric_limits<double>::quiet_NaN());
 				//_initializeCG(_cg, _sgDimX, _sgDimY, _sgDimZ, NC, -1);
@@ -1232,8 +1241,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				}
 			}
 			_selfEnt[n] = E;
-			if (_debugMode>-2) {
-				std::cout << "E(real#" << n << ") = " <<_selfEnt[n] << std::endl;				
+			if (_debugMode>0) {
+				std::cout << "SI(real#" << n << ") = " <<_selfEnt[n] << std::endl;				
 			}
 		}
 
@@ -1262,7 +1271,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			E=E+_selfEnt[i];			
 		}
 		E=E/_realizationNumbers;
-		if (_debugMode>-2) {
+		if (_debugMode>0) {
 			std::cout << "H=E(SelfInformation)=" << E << std::endl;
 		}
 	}
@@ -1274,8 +1283,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		std::cout << "Average time for " << _realizationNumbers << " simulations (hours:minutes:seconds) : " << hours << ":" << minutes << ":" << seconds << std::endl;
 	}
 
-	if(_debugMode > -1 ) {
-		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
+	if(_debugMode > 0 ) {
+		// std::cout << "Number of threads: " << _numberOfThreads << std::endl;
 		// std::cout << "_maxNeighbours: " << _maxNeighbours << std::endl;
 		// std::cout << " maxIterations: " << _maxIterations << std::endl;
 		std::cout << "SG: " << _sgDimX << " " << _sgDimY << " " << _sgDimZ << std::endl;

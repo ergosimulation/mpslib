@@ -1,4 +1,4 @@
-// (c) 2015-2016 I-GIS (www.i-gis.dk) and Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)
+// (c) 2015-2020 I-GIS (www.i-gis.dk) and Thomas Mejer Hansen (thomas.mejer.hansen@gmail.com)
 //
 //    This file is part of MPSlib.
 //
@@ -250,7 +250,7 @@ namespace MPS {
 			std::ifstream file;
 			file.open(fileName, std::ios::binary);
 			if (!file.is_open()) {
-				std::cerr << "Can't open " << fileName << " !\n";
+				//std::cerr << "Can't open " << fileName << " !\n";
 				return false;
 			}
 			int tiSizeX, tiSizeY, tiSizeZ;

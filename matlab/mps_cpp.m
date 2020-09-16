@@ -22,6 +22,12 @@
 %   % set as d_soft parameter:
 %   O.d_soft [x y z prob_0 prob_1 ...]
 %
+% % MASK
+%   % set MASK
+%   MASK=zeros(size(SIM));;
+%   MASK(1:5,1:5)=1; % only simulate these data
+%   O.d_mask=MASK; [ny nx]
+%
 %
 % % optional
 %   O.exe_root: sets the path the folder containing the MPS binary files
@@ -96,10 +102,16 @@ if doSetSIM==1;
         O.simulation_grid_size=[nx ny nz];
     end
     if ~isfield(O,'origin');
-        O.origin=[0 0 0];
+        if isfield(O,'x'); o1=O.x(1);else o1=0;end
+        if isfield(O,'y'); o2=O.y(1);else o2=0;end
+        if isfield(O,'z'); o3=O.z(1);else o3=0;end
+        O.origin=[o1 o2 o3];
     end
     if ~isfield(O,'grid_cell_size');
-        O.grid_cell_size=[1 1 1];
+        if isfield(O,'x'); dx=O.x(2)-O.x(1);else dx=1;end
+        if isfield(O,'y'); dy=O.y(2)-O.y(1);else dy=1;end
+        if isfield(O,'z'); dz=O.z(2)-O.z(1);else dz=1;end
+        O.grid_cell_size=[dx dy dz];
     end
 end
 
@@ -151,6 +163,14 @@ if isfield(O,'d_soft');
         O.soft_data_filename='d_soft.dat';
     end
     write_eas(O.soft_data_filename,O.d_soft);
+end
+
+% WRITE MASK GRID IF SET AS VARIABLE
+if isfield(O,'d_mask');
+    if ~isfield(O,'mask_filename');
+        O.soft_data_filename='mask.dat';
+    end
+    write_eas_matrix(O.mask_filename,O.d_mask);
 end
 
 %%
@@ -291,6 +311,7 @@ if isfield(O,'doEstimation');
         if isfield(O,'d_hard')&&(O.simulation_grid_size(3)==1);
             s=size(O.cg);nc=s(end);
             vals=[0:1:nc-1];
+            try
             for i=1:size(O.d_hard,1);
                 P=zeros(1,nc);
                 P(O.d_hard(i,4)==vals)=1;
@@ -311,6 +332,9 @@ if isfield(O,'doEstimation');
                         keyboard
                     end
                 end
+            end
+            catch
+                disp('O.cg prob')
             end
         end
         
@@ -349,7 +373,6 @@ if (O.doEntropy>0)
      end
 end
 
-
 %% READ TEMPORARY GRID VALUES
 if (O.debug>1)
     for i=1:O.n_real
@@ -361,12 +384,27 @@ if (O.debug>1)
         end
     end
     
-    
-    fname=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
+    % PATH
+    fname=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,0);    
     if exist(fname,'file')
-        O.(sprintf('I_PATH'))=read_eas_matrix(fname);
+        
+        O.I_PATH=ones([O.simulation_grid_size(2) O.simulation_grid_size(1) O.simulation_grid_size(3)]).*NaN;;
+        O.i_path=read_eas(fname);
+        nxyz=prod(O.simulation_grid_size);
+        for i=1:length(O.i_path)
+            if (O.i_path(i)>0) && (O.i_path(i)<nxyz)
+                %iz=1;[ix,iy]=ind2sub([O.simulation_grid_size(1),O.simulation_grid_size(2)],O.i_path(i)+1);
+                [ix,iy,iz]=ind2sub([O.simulation_grid_size(1),O.simulation_grid_size(2),O.simulation_grid_size(3)],O.i_path(i)+1);
+                try
+                    O.I_PATH(iy,ix)=i;
+                catch
+                    disp(sprintf('%s: could not update O.I_PATH(%d,%d)',mfilename,iy,ix))
+                end
+            else
+                O.I_PATH(iy,ix)=NaN;
+            end
+        end
     end
-    
 end
 
 %% relocation grids
@@ -417,47 +455,6 @@ if (O.debug>2)
         disp(sprintf('%s: Could not read soft data',mfilename))        
     end
 end
-
-
-
-
-
-%%
-if (O.debug>1)
-    for i=1:O.n_real
-        fname_path=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
-        
-        
-        
-        try
-            PP=read_eas(fname_path);
-        catch
-            disp(sprintf('%s: problems reading output file (%s) - waiting a bit an retrying',mfilename,fname));
-            pause(5);
-            PP=read_eas(fname_path);
-        end
-        O.path(:,i)=PP(:);
-        
-        if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
-            % 1D
-        elseif (O.simulation_grid_size(3)==1)
-            % 2D
-            try
-                O.P=read_eas_matrix(fname_path);
-            end
-            [ix,iy]=ind2sub([O.simulation_grid_size(2),O.simulation_grid_size(1)],PP(:)+1);
-            for j=1:length(ix);
-                O.I_PATH(iy(j),ix(j),i)=j;
-            end
-        else
-            % 3D
-        end
-        
-        
-    end
-end
-
-
 
 
 %%

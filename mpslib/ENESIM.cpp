@@ -1,4 +1,4 @@
-// (c) 2015-2016 I-GIS (www.i-gis.dk) and Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)
+// (c) 2015-2020 I-GIS (www.i-gis.dk) and Thomas Mejer Hansen (thomas.mejer.hansen@gmail.com)
 //
 //    This file is part of MPSlib.
 //
@@ -19,6 +19,7 @@
 #include <cctype>       // isspace
 #include <algorithm>    // std::previousMatchedCntuffle std::remove_if
 #include <map>
+#include <time.h>
 
 #include "ENESIM.h"
 #include "Utility.h"
@@ -100,7 +101,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	}
 	
 
-	// Distance Measure and minimum distance
+	// Distance Measure and maximum distance allowed
 	_readLineConfiguration_mul(file, ss, data, s, str);
 	_distance_measure = stoi(data[1]);
 	// optional. Template size x - base when n_mulgrid=0
@@ -248,7 +249,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_doEntropy = 0;
 	}
-	if (_debugMode>-1) {
+	if (_debugMode>1) {
 		std::cout << "readpar: _doEntropy=" << _doEntropy << std::endl;
 	}
 	
@@ -258,7 +259,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_doEstimation = 0;
 	}
-	if (_debugMode>-1) {
+	if (_debugMode>1) {
 		std::cout << "readpar: _doEstimation=" << _doEstimation << std::endl;
 	}
 	
@@ -315,7 +316,11 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	// and store the relative locatoin in L_h, and the values in V_h
 	std::vector<MPS::Coords3D> L_c;
 	std::vector<float> V_c;
+	//int t0 = clock();
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
+	//int t1 = clock();	
+	//double elapsedNodeSecs = double(t1 - t0) / CLOCKS_PER_SEC;
+	//std::cout << "Time Circ Search = "<<  elapsedNodeSecs << std::endl;
 
 	if (_debugMode>2) {
 		std::cout << "  location in sim grid, SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
@@ -323,25 +328,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 		std::cout << ", _maxSearchRadius=" << _maxSearchRadius << ")" << std::endl;
 	}
 
-	// Compute relative distance for each conditional data
-	std::vector<float> L_weight(L_c.size());
-	for (unsigned int i = 0; i<L_c.size(); i++) {
-		if (_distance_power_order != 0) {
-			L_weight[i] = sqrt(L_c[i].getX()*L_c[i].getX() + L_c[i].getY()*L_c[i].getY() + L_c[i].getZ()*L_c[i].getZ());
-			L_weight[i] = pow(L_weight[i], -1 * _distance_power_order);
-
-		}
-		else {
-			L_weight[i] = 1;
-		}
-		if (_debugMode>2) {
-			std::cout << "  Lxyz=(" << L_c[i].getX() << "," << L_c[i].getY() << "," << L_c[i].getZ() << ")" << " V=" << V_c[i];
-			std::cout << " - weight  = " << L_weight[i] << std::endl;
-		}
-		
-	}
-
-
+	
 	// Setup the path through the training image
 
 	// Tirst check if the last dimension should be treated as individual types of random varibles
@@ -410,7 +397,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
 
 		// Get the distance between the conditional data in TI and SIM grid
-		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_weight);
+		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ);
 
 		
 		// Check if current L,T in TI match conditional observations better
@@ -711,13 +698,25 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 * @param L_weight precomputed (distance) weight!
 * @return distance
 */
-float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ, std::vector<float>& L_weight) {
+float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ) {
 
 	//float h_dist=0;
 	float L_weight_cum=0;
 	float LC_dist=0;
 	float V_ti;
 	int TI_x, TI_y, TI_z;
+
+	// Compute relative distance for each conditional data
+	std::vector<float> L_weight(L.size());
+	for (unsigned int i = 0; i<L.size(); i++) {
+		if (_distance_power_order != 0) {
+			L_weight[i] = sqrt(L[i].getX()*L[i].getX() + L[i].getY()*L[i].getY() + L[i].getZ()*L[i].getZ());
+			L_weight[i] = pow(L_weight[i], -1 * _distance_power_order);
+		}
+		else {
+			L_weight[i] = 1;
+		}				
+	}
 
 	//LC_dist=0;
 	//h_dist_cum=0;

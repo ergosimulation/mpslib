@@ -34,7 +34,7 @@ if ~isfield(O,'grid_cell_size'); O.grid_cell_size=[1 1 1]; end
 if ~isfield(O,'ti_filename');O.ti_filename='TI/ti_strebelle_250_250_1.sgems';end 
 if ~isfield(O,'mask_filename');O.mask_filename='mask.dat';end 
 if ~isfield(O,'output_folder');O.output_folder='.';end 
-if ~isfield(O,'shuffle_simulation_grid');O.shuffle_simulation_grid=1;end
+if ~isfield(O,'shuffle_simulation_grid');O.shuffle_simulation_grid=2;end
 if ~isfield(O,'entropyfactor_simulation_grid');O.entropyfactor_simulation_grid=4;end
 if ~isfield(O,'shuffle_simulation_grid');O.shuffle_simulation_grid=2;end
 %if ~isfield(O,'n_max_cpdf_count');O.n_max_cpdf_count=0;end
@@ -48,6 +48,11 @@ if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
 if ~isfield(O,'doEstimation');O.doEstimation=0;end
 if ~isfield(O,'doEntropy');O.doEntropy=0;end
+
+if (O.doEstimation==1)&&(O.n_real>1)
+    O.n_real=1;
+    disp(sprintf('%s: Setting n_real=%d in estimation mode.',mfilename,O.n_real))
+end
 %% WRITE STRUCTURE TO PARAMETER FILE
 fid=fopen(O.parameter_filename,'w');
 

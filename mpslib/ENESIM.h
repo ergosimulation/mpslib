@@ -1,4 +1,4 @@
-// (c) 2015-2016 I-GIS (www.i-gis.dk) and Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)
+// (c) 2015-2020 I-GIS (www.i-gis.dk) and Thomas Mejer Hansen (thomas.mejer.hansen@gmail.com)
 //
 //    This file is part of MPSlib.
 //
@@ -148,12 +148,10 @@ protected:
 	* @param TIi_dxX coordinate X of the current node in TI
 	* @param TIi_dxY coordinate Y of the current node in TI
 	* @param TIi_dxZ coordinate Z of the current node in TI
-	* @param L_dist : Precomputed distance
 	* @return distance
 	*/
-	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ,  std::vector<float>& L_dist);
-	//float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
-
+	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
+	
 public:
 	/**
 	* @brief Constructors default and empty parameters

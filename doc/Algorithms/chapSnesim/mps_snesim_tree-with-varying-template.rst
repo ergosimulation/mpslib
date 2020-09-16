@@ -30,7 +30,7 @@ Examples of running ``mps_snesim_tree`` with different template sizes
 can be found at
 https://github.com/ergosimulation/mpslib/tree/master/examples/2D/varying_template.
 
-The following figure show the result of 2D unconditional simualtion
+The following figure show the result of 2D unconditional simulation
 using different template sizes. The red line in the top of the figures
 represent the CPU time needed to generate the different realizations:
 

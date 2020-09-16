@@ -1,4 +1,4 @@
-// (c) 2015-2016 I-GIS (www.i-gis.dk) and Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)
+// (c) 2015-2020 I-GIS (www.i-gis.dk) and Thomas Mejer Hansen (thomas.mejer.hansen@gmail.com)
 //
 //    This file is part of MPSlib.
 //
@@ -69,7 +69,9 @@ void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 	_jobDone = false;
 
 	
-	if(_debugMode > -1 ) {
+	if(_debugMode > 0 ) {
+		std::cout << "______________________________________" << std::endl;
+		std::cout << "____________ENESIM____________________" << std::endl;
 		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
 		std::cout << "Conditional points: " << _maxNeighbours << std::endl;
 		std::cout << "Max iterations: " << _maxIterations << std::endl;

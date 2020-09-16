@@ -129,7 +129,10 @@ if (length(O.z)==1);
                 end
                 %plot(ix,iy,'ro','MarkerSize',1+12*(i/prod(O.simulation_grid_size)))
             end
-            imagesc(TI);title('Training image');
+            try
+            imagesc(TI(:,:,1));
+            end
+            title('Training image');
             axis image;
             cax=caxis;
             colormap(gray)
@@ -152,7 +155,7 @@ if (length(O.z)==1);
         figure;clf;
         imagesc(O.x,O.y,O.I_PATH);
         axis image
-        caxis([0 8])
+        caxis([0 80]);colorbar
         title('Path')
         
         if hardcopy==1; 

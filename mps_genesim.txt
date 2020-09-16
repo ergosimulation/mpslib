@@ -1,9 +1,9 @@
-Number of realizations # 10
+Number of realizations # 2
 Random Seed (0 `random` seed) # 1
 Maximum number of counts for conditional pdf # -1
-Max number of conditional point (Nhard) # 15
+Max number of conditional point (Nhard) # 9
 Max number of iterations # -1
-Distance measure [1:disc, 2:cont], minimum distance, distance power # 1 0.000000 0.000000
+Distance measure [1:disc, 2:cont], maximum distance, distance power # 1 0.000000 0.000000
 Colocated Dimension [0: no colocattion; >0: Colocated] # 1 
 Maximum search radius # 100000.000000
 Simulation grid size X # 20
@@ -15,7 +15,7 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # ti/ti_strebelle_125_125_1.dat
+Training image file (spaces not allowed) # sdata/ti/ti_strebelle_125_125_1.dat
 Output folder (spaces in name not allowed) # .
 Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential, EF) # 2 14
 Shuffle Training Image path (1: random, 0: sequential) # 1
@@ -24,7 +24,7 @@ HardData seach radius (world units) # 1
 Softdata categories (separated by ;) # 0;1
 Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft.dat
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
-Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # -1
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) #1
 Mask grid # dummyMaskGrid.grd3
 doEntropy # 1
 doEstimation # 0
