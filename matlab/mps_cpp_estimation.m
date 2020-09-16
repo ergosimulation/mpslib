@@ -13,7 +13,7 @@ if nargin<4, use_parfor=1;end
 
 if (license('test','Distrib_Computing_Toolbox')==0);
     disp(sprintf('%s: parallel toolbox not available - using single thread',mfilename))
-    use_parfor=1
+    use_parfor=0;
 end
 
 if use_parfor==1;
