@@ -51,6 +51,11 @@ if ~isfield(O,'max_search_radius');O.max_search_radius=[1 1].*1e+6;end
 if ~isfield(O,'doEstimation');O.doEstimation=0;end
 if ~isfield(O,'doEntropy');O.doEntropy=0;end
 
+if (O.doEstimation==1)&&(O.n_real>1)
+    O.n_real=1;
+    disp(sprintf('%s: Setting n_real=%d in estimation mode.',mfilename,O.n_real))
+end
+
 % multiple grids are not used by enesim
 %if (O.n_multiple_grids~=0);
     %disp(sprintf('%s: Setting nmulgrids to ZERO to avoid relocation',mfilename));
