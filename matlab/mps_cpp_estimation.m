@@ -13,20 +13,22 @@ if nargin<4, use_parfor=1;end
 
 if (license('test','Distrib_Computing_Toolbox')==0);
     disp(sprintf('%s: parallel toolbox not available - using single thread',mfilename))
-    use_parfor=1
+    use_parfor=0;
 end
 
 if use_parfor==1;
 
     %% try use parpool
-    try
-        %poolobj = gcp('nocreate');
-        poolobj = gcp;
-        n_threads=poolobj.NumWorkers;
-    catch
-        disp(sprintf('%s: No parallel toolbox - using 1 thread/worker',mfilename))
-        n_threads=1;
+    
+    o=gcp('nocreate');
+    if isempty(o);
+        % when no parpool exists, create a new one
+        %delete(o);
+        n_threads = feature('numcores');
+        parpool(n_threads);
     end
+    n_threads = o.NumWorkers;
+    
     t_init=now;
     
     [ny,nx,nz]=size(SIM);
@@ -58,6 +60,7 @@ if use_parfor==1;
         end
         
         if doPlot==1;
+            figure(79);
             nsp=ceil(sqrt(n_threads));
             subplot(nsp,nsp,i);
             imagesc(mask{i});
