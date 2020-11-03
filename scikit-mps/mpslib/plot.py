@@ -41,6 +41,11 @@ def plot_3d_reals_pyvista(O, nshow=4):
     '''
     import numpy as np
     import pyvista
+    import pyvista
+    from pyvistaqt import BackgroundPlotter
+
+
+plotter = BackgroundPlotter()
     
     if not(hasattr(O,'sim')):
         print('No data to plot (no "sim" attribute)')
@@ -125,7 +130,7 @@ def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=()
     
         # Now plot the grid!
     if (len(threshold)==2):
-        plot = pyvista.BackgroundPlotter() # interactive
+        plot = BackgroundPlotter() # interactive
         #plot = pyvista.Plotter() # interactive
         grid_threshold = grid.threshold(threshold)   
         try:
@@ -141,7 +146,7 @@ def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=()
     
     elif (slice==1):
         # plot = pyvista.Plotter() # static
-        plot = pyvista.BackgroundPlotter() # interactive
+        plot = BackgroundPlotter() # interactive
         
         grid_slice = grid.slice_orthogonal()
         plot.add_mesh(grid_slice)
