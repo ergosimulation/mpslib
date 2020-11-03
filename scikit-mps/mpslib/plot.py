@@ -43,8 +43,7 @@ def plot_3d_reals_pyvista(O, nshow=4):
     import pyvista
     import pyvista
     from pyvistaqt import BackgroundPlotter
-
-
+    
     plotter = BackgroundPlotter()
     
     if not(hasattr(O,'sim')):
@@ -118,12 +117,14 @@ def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=()
     plot 3D cube using 'pyvista' 
     '''
     import numpy as np 
+    from pyvistaqt import BackgroundPlotter
     
     if module_exists('pyvista',1):
         import pyvista
     else:
         return 1
     print(filename)
+    
     
     # create uniform grid 
     grid = numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1))
