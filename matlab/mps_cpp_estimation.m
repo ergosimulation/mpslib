@@ -6,7 +6,7 @@
 % parpool(nthreads) before running this function.
 %
 function [est,O]=mps_cpp_estimation(TI,SIM,O,use_parfor)
-doPlot=1;
+doPlot=0;
 
 O.n_real=1;
 if nargin<4, use_parfor=1;end
@@ -27,6 +27,7 @@ if use_parfor==1;
         n_threads = feature('numcores');
         parpool(n_threads);
     end
+    o = gcp('nocreate')
     n_threads = o.NumWorkers;
     
     t_init=now;
@@ -115,24 +116,37 @@ if use_parfor==1;
     end
     cd(cwd);
     %% COLLECT THE DATA FROM THE THREADS
-    est=Othread{1}.cg.*nan;
+    O=Othread{1};
+    if (O.debug>1);O.TG2=Othread{1}.TG2.*nan;end
+    %est=
     for i=1:n_threads;
         for ix=1:nx
         for iy=1:ny
         for iz=1:nz
             if Othread{i}.d_mask(iy,ix,iz)==1;
                 if nz==1
-                    est(iy,ix,:)=Othread{i}.cg(iy,ix,:);
+                    %est(iy,ix,:)=Othread{i}.cg(iy,ix,:);
+                    O.cg(iy,ix,:)=Othread{i}.cg(iy,ix,:);
                 else
-                    est(iy,ix,iz,:)=Othread{i}.cg(iy,ix,iz,:);
-                end                    
+                    %est(iy,ix,iz,:)=Othread{i}.cg(iy,ix,iz,:);
+                    O.cg(iy,ix,iz,:)=Othread{i}.cg(iy,ix,iz,:);
+                end
+                
+                if (O.debug>1)
+                    %if isfield(Othread{i},'TG2')
+                    O.TG2(iy,ix,iz)=Othread{i}.TG2(iy,ix,iz);
+                end
+                
             end
+            
+            
         end
         end
         end
     end
-    O=Othread{1};
-    O.cg=est;
+    %O=Othread{1};
+    %O.cg=est;
+    est=O.cg;
     O.time = (now-t_init)*3600*24;
     
 else
