@@ -22,7 +22,7 @@ if ~isfield(O,'rseed'); O.rseed=0; end
 if ~isfield(O,'n_cond'); O.n_cond=[25 1]; end
 if ~isfield(O,'n_max_ite'); O.n_max_ite=10000; end
 if ~isfield(O,'n_max_cpdf_count'); O.n_max_cpdf_count=10; end
-if ~isfield(O,'template_size'); O.template_size=[5 5 1]; end
+%if ~isfield(O,'template_size'); O.template_size=[5 5 1]; end
 if ~isfield(O,'simulation_grid_size'); O.simulation_grid_size=[50 50 1]; end
 if ~isfield(O,'origin'); O.origin=[0 0 0]; end
 if ~isfield(O,'grid_cell_size'); O.grid_cell_size=[1 1 1]; end
@@ -50,6 +50,11 @@ if ~isfield(O,'max_search_radius');O.max_search_radius=[1 1].*1e+6;end
 
 if ~isfield(O,'doEstimation');O.doEstimation=0;end
 if ~isfield(O,'doEntropy');O.doEntropy=0;end
+
+if (O.doEstimation==1)&&(O.n_real>1)
+    O.n_real=1;
+    disp(sprintf('%s: Setting n_real=%d in estimation mode.',mfilename,O.n_real))
+end
 
 % multiple grids are not used by enesim
 %if (O.n_multiple_grids~=0);

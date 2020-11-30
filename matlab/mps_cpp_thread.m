@@ -92,8 +92,10 @@ cwd=pwd;
 parfor i=1:actual_threads;
     cd(cwd);
     cd(outdir{i});
-    
-    disp(sprintf('%s: running thread #%d in %s',mfilename,i,outdir{i}));
+    if ~isfield(Othread{i},'debug');Othread{i}.debug;end
+    if Othread{i}.debug>-1
+        disp(sprintf('%s: running thread #%d in %s',mfilename,i,outdir{i}));
+    end
     [r{i},Othread{i}]=mps_cpp(TI,SIM,Othread{i});
 end
 %%

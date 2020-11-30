@@ -245,8 +245,6 @@ void MPS::SNESIM::_constructTemplateFaces(const int& sizeX, const int& sizeY, co
 	//Loop through all template indices
 	//initialize faces
 	_templateFaces.clear();
-	//Initialize the faces with center point(0, 0, 0)
-	_templateFaces.push_back(MPS::Coords3D(0, 0, 0));
 	int offsetX, offsetY, offsetZ;
 	int templateIdxX, templateIdxY, templateIdxZ;
 	for (int i=0; i<totalTemplateIndices; i++) {
@@ -255,10 +253,7 @@ void MPS::SNESIM::_constructTemplateFaces(const int& sizeX, const int& sizeY, co
 		offsetX = templateIdxX - templateCenterX;
 		offsetY = templateIdxY - templateCenterY;
 		offsetZ = templateIdxZ - templateCenterZ;
-		//Ignore center point
-		if (offsetX != 0 || offsetY != 0 || offsetZ != 0) {
-			_templateFaces.push_back(MPS::Coords3D(offsetX, offsetY, offsetZ));
-		}
+		_templateFaces.push_back(MPS::Coords3D(offsetX, offsetY, offsetZ));
 	}
 
 	////Forcing a template like in article
@@ -269,11 +264,12 @@ void MPS::SNESIM::_constructTemplateFaces(const int& sizeX, const int& sizeY, co
 	//_templateFaces.push_back(MPS::Coords3D(0, -1, 0));
 	//_templateFaces.push_back(MPS::Coords3D(-1, 0, 0));
 	////Showing the template faces
-	//std::cout << _templateFaces.size() << std::endl;
-	//for (unsigned int i=0; i<_templateFaces.size(); i++) {
-	//	std::cout << _templateFaces[i].getX() << " " << _templateFaces[i].getY() << " " << _templateFaces[i].getZ() << std::endl;
-	//}
-
+	if (_debugMode > 1) {
+		std::cout << _templateFaces.size() << std::endl;
+		for (unsigned int i=0; i<_templateFaces.size(); i++) {
+			std::cout << _templateFaces[i].getX() << " " << _templateFaces[i].getY() << " " << _templateFaces[i].getZ() << std::endl;
+		}
+	}	
 }
 
 /**

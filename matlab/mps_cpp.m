@@ -311,6 +311,7 @@ if isfield(O,'doEstimation');
         if isfield(O,'d_hard')&&(O.simulation_grid_size(3)==1);
             s=size(O.cg);nc=s(end);
             vals=[0:1:nc-1];
+            try
             for i=1:size(O.d_hard,1);
                 P=zeros(1,nc);
                 P(O.d_hard(i,4)==vals)=1;
@@ -325,8 +326,15 @@ if isfield(O,'doEstimation');
                 %    iy1=O.d_hard(i,1);
                 %end
                 for ic=1:nc
-                    O.cg(iy1,ix1,ic)=P(ic);
+                    try
+                        O.cg(iy1,ix1,ic)=P(ic);
+                    catch
+                        keyboard
+                    end
                 end
+            end
+            catch
+                disp('O.cg prob')
             end
         end
         
@@ -365,7 +373,6 @@ if (O.doEntropy>0)
      end
 end
 
-
 %% READ TEMPORARY GRID VALUES
 if (O.debug>1)
     for i=1:O.n_real
@@ -380,14 +387,24 @@ if (O.debug>1)
     % PATH
     fname=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,0);    
     if exist(fname,'file')
-        O.i_path=read_eas(fname)
+        
+        O.I_PATH=ones([O.simulation_grid_size(2) O.simulation_grid_size(1) O.simulation_grid_size(3)]).*NaN;;
+        O.i_path=read_eas(fname);
+        nxyz=prod(O.simulation_grid_size);
         for i=1:length(O.i_path)
-            [ix,iy]=ind2sub([O.simulation_grid_size(1),O.simulation_grid_size(2)],O.i_path(i)+1);
-            O.I_PATH(iy,ix)=i;
+            if (O.i_path(i)>0) && (O.i_path(i)<nxyz)
+                %iz=1;[ix,iy]=ind2sub([O.simulation_grid_size(1),O.simulation_grid_size(2)],O.i_path(i)+1);
+                [ix,iy,iz]=ind2sub([O.simulation_grid_size(1),O.simulation_grid_size(2),O.simulation_grid_size(3)],O.i_path(i)+1);
+                try
+                    O.I_PATH(iy,ix)=i;
+                catch
+                    disp(sprintf('%s: could not update O.I_PATH(%d,%d)',mfilename,iy,ix))
+                end
+            else
+                O.I_PATH(iy,ix)=NaN;
+            end
         end
     end
-    
-    
 end
 
 %% relocation grids
@@ -438,45 +455,6 @@ if (O.debug>2)
         disp(sprintf('%s: Could not read soft data',mfilename))        
     end
 end
-
-
-
-
-
-%% WHAT IS THIS
-if (O.debug>1)
-    for i=1:O.n_real
-        fname_path=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
-        
-        try
-            PP=read_eas(fname_path);
-        catch
-            disp(sprintf('%s: problems reading output file (%s) - waiting a bit an retrying',mfilename,fname));
-            pause(5);
-            PP=read_eas(fname_path);
-        end
-        O.path(:,i)=PP(:);
-        
-        if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
-            % 1D
-        elseif (O.simulation_grid_size(3)==1)
-            % 2D
-            try
-                O.P=read_eas_matrix(fname_path);
-            end
-            [ix,iy]=ind2sub([O.simulation_grid_size(2),O.simulation_grid_size(1)],PP(:)+1);
-            %for j=1:length(ix);
-            %    O.I_PATH(iy(j),ix(j),i)=j;
-            %end
-        else
-            % 3D
-        end
-        
-        
-    end
-end
-
-
 
 
 %%

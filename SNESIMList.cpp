@@ -87,7 +87,8 @@ void MPS::SNESIMList::initialize(const std::string& configurationFile) {
 						tiX = x + deltaX;
 						tiY = y + deltaY;
 						tiZ = z + deltaZ;
-						if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[tiZ][tiY][tiX])) {
+						//std::cout << deltaX << " " << deltaY << " " << deltaZ  << std::endl;
+ 						if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[tiZ][tiY][tiX])) {
 							//Out of bound or NaN value then just ignore this key
 							isValidKey = false;
 							break;
@@ -115,7 +116,7 @@ void MPS::SNESIMList::initialize(const std::string& configurationFile) {
 				}
 			}	
 		}
-		if (_debugMode > -1) {
+		if (_debugMode > 0) {
 		  std::cout << "Total pixel: " << pixelsCnt << std::endl;
 		  //Check out dictionary
 		  std::cout << "Dictionary info: " << std::endl;
@@ -123,12 +124,18 @@ void MPS::SNESIMList::initialize(const std::string& configurationFile) {
 		  std::cout << "Total elements: " << _patternsDictionary[level].size() << std::endl;
 		}
 		////Showing the dictionary to debug ...
-		//for(auto iter = _patternsDictionary[level].begin(); iter != _patternsDictionary[level].end(); ++iter) {
-		//	std::vector<float> key = iter->first;
-		//	for (int i=0; i<key.size(); i++)
-		//	std::cout << key[i] << " ";
-		//	std::cout << " : " << iter->second << std::endl << std::endl;
-		//}
+		/*
+		int ic=0;
+		for(auto iter = _patternsDictionary[level].begin(); iter != _patternsDictionary[level].end(); ++iter) {
+			ic++;
+			//std::cout << "ic" << ic << " :: ";
+			std::vector<float> key = iter->first;
+			for (int i=0; i<key.size(); i++) {
+				std::cout << key[i] << " ";
+			}
+			std::cout << "     " << iter->second << std::endl;
+		}
+		*/
 	}	
 }
 
