@@ -2,10 +2,10 @@
 mpslib_estimation:
 Estimation vs simulation
 '''
+import copy
 import mpslib as mps
 import matplotlib.pyplot as plt
 import numpy as np
-import copy
 
 plt.ion()
 
@@ -24,7 +24,6 @@ O.par['hard_data_fnam']='hard.dat'
 d_hard = np.array([[ 3, 3, 0, 1],
                     [ 8, 8, 0, 0],
                     [ 12, 3, 0, 1]])
-    
 
 O.d_hard = d_hard
 # Set training image
