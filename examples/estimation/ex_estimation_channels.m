@@ -14,9 +14,8 @@ SIM=zeros(ny,nx).*NaN; %  simulation grid
 %O.method='mps_snesim_list'; %
 O.method='mps_genesim'; %
 
-O.n_real=1;             %  optional number of realization
-O.n_cond=64;             %  optional number of realization
-%O.n_cond=16;             %  optional number of realization
+O.n_cond=49;             %  optional number of realization
+O.n_cond=16,
 O.distance_pow=2;
 O.distance_min=0.01;
 O.distnace_measure=1;
