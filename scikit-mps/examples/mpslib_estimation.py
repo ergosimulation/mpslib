@@ -55,18 +55,13 @@ O_est.par['do_entropy']=1
 O_est.par['n_real']=1
 O_est.par['n_max_cpdf_count']=1000000 # We need ENESIM/GENESIM and not DS
 O_est.par['n_max_ite']=1000000
-O_est.remove_gslib_after_simulation=0
+O_est.remove_gslib_after_simulation=1
 
 O_est.run()
 
-D_est = mps.eas.read('ti.dat_cg_1.gslib')
-P1=D_est['Dmat'][:,:,0]
-P1=P1.transpose()
-
-
-D_ent = mps.eas.read('ti.dat_ent_0.gslib')
-H=D_ent['Dmat'][:,:,0]
-H=H.transpose()
+#%%
+P1=O_est.est[1][:,:,0].T
+H=O_est.Hcond[:,:,0].transpose()
 
 plt.figure()
 plt.subplot(121)
