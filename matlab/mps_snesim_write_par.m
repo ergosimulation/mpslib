@@ -48,6 +48,11 @@ if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
 if ~isfield(O,'doEstimation');O.doEstimation=0;end
 if ~isfield(O,'doEntropy');O.doEntropy=0;end
+
+if (O.doEstimation==1)&&(O.n_real>1)
+    O.n_real=1;
+    disp(sprintf('%s: Setting n_real=%d in estimation mode.',mfilename,O.n_real))
+end
 %% WRITE STRUCTURE TO PARAMETER FILE
 fid=fopen(O.parameter_filename,'w');
 
