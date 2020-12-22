@@ -63,6 +63,9 @@ One (recommended) approach is to make use of MSYS2. Follow the guide at [http://
 
 # Release history
 
+## v1.4 [01-01-2021]
+Support for sequential estimation
+
 ## v1.0 [15-02-2016]
 Initial release of MPSlib, with
 `mps_snesim_list`,

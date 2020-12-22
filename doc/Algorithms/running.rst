@@ -116,8 +116,14 @@ Entropy
 ^^^^^^^^^
 
 -  [ 0]: No computation of entropy
--  [ 1]: Compute entropy as part of simulation
+-  [ 1]: Compute entropy/self-information as part of simulation
 
 See [HANSEN2020]_ for more information.
 
+Estimation
+^^^^^^^^^^
 
+-  [ 0]: Do not perform sequential estimation
+-  [ 1]: Perform sequential estimation (rather than sequential simulation)
+
+See [JOHANNSSON2019]_ for more information.
