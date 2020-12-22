@@ -26,8 +26,8 @@ and Visual Studio C++. Using GNU C++ the code can be compiled using
     make
 
 
-LINUX (Ubuntu Linux 16.04)
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+LINUX (Ubuntu Linux (>16.04))
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Prerequisites: g++, which can be installed using
 
