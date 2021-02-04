@@ -71,7 +71,7 @@ reals=[];
 
 %% DEFAULT VALUES
 if ~isfield(O,'debug');O.debug=-1;end
-if ~isfield(O,'rseed');O.rseed=1;end
+if ~isfield(O,'rseed');O.rseed=0;end
 if ~isfield(O,'output_folder');O.output_folder='.';end
 
 %% write ti
@@ -263,7 +263,7 @@ for i=1:O.n_real
   
   if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
     % 1D
-    reals=D;
+    reals(i,:)=D;
   elseif (O.simulation_grid_size(3)==1)
     % 2D
     %reals(:,:,i)=reshape(D,O.simulation_grid_size(1),O.simulation_grid_size(2))';

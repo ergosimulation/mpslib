@@ -92,7 +92,7 @@ cwd=pwd;
 parfor i=1:actual_threads;
     cd(cwd);
     cd(outdir{i});
-    if ~isfield(Othread{i},'debug');Othread{i}.debug;end
+    if ~isfield(Othread{i},'debug');Othread{i}.debug=0;end
     if Othread{i}.debug>-1
         disp(sprintf('%s: running thread #%d in %s',mfilename,i,outdir{i}));
     end
