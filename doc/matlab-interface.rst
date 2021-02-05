@@ -1,8 +1,8 @@
 Matlab interface
 ================
 
-A simple matlab interface to the algorithms on MPSlib has been
-developed. It consist of the following m-files:
+A simple Matlab interface to the algorithms on MPSlib has been
+developed. It consists of the following m-files:
 
 Running MPSlib algorithms:
 
@@ -24,10 +24,10 @@ Examples:
 -  mps_cpp_demo.m
 
 These m-files requires no special toolboxes, and are compatible with GNU
-Octave. However, the examples below requires the
+Octave. However, the examples below require the
 `mGstat <http//mgstat.sf.net/>`__ toolbox.
 
-``mps_cpp`` takes to three inputs, og which the first two are mandatory:
+``mps_cpp`` takes to three inputs, of which the first two are mandatory:
 
 ::
 
@@ -183,7 +183,7 @@ i.e. by at each iteration: \`
 Plot simulation results
 -----------------------
 
-``mps_cpp_plot``, can be used use to plot simulation results
+``mps_cpp_plot``, can be used used to plot simulation results
 
 ::
 
@@ -191,7 +191,7 @@ Plot simulation results
     mps_plot_cpp(reals,O);
 
 If debug level is larger than one, then the number of temporary grids
-with different information, is alos visualized.
+with different information, is also visualized.
 
 ::
 
