@@ -6,9 +6,9 @@
 %
 
 if ~exist('TI','var');
-    TI=mps_ti;           %  training image
-    TI=mps_ti('ti_cb_6x6_40_40_1.dat');   
-    [TI,TI_fname]=mps_ti('ti_fluvsim_250_250_100.dat');       
+    [TI,TI_fname]=mps_ti;           %  training image
+    %[TI,TI_fname]=mps_ti('ti_cb_6x6_40_40_1.dat');   
+    %[TI,TI_fname]=mps_ti('ti_fluvsim_250_250_100.dat');       
 end
 figure(1);
 imagesc(TI(:,:,1));axis image
@@ -16,7 +16,7 @@ title(sprintf('TI: %s',TI_fname))
 drawnow;
 
 if ~exist('SIM','var');
-    SIM=zeros(80,80).*NaN; %  simulation grid
+    SIM=zeros(280,280).*NaN; %  simulation grid
 end
 
 O.n_real=1;  % Number of realizations
@@ -33,7 +33,7 @@ if ~isfield(O,'n_max_cpdf_count')
 end
 
 if ~exist('par_1','var'); par_1='n_cond';end
-if ~exist('arr_1','var'); arr_1=[1,2,3,4,5].^2; end
+if ~exist('arr_1','var'); arr_1=[1,2,3,4,5,6,7].^2; end
 
 if ~exist('par_2','var'); par_2='rseed';end
 if ~exist('arr_2','var'); arr_2=[1,2,3];end
@@ -41,6 +41,7 @@ if ~exist('arr_2','var'); arr_2=[1,2,3];end
 n_1=length(arr_1);
 n_2=length(arr_2);
 
+figure(2);
 clf;
 for i=1:n_1
 for j=1:n_2
@@ -54,7 +55,6 @@ for j=1:n_2
     tic;
     [reals,O]=mps_cpp(TI,SIM,O);
     t(i,j)=toc;
-    figure(2);
     if n_2==1;
         nn=ceil(sqrt(n_1));        
         subplot(nn,nn,(j-1)*n_1+i)
