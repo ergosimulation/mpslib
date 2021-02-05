@@ -13,6 +13,7 @@ end
 figure(1);
 imagesc(TI(:,:,1));axis image
 title(sprintf('TI: %s',TI_fname))
+drawnow;
 
 if ~exist('SIM','var');
     SIM=zeros(80,80).*NaN; %  simulation grid
@@ -32,7 +33,7 @@ if ~isfield(O,'n_max_cpdf_count')
 end
 
 if ~exist('par_1','var'); par_1='n_cond';end
-if ~exist('arr_1','var'); arr_1=[2,3,4,5].^2; end
+if ~exist('arr_1','var'); arr_1=[1,2,3,4,5].^2; end
 
 if ~exist('par_2','var'); par_2='rseed';end
 if ~exist('arr_2','var'); arr_2=[1,2,3];end
