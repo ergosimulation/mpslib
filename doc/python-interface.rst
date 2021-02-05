@@ -56,8 +56,8 @@ and
    :alt: E-type
    :scale: 50%
 
-   Etype mean and variance from simulation.
-	   
+   Etype mean and variance from the simulation.
+      
 ************************************************
 Installation
 ************************************************
@@ -71,7 +71,7 @@ To allow editing scikit-mps locally after install use
    cd mpslib/scikit-mps
    pip install -e .
 
-A number of examples are locate in ``mpslib/scikit-mps/examples`` 
+Several examples are located in ``mpslib/scikit-mps/examples`` 
    
 ****************************************
 mps.mpslib: The main interface to mpslib
@@ -141,7 +141,7 @@ This can be done using e.g.
 mps.eas: reading and writing EAS formatted files
 ************************************************
 
-mps.eas contains a number of functions for reading and writing EAS formatted data.
+mps.eas contains several functions for reading and writing EAS formatted data.
 
 Read EAS point set
 __________________
@@ -178,7 +178,7 @@ The first line (the title) must contain the dimensions of the data in the eas fi
 ::
    100 210 13
 
-to describe matrix of size nx=100, ny=210, and nz=13.
+to describe a matrix of size nx=100, ny=210, and nz=13.
 It is read as for the points data set
 ::
    import mpslib as mps
@@ -189,7 +189,7 @@ It is read as for the points data set
 
 Write EAS volume set
 ____________________
-A 3D numpy array can be written as a EAS volume set using
+A 3D numpy array can be written as an EAS volume set using
 ::
    import mpslib as mps
    import numpy as no
@@ -216,19 +216,19 @@ To see a list of the available training images call
    horizons - 3D continious horizons
    fluvsim - 3D discrete fluvsim
 
-To load and plot the widely used traning image from Strebelle, simply call it using e.g.
+To load and plot the widely used training image from Strebelle, simply call it using e.g.
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.strebelle()
    mps.plot.plot_3d(ti)   
    
-To load and plot a checkerboard traning image, use e.g 
+To load and plot a checkerboard training image, use e.g 
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
    mps.plot.plot_3d(ti)   
 
-To load and plot the 3D fluvsim  traning image, use e.g 
+To load and plot the 3D fluvsim  training image, use e.g 
 ::
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.fluvsim()

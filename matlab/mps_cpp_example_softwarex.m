@@ -7,7 +7,7 @@ clear all;close all
 
 nx=80;ny=50;
 
-TI=read_eas_matrix(['..',filesep,'ti',filesep,'ti_strebelle_250_250_1.dat']);
+TI=mps_ti('ti_strebelle_250_250_1.dat');
 TI=TI(2:2:end,2:2:end);
 
 SIM=zeros(ny,nx).*NaN; %  simulation grid
