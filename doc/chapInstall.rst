@@ -5,10 +5,10 @@ Download
 --------
 
 | The latest release, containing statically compiles binaries for
-  windows and Linux, can be found here:
+  Windows and Linux, can be found here:
 | https://github.com/ergosimulation/mpslib/releases/latest.
 
-The source can be downloaded from github
+The source can be downloaded from GitHub
 https://github.com/ergosimulation/mpslib.
 
 Compilation
@@ -57,7 +57,7 @@ Windows: (mingw-w64)
 ^^^^^^^^^^^^^^^^^^^^
 
 MPSlib has been tested using MinGW, specifically mingw-w64
-([http://mingw-w64.org/doku.php]), which can be obtained in a number of
+([http://mingw-w64.org/doku.php]), which can be obtained in several
 ways. (Note that not all builds of MinGW works!)
 
 One (recommended) approach is to make use of MSYS2. Follow the guide at

@@ -20,13 +20,13 @@
 # -- Project information -----------------------------------------------------
 
 project = 'MPSlib'
-copyright = '2019, Thomas Mejer Hansen'
+copyright = '2021, Thomas Mejer Hansen'
 author = 'Thomas Mejer Hansen'
 
 # The short X.Y version
-version = '1.0'
+version = '1.3'
 # The full version, including alpha/beta/rc tags
-release = '1.0.37'
+release = '1.3'
 
 
 # -- General configuration ---------------------------------------------------
