@@ -12,7 +12,11 @@ if ~exist('TI','var');
 end
 figure(1);
 imagesc(TI(:,:,1));axis image
-title(sprintf('TI: %s',TI_fname))
+try
+    title(sprintf('TI: %s',TI_fname))
+catch
+    title('TI')
+end
 drawnow;
 
 if ~exist('SIM','var');
