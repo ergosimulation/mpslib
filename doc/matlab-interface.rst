@@ -24,8 +24,7 @@ Examples:
 -  mps_cpp_example.m
 
 These m-files requires no special toolboxes, and are compatible with GNU
-Octave. However, the examples below require the
-`mGstat <http//mgstat.sf.net/>`__ toolbox.
+Octave.
 
 ``mps_cpp`` takes to three inputs, of which the first two are mandatory:
 
