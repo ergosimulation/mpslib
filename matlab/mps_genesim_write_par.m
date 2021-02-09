@@ -56,6 +56,12 @@ if (O.doEstimation==1)&&(O.n_real>1)
     disp(sprintf('%s: Setting n_real=%d in estimation mode.',mfilename,O.n_real))
 end
 
+if (O.doEstimation==1)&&(O.n_max_cpdf_count==1)    
+    disp(sprintf('%s: O.n_max_cpdf_count=1 (DS mode) is not usefull in estimation mode',mfilename))
+    O.n_max_cpdf_count=1000;
+    disp(sprintf('%s: Setting O.n_max_cpdf_count=%d in estimation mode.',mfilename,O.n_max_cpdf_count))
+end
+
 % multiple grids are not used by enesim
 %if (O.n_multiple_grids~=0);
     %disp(sprintf('%s: Setting nmulgrids to ZERO to avoid relocation',mfilename));
