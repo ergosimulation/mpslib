@@ -1,7 +1,7 @@
 % mps_cpp_example_entropy
 % Example of computing self-information and entropy as part of sequential
 % simulation
-clear all;
+clear all;close all
 
 TI=mps_ti;           %  training image
 SIM=zeros(80,60).*NaN; %  simulation grid
