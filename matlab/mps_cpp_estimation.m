@@ -1,5 +1,8 @@
 % mps_cpp_estimation: Perform sequential estimation
 %
+% Call:
+%    [est,O]=mps_cpp_estimation(TI,SIM,O,use_parfor)
+%
 % Will split sequentuial estimation on multiple threads
 %
 % Select number of threads by running
@@ -27,7 +30,7 @@ if use_parfor==1;
         n_threads = feature('numcores');
         parpool(n_threads);
     end
-    o = gcp('nocreate')
+    o = gcp('nocreate');
     n_threads = o.NumWorkers;
     
     t_init=now;
@@ -37,7 +40,8 @@ if use_parfor==1;
     nsub=ceil(nxyz/n_threads);
     
     % setup masks
-    ii_r=shuffle(1:nxyz); % shuffle nodes
+    %ii_r=shuffle(1:nxyz); % shuffle nodes
+    ii_r=randperm(nxyz); % shuffle nodes
     %ii_r=1:1:nxyz;
     
     i0=0;
