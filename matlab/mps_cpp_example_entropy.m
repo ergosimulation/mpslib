@@ -11,11 +11,12 @@ SIM=zeros(80,60).*NaN; %  simulation grid
 %SIM(40:40:43)=1; % some mode conditional data
 
 O.method='mps_snesim_tree';
-O.n_real=40;
+%O.method='mps_genesim';O.n_max_cpdf_count=10;
+O.n_real=50;
 O.doEntropy=1;
 O.rseed=1;
 nc_arr = [1:7].^2;
-nc_arr = [1:2:30];
+%nc_arr = [1:2:30];
 
 for i=1:length(nc_arr);
     O.n_cond = nc_arr(i);
