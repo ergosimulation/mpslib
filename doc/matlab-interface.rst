@@ -301,21 +301,23 @@ Sequential Estimation
  Details about using sequential estimation with MPS algorithms can be found in [JOHANNSSON2019]_
 
 ::
-    TI=mps_ti;           %  training image
-    SIM=zeros(80,60).*NaN; %  simulationgrid
-    SIM(10:12,20)=0; % some conditional data
-    SIM(40:40:43)=1; % some conditional data
-    O.method='mps_genesim';
-    O.doEstimation=1;
 
-    [reals,O]=mps_cpp(TI,SIM,O);
-    est = O.cg; % this of size [80,60,2] as the training image has 2 soft_data_categories
+      TI=mps_ti;           %  training image
+      SIM=zeros(80,60).*NaN; %  simulationgrid
+      SIM(10:12,20)=0; % some conditional data
+      SIM(40:40:43)=1; % some conditional data
+      O.method='mps_genesim';
+      O.doEstimation=1;
+
+      [reals,O]=mps_cpp(TI,SIM,O);
+      est = O.cg; % this of size [80,60,2] as the training image has 2 soft_data_categories
 
 
 Sequential estimation can be performed in parallel, consideiring each pixel at a time. This is utilised in ``mps_cpp_estimation`` that use parallel threads for faster estimation: 
 ::
-    O.n_max_cpdf_count=100000;
-    [est]=mps_cpp_estimation(TI,SIM,O);
+
+      O.n_max_cpdf_count=100000;
+      [est]=mps_cpp_estimation(TI,SIM,O);
 
 
 
@@ -328,16 +330,17 @@ In this case the self-information of each realization is returned in ``O.SI``, a
 
 
 ::
-    clear all;
-    TI=mps_ti;           %  training image
-    SIM=zeros(80,60).*NaN; %  simulation grid
-    O.method='mps_snesim_tree';
-    O.doEntropy=1;
-    O.n_real = 10;
-    [reals,O]=mps_cpp(TI,SIM,O);
 
-    % The self-information of each realizations is 
-    O.SI = 
+      clear all;
+      TI=mps_ti;           %  training image
+      SIM=zeros(80,60).*NaN; %  simulation grid
+      O.method='mps_snesim_tree';
+      O.doEntropy=1;
+      O.n_real = 10;
+      [reals,O]=mps_cpp(TI,SIM,O);
+
+      % The self-information of each realizations is 
+      O.SI = 
 
             431.6090
             364.8060
@@ -350,8 +353,8 @@ In this case the self-information of each realization is returned in ``O.SI``, a
             336.9290
             489.7420
 
-    % Compute the entropy as the average self-information
-    H_est = mean(O.SI)
+      % Compute the entropy as the average self-information
+      H_est = mean(O.SI)
 
             H_est =
 
