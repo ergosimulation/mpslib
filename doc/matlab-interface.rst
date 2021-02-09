@@ -22,6 +22,8 @@ Examples:
 
 -  mps_cpp_example.m
 -  mps_cpp_example_softwarex.m
+-  mps_cpp_example_estimation.m
+-  mps_cpp_example_entropy.m
 
 These m-files requires no special toolboxes, and are compatible with GNU
 Octave.
