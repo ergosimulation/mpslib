@@ -20,12 +20,11 @@ Reading and writing parameter files:
 
 Examples:
 
--  mps_example_softwarex.m
--  mps_cpp_demo.m
+-  mps_cpp_example_softwarex.m
+-  mps_cpp_example.m
 
 These m-files requires no special toolboxes, and are compatible with GNU
-Octave. However, the examples below require the
-`mGstat <http//mgstat.sf.net/>`__ toolbox.
+Octave.
 
 ``mps_cpp`` takes to three inputs, of which the first two are mandatory:
 
