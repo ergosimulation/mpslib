@@ -62,40 +62,45 @@ structure will then be updated with all the parameters that can be set:
 
 ::
 
-    >> O
+O = 
 
-    O = 
+  struct with fields:
 
-      struct with fields:
+                             null: ''
+                            debug: -1
+                            rseed: 0
+                    output_folder: '.'
+                          WriteTI: 1
+                      ti_filename: 'ti.dat'
+             simulation_grid_size: [60 80 1]
+                           origin: [0 0 0]
+                   grid_cell_size: [1 1 1]
+                    mask_filename: 'mask.dat'
+               hard_data_filename: 'd_hard.dat'
+                           method: 'mps_snesim_tree'
+               parameter_filename: 'mps_snesim.txt'
+                           n_real: 1
+                 n_multiple_grids: 3
+                 n_min_node_count: 0
+                           n_cond: 39
+                    template_size: [5 5 1]
+          shuffle_simulation_grid: 2
+    entropyfactor_simulation_grid: 4
+                  shuffle_ti_grid: 1
+          hard_data_search_radius: 1
+             soft_data_categories: '0;1'
+               soft_data_filename: 'soft.dat'
+                        n_threads: 1
+                     doEstimation: 0
+                        doEntropy: 0
+                     exe_filename: 'F:\PROGRAMMING\mpslib\matlab\..\mps_snesim_tree.exe'
+                             time: 0.2945
+                                x: [1×60 double]
+                                y: [1×80 double]
+                                z: 0
+                            clean: 1
 
-                                 null: ''
-                                debug: -1
-                                rseed: 1
-                        output_folder: '.'
-                          ti_filename: 'ti.dat'
-                 simulation_grid_size: [60 80 1]
-                               origin: [0 0 0]
-                       grid_cell_size: [1 1 1]
-                               method: 'mps_snesim_tree'
-                   parameter_filename: 'snesim.txt'
-                               n_real: 1
-                     n_multiple_grids: 3
-                     n_min_node_count: 0
-                               n_cond: -1
-                        template_size: [5 5 1]
-              shuffle_simulation_grid: 1
-        entropyfactor_simulation_grid: 4
-                      shuffle_ti_grid: 1
-                   hard_data_filename: 'conditional.dat'
-              hard_data_search_radius: 1
-                 soft_data_categories: '0;1'
-                   soft_data_filename: 'soft.dat'
-                            n_threads: 1
-                         exe_filename: 'E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\matlab\..\mps_snesim_tree.…'
-                                 time: 1.2122
-                                    x: [1×60 double]
-                                    y: [1×80 double]
-                                    z: 0
+
 
 GENESIM type simulation
 -----------------------
@@ -113,12 +118,8 @@ which return the ``O``\ data structure:
 
 ::
 
-    > O
-
     O = 
-
-      struct with fields:
-
+       struct with fields:
                                method: 'mps_genesim'
                                 debug: -1
                                 rseed: 1
