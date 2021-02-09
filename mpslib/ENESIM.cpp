@@ -322,13 +322,20 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	//double elapsedNodeSecs = double(t1 - t0) / CLOCKS_PER_SEC;
 	//std::cout << "Time Circ Search = "<<  elapsedNodeSecs << std::endl;
 
+	if (!_softDataGrids.empty()) {
+		L_s.clear();
+		V_s.clear();
+		if (_maxNeighbours_soft>0) {
+			_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _softDataGrids[0], _maxNeighbours_soft, _maxSearchRadius_soft, L_s, V_s);
+		}
+	}
+	
 	if (_debugMode>2) {
 		std::cout << "  location in sim grid, SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
 		std::cout << "  Found conditional data=" << L_c.size() << " (_maxNeighbours =" << _maxNeighbours;
 		std::cout << ", _maxSearchRadius=" << _maxSearchRadius << ")" << std::endl;
 	}
 
-	
 	// Setup the path through the training image
 
 	// Tirst check if the last dimension should be treated as individual types of random varibles
@@ -438,6 +445,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 					int NLs;
 
 					// FIND THE SOFT PROBABILITY ASSOCIATED to the THE CURRENT MATCH!
+					/*
 					L_s.clear();
 					V_s.clear();
 					if (_maxNeighbours_soft>0) {
@@ -446,6 +454,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 						//	std::cout << "i_ti_path=" << i_ti_path <<"--> Found N_soft_cond data = " << L_s.size() << " -- _maxSearchRadius_soft" << _maxSearchRadius_soft << std::endl;
 						//}
 					}
+					*/
 					P_soft_i.clear();
 					P_soft_max_i.clear();
 

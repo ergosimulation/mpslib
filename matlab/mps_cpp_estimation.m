@@ -12,6 +12,7 @@ function [est,O]=mps_cpp_estimation(TI,SIM,O,use_parfor)
 doPlot=0;
 
 O.n_real=1;
+O.doEstimation = 1;
 if nargin<4, use_parfor=1;end
 
 if (license('test','Distrib_Computing_Toolbox')==0);
