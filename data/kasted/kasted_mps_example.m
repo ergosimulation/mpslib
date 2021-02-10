@@ -40,8 +40,9 @@ clear Oc;
 Oc.x = x1:dx:x2;
 Oc.y = y1:dx:y2;
 
-% select which hard and soft data to use
+% select which hard 
 %Oc.d_hard = d_well_hard;
+% Select soft data
 %Oc.d_soft = d_res;
 %Oc.d_soft = d_ele;
 i_use_soft_well = find(d_well(:,4)-0.5);
@@ -49,16 +50,18 @@ Oc.d_soft = d_well(i_use_soft_well,:);
 
 Oc.shuffle_simulation_grid=2; % preferential path
 
-n_cond_hard = 4;
+n_cond_hard = 25;
 n_cond_soft = 4; % non-colocate soft data - only for GENESIM 
 
+% Use SNESIM?
 Oc.method = 'mps_snesim_tree';
-Oc.template_size=[4 4 1];
+Oc.template_size=[8 8 1];
 Oc.n_multiple_grids = 3;
 Oc.n_cond=[n_cond_hard];
 
-Oc.method = 'mps_genesim';
-Oc.n_cond=[n_cond_hard, n_cond_soft];
+% Use GENESIM/DS
+%Oc.method = 'mps_genesim';
+%Oc.n_cond=[n_cond_hard, n_cond_soft];
 
 Oc.n_real = 100;
 
@@ -95,6 +98,7 @@ title('Etype Variance')
 
 %% MPS Estimation
 Oest = Oc; 
+Oest.n_max_cpdf_count=100
 Oest.doEstimation = 1;
 [~,Oest]=mps_cpp(TI,SIM,Oest);
 Pcond = Oest.cg;
