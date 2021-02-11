@@ -420,7 +420,7 @@ namespace MPS {
 							if ((idxX>-1)&(idxY>-1)&(idxZ>-1)&(idxX<dataSizeX)&(idxY<dataSizeY)&(idxZ<dataSizeZ)) {
 								data[idxZ][idxY][idxX] = dataValue;
 							} else {
-								std::cout << "Hard data, "<< fileName << ": Data outside simualtion grid ix,iy,iz=" << idxX << " "<< idxY << " "<< idxZ  << std::endl;
+								std::cout << "Hard data, "<< fileName << ": Data outside simulation grid ix,iy,iz=" << idxX << " "<< idxY << " "<< idxZ  << std::endl;
 							}
 						}
 					} else { //Single column file
@@ -519,9 +519,8 @@ namespace MPS {
 						for (unsigned int nbCats=0; nbCats<categories.size(); nbCats++) {
 							if ((idxX>-1)&(idxY>-1)&(idxZ>-1)&(idxX<dataSizeX)&(idxY<dataSizeY)&(idxZ<dataSizeZ)) {
 							  data[nbCats][idxZ][idxY][idxX] = lineData[nbCats + 3];
-								
-						  } else {
-								std::cout << "Soft data, "<< fileName << ": Data outside simualtion grid ix,iy,iz=" << idxX << " "<< idxY << " "<< idxZ  << std::endl;
+							} else {
+								std::cout << "Soft data, "<< fileName << ": Data outside simulation grid ix,iy,iz=" << idxX << " "<< idxY << " "<< idxZ  << std::endl;
 							}
 						}
 					} else { //Single column file

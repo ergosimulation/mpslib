@@ -41,7 +41,7 @@ actual_threads=ceil(O.n_real/n_reals_per_thread);
 
 if actual_threads==1;
     disp(sprintf('%s: No parallelization, using 1 thread/worker',mfilename))
-    [reals,Othread]=mps_cpp(TI,SIM,O);
+    [reals,O]=mps_cpp(TI,SIM,O);
     return
 else
     disp(sprintf('%s: Using %d threads/workers',mfilename,actual_threads))
