@@ -1,8 +1,8 @@
 Number of realizations # 1
 Random Seed (0 `random` seed) # 3
-Number of mulitple grids (start from 0) # 0
-Min Node count (0 if not set any limit)# 0
-Maximum number conditional data (0: all) # 0
+Number of mulitple grids (start from 0) # 3
+Min Node count (0 if not set any limit)# 5
+Maximum number conditional data (0: all) # 25
 Search template size X # 8
 Search template size Y # 8
 Search template size Z # 1
