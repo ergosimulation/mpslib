@@ -12,6 +12,9 @@ MPSlib (version 1.0) has been developed by
 and
 [Solid Earth Physics, Niels Bohr Institute](http://imgp.nbi.ku.dk/).
 
+MPSlib (version 1.4) updated by
+Thomas Mejer Hansen (tmeha@geo.au.dk)
+
 Development has been funded by the Danish National Hightech Foundation (now: the Innovation fund) through the ERGO (Effective high-resolution Geological Modeling) project, a collaboration between
 [IGIS](http://i-gis.dk/),
 [GEUS](http://geus.dk/), and
