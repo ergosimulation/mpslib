@@ -350,12 +350,13 @@ if (O.doEntropy>0)
     catch
         disp(sprintf('Could not load %s',fname));
     end       
-    
+    O.H=mean(O.SI);
+
     for i=1:O.n_real                 
          fname=sprintf('%s%s%s%s_ent_%d.gslib',O.output_folder,filesep,f,e,i-1);
          try
              D=read_eas_matrix(fname);
-             O.selfE(i)=nansum(D(:));
+             %O.selfE(i)=nansum(D(:));
          catch
              disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
          end

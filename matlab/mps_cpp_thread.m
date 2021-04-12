@@ -119,14 +119,38 @@ end
 %%
 if nargout>1
     fn=fieldnames(Othread{1});
-    
     for i=1:length(fn)
         if ~isfield(O,fn{i})
             O.(fn{i})=Othread{1}.(fn{i});
         end
     end
 end
-%%
+%% Extract entropy 
+if (O.doEntropy>0)
+    i0=0;
+    O.SI=zeros(1,O.n_real);
+    for i=1:actual_threads
+        %update SI
+        O.SI(i0+[1:Othread{i}.n_real])=Othread{i}.SI;
+        
+        % Update E
+        for j=1:Othread{i}.n_real
+            
+            if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
+                % 1D
+                O.E(i0+j,:)=Othread{i}.E(j,:);
+            elseif (O.simulation_grid_size(3)==1)
+                % 2D
+                O.E(:,:,i0+j)=Othread{i}.E(:,:,j);
+            else
+                % 3D
+                O.E(:,:,:,i0+j)=Othread{i}.E(:,:,:,j);
+            end
+        end
+        i0=i0+Othread{i}.n_real;
+    end
+    O.H=mean(O.SI);
+end
 
 
 

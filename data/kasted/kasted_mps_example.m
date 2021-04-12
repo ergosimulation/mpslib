@@ -2,7 +2,7 @@
 clear all;close all;
 
 %% load kasted adta
-dx=100;
+dx=400;
 kasted_load;
 %% SET SIZE OF SIMULATION GRID
 x1 = 562000;
@@ -21,10 +21,15 @@ SIM=zeros(ny,nx).*NaN;
 O.method = 'mps_snesim_tree';
 O.template_size=[8 8 1];
 O.n_multiple_grids = 3;
-O.n_cond = 25;
+O.n_cond = 18;
 O.n_real = 9;
+O.doEntropy = 1; % compute entropy and self-information
 [reals_uncond,Ou]=mps_cpp_thread(TI,SIM,O);
 %[reals_uncond,Ou]=mps_cpp(TI,SIM,O);
+
+if O.doEntropy==1
+    disp(sprintf('Estimated entropy = %4.1f',mean(Ou.SI)))
+end
 
 figure(2);clf;
 for i=1:9;
@@ -36,21 +41,20 @@ end
 drawnow;pause(1);
 %% Conditional simulation
 clear Oc;
-Oc.x = x1:dx:x2;
-Oc.y = y1:dx:y2;
+Oc=O;
 
 % select which hard 
 %Oc.d_hard = d_well_hard;
 % Select soft data
-%Oc.d_soft = d_res;
+Oc.d_soft = d_res;
 %Oc.d_soft = d_ele;
-i_use_soft_well = find(d_well(:,4)-0.5);
-Oc.d_soft = d_well(i_use_soft_well,:);
+%i_use_soft_well = find(d_well(:,4)-0.5);
+%Oc.d_soft = d_well(i_use_soft_well,:);
 
 Oc.shuffle_simulation_grid=2; % preferential path
 
-n_cond_hard = 25;
-n_cond_soft = 0; % non-colocate soft data - only for GENESIM 
+n_cond_hard = 16;
+n_cond_soft = 1; % non-colocate soft data - only for GENESIM 
 
 % Use SNESIM?
 Oc.method = 'mps_snesim_tree';
@@ -66,6 +70,11 @@ Oc.n_cond=[n_cond_hard, n_cond_soft];
 Oc.n_real = 100;
 
 [reals_cond,Oc]=mps_cpp_thread(TI,SIM,Oc);
+
+if Oc.doEntropy==1
+    disp(sprintf('Estimated entropy = %4.1f',mean(Oc.SI)))
+end
+
 
 figure(3);clf;
 for i=1:9;
@@ -96,10 +105,14 @@ axis image;
 colorbar
 title('Etype Variance')
 drawnow;pause(1);
+
 %% MPS Estimation
 Oest = Oc; 
+Oest.method = 'mps_genesim';
 Oest.n_max_cpdf_count=100
+Oest.n_real=1;
 Oest.doEstimation = 1;
+Oest.n_cond=[16,1];
 [~,Oest]=mps_cpp(TI,SIM,Oest);
 Pcond = Oest.cg;
 
@@ -115,31 +128,3 @@ hold off
 axis image
 colorbar;
 title('Etype Mean')
-
-return
-
-%% GENESIM simulation
-close all;clear O;
-O.x = x1:dx:x2;
-O.y = y1:dx:y2;
-O.method = 'mps_genesim';
-
-%O.d_hard = d_well_hard;
-i_use_soft_well = find(d_well(:,4)-0.5);
-O.d_soft = d_well(i_use_soft_well,:);
-%O.d_soft = d_well;
-%O.max_search_radius=[13 13]; % Does fo something
-%O.hard_data_search_radius=100; % % DOES NOT DO ANYTHING
-O.n_cond = [4 1];
-O.n_max_ite=1000;
-%O.distance_min=0.01;
-O.rseed=1;
-O.debug=0;
-O.n_real = 100;
-[reals_uncond,O]=mps_cpp_thread(TI,SIM,O);
-O.time
-imagesc(O.x, O.y, reals_uncond(:,:,1));
-axis image
-mps_cpp_plot(reals_uncond,O);
-
-
