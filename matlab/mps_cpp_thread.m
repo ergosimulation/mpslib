@@ -44,7 +44,9 @@ if actual_threads==1;
     [reals,O]=mps_cpp(TI,SIM,O);
     return
 else
-    disp(sprintf('%s: Using %d threads/workers',mfilename,actual_threads))
+    if O.debug>-1
+        disp(sprintf('%s: Using %d threads/workers',mfilename,actual_threads))
+    end
 end
 
 
@@ -93,7 +95,7 @@ parfor i=1:actual_threads;
     cd(cwd);
     cd(outdir{i});
     if ~isfield(Othread{i},'debug');Othread{i}.debug=0;end
-    if Othread{i}.debug>-1
+    if Othread{i}.debug>0;
         disp(sprintf('%s: running thread #%d in %s',mfilename,i,outdir{i}));
     end
     [r{i},Othread{i}]=mps_cpp(TI,SIM,Othread{i});

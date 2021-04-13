@@ -308,6 +308,8 @@ if isfield(O,'doEstimation');
         
         % replace NaN with 0,1
         % only works in 2D
+        handleNaN=1;
+        if handleNaN==1;
         if isfield(O,'d_hard')&&(O.simulation_grid_size(3)==1);
             s=size(O.cg);nc=s(end);
             vals=[0:1:nc-1];
@@ -315,19 +317,13 @@ if isfield(O,'doEstimation');
             for i=1:size(O.d_hard,1);
                 P=zeros(1,nc);
                 P(O.d_hard(i,4)==vals)=1;
-                %if O.grid_cell_size(1)~=1
-                    ix1=1+ceil((O.d_hard(i,1)-O.origin(1))/O.grid_cell_size(1));
-                %else
-                %    ix1=O.d_hard(i,1);
-                %end
-                %if O.grid_cell_size(2)~=1
-                    iy1=1+ceil((O.d_hard(i,2)-O.origin(2))/O.grid_cell_size(2));
-                %else
-                %    iy1=O.d_hard(i,1);
-                %end
+                ix1=ceil((O.d_hard(i,1)-O.origin(1))/O.grid_cell_size(1));
+                iy1=ceil((O.d_hard(i,2)-O.origin(2))/O.grid_cell_size(2));
                 for ic=1:nc
                     try
-                        O.cg(iy1,ix1,ic)=P(ic);
+                        if (ix1>=1)&(iy1>=1)&(ix1<=O.simulation_grid_size(1))&(iy1<=O.simulation_grid_size(2))                        
+                            O.cg(iy1,ix1,ic)=P(ic);
+                        end
                     catch
                         keyboard
                     end
@@ -337,7 +333,7 @@ if isfield(O,'doEstimation');
                 disp('O.cg prob')
             end
         end
-        
+        end
     end
 end
 

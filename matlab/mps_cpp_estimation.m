@@ -115,8 +115,9 @@ if use_parfor==1;
     parfor i=1:n_threads;
         cd(cwd);
         cd(outdir{i});
-        
-        disp(sprintf('%s: running thread #%d in %s',mfilename,i,outdir{i}));
+        if (Othread{i}.debug)>-1;
+            disp(sprintf('%s: running thread #%d in %s',mfilename,i,outdir{i}));
+        end
         [r{i},Othread{i}]=mps_cpp(TI,SIM,Othread{i});
     end
     cd(cwd);
