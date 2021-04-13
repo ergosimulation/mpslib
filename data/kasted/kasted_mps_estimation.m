@@ -1,8 +1,8 @@
 %kasted_mps_estimation
 clear all;close all;
 n_max_ite=100000;1000000;
-n_max_cpdf_count= 1000;
-n_real = 100;
+n_max_cpdf_count= 2000;
+n_real = 250;
 
 n_conds = [9];
 min_dists = [0.2 0.5];
@@ -94,7 +94,7 @@ for i=1:length(n_conds);
         axis image;axis(ax);colormap(cmap);
         set(gca,'ydir','normal')
         hold on;
-        plot(Oc.d_hard(:,1),Oc.d_hard(:,2),'k.','MarkerSize',14);
+        plot(Oc.d_hard(:,1),Oc.d_hard(:,2),'w.','MarkerSize',14);
         scatter(Oc.d_hard(:,1),Oc.d_hard(:,2),10,Oc.d_hard(:,4),'filled')
         hold off
         caxis([0 1])
@@ -103,7 +103,7 @@ for i=1:length(n_conds);
         axis image;axis(ax);colormap(cmap);
         set(gca,'ydir','normal')
         hold on;
-        plot(Oc.d_hard(:,1),Oc.d_hard(:,2),'k.','MarkerSize',14);
+        plot(Oc.d_hard(:,1),Oc.d_hard(:,2),'w.','MarkerSize',14);
         scatter(Oc.d_hard(:,1),Oc.d_hard(:,2),10,Oc.d_hard(:,4),'filled')
         hold off
         caxis([0 1])
