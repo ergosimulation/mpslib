@@ -20,9 +20,7 @@ Training image
 
 `kasted_ti_dx50.dat` (EAS matrix format) 632x291 pixel training image. Each pixel is of size 50x50 meter.
 
-`kasted_ti_dx100.dat` (EAS matrix format) 312x141x pixel training image (4 2D training images). Each pixel is of size 50x50 meter.
-
-`kasted_ti_dx100.dat` (coarser TI)
+`kasted_ti_dx100.dat` (EAS matrix format) 312x141x pixel training image (4 2D training images). Each pixel is of size 100x100 meter.
 
 `kasted_ti_dx200.dat` (coarser TI)
 
