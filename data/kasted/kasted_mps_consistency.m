@@ -53,6 +53,9 @@ O.rseed=1;
 O.hard_data_search_radius=10000000;
 % Conditional data
 O.d_hard = d_well_hard;
+
+
+
 %Oc.d_soft = d_res;
 %Oc.d_soft = d_ele;
 %i_use_soft_well = find(d_well(:,4)-0.5);
@@ -89,9 +92,19 @@ Oc.n_real=1;
 Oc.n_max_cpdf_count=n_max_cpdf_count;;
 
 d_hard = d_well_hard;
+
+i_not = [ 20    24    39    78    87];
+i_ok = setxor(1:size(d_hard,1),i_not)
+d_hard = d_hard(i_ok,:)
+
+%i_not = [8    20    25    74    79];
+%i_ok = setxor(1:size(d_hard,1),i_not)
+%d_hard = d_hard(i_ok,:)
+
+
 n_use = size(d_hard,1);
-rng(1);
-d_hard = d_hard(randomsample(1:size(d_hard,1),n_use),:);
+%rng(1);
+%d_hard = d_hard(randomsample(1:size(d_hard,1),n_use),:);
 
 
 n_hard = size(d_hard,1);
@@ -121,6 +134,17 @@ for i_use = 1:n_hard;
     KL_dis(i_use) = kl(P_local(i_use,:),P_est(i_use,:));
 end
 %profile report
+
+
+KL_dis(find(isinf(KL_dis)))=max(KL_dis);
+
+DD =sortrows([[1:n_hard]',KL_dis(:)],2,'des');
+n_show = 5;
+disp(sprintf('The 5 most inconsistent data are: '))
+disp(DD(1:n_show,1)')
+
+
+
 
 %%
 figure(1);
@@ -152,6 +176,11 @@ colorbar
 
 subplot(2,2,4);
 scatter(d_hard(:,1),d_hard(:,2),50,KL_dis,'filled');
+hold on
+for i=1:n_hard
+    text(d_hard(i,1),d_hard(i,2),sprintf('%d',i))
+end
+hold off
 axis image
 colormap(gca,flipud(copper))
 colorbar
