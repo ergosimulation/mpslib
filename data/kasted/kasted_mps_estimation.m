@@ -1,21 +1,24 @@
 %kasted_mps_estimation
 clear all;close all;
+
 p=gcp;
 n_workers = p.NumWorkers;
 
 doPlot=1;
 n_max_ite=100000;1000000;
-n_max_cpdf_count= n_workers*10;62000;2000;
+n_max_cpdf_count= n_workers*4;62000;2000;
 n_real = n_max_cpdf_count;1000;
 
-n_conds = [1,2,4,9,25,36, 49];
-n_conds = [1,2,4,9];
 
 n_conds = [1,2,4,9,25,36];
-min_dists = [0:0.05:1];
+min_dists = [0:0.1:1];
 
 n_conds = [1,2,4,9, 16, 25, 36,49, 64, 81];
 min_dists = [0.1 0.15 0.2 0.25];
+
+n_conds = [1,2,4,9];
+min_dists = [0.2];
+
 
 %n_conds = [25];
 %min_dists = [0.15, 0.2, 0.25, 0.35];
@@ -48,6 +51,8 @@ O.y = y1:dx:y2;
 nx=length(O.x);
 ny=length(O.y);
 SIM=zeros(ny,nx).*NaN;
+
+d_well_hard  = read_eas('kasted_hard_well_conistent.dat');
 
 % Simulation
 O.debug=-1;
@@ -119,11 +124,12 @@ for i=1:length(n_conds);
         P_EST{i,j}=Oest.cg(:,:,2);
         disp(sprintf('EST DONE, t=%5.1fs',Oest.time))
         
+        try
         P(:,:,1)=P_SIM{i,j,1};P(:,:,2)=1-P_SIM{i,j};H_SIM_2d{i,j}=entropy_2d(P);
         H_SIM(i,j)=sum(sum(H_SIM_2d{i,j}));
         P(:,:,1)=P_EST{i,j};P(:,:,2)=1-P_EST{i,j};H_EST_2d{i,j}=entropy_2d(P);
         H_EST(i,j)=sum(sum(H_EST_2d{i,j}));
-        
+        end
         T_SIM(i,j)=Osim.time;
         T_EST(i,j)=Oest.time;
         
