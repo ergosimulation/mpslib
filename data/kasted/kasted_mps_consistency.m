@@ -2,7 +2,7 @@
 clear all;close all;
 doPlot=1;
 n_max_ite=100000;1000000;
-n_max_cpdf_count= 1000;2000;
+n_max_cpdf_count= 10000000; 1000;2000;
 n_real = n_max_cpdf_count;1000;
 
 n_conds = [1,2,4,9,25,36, 49];
@@ -93,14 +93,15 @@ Oc.n_max_cpdf_count=n_max_cpdf_count;;
 
 d_hard = d_well_hard;
 
-i_not = [ 20    24    39    78    87];
+i_not = [   108    62    60    79    89];
 i_ok = setxor(1:size(d_hard,1),i_not)
 d_hard = d_hard(i_ok,:)
 
-%i_not = [8    20    25    74    79];
-%i_ok = setxor(1:size(d_hard,1),i_not)
-%d_hard = d_hard(i_ok,:)
+i_not = [35];
+i_ok = setxor(1:size(d_hard,1),i_not)
+d_hard = d_hard(i_ok,:)
 
+write_eas('kasted_hard_well_conistent.dat',d_hard)
 
 n_use = size(d_hard,1);
 %rng(1);
@@ -178,10 +179,11 @@ subplot(2,2,4);
 scatter(d_hard(:,1),d_hard(:,2),50,KL_dis,'filled');
 hold on
 for i=1:n_hard
-    text(d_hard(i,1),d_hard(i,2),sprintf('%d',i))
+    text(d_hard(i,1),d_hard(i,2),sprintf('%d',i),'HOrizontalAlignment','center')
 end
 hold off
 axis image
-colormap(gca,flipud(copper))
+colormap(gca,cmap_geosoft)
+%colormap(gca,flipud(copper))
 colorbar
             
