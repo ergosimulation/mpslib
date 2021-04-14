@@ -6,7 +6,7 @@ x_ti=[1:1:size(TI,2)].*dx;
 y_ti=[1:1:size(TI,1)].*dx;
 
 % soft well data
-d_well=read_eas('kasted_soft_well.dat');
+d_well_soft=read_eas('kasted_soft_well.dat');
 
 % Hard well data
 d_well_hard=read_eas('kasted_hard_well.dat');
@@ -28,13 +28,13 @@ title('a) Kasted TI - 0: clay/no channel, 1: sand/channel')
 set(gca,'ydir','normal')
 
 subplot(4,2,3)
-S=sum(abs(d_well(:,4:5)-0.5)')';S=S./(max(S));
-scatter(d_well(:,1),d_well(:,2),1+S*15,d_well(:,5),'filled')
+S=sum(abs(d_well_soft(:,4:5)-0.5)')';S=S./(max(S));
+scatter(d_well_soft(:,1),d_well_soft(:,2),1+S*15,d_well_soft(:,5),'filled')
 caxis([0 1])
 axis image;axis(ax)
 set(gca,'ydir','normal')
 colorbar
-title('b) P(Channel | I_{well-hard})','Interpreter','tex')
+title('b) P(Channel | I_{well-soft})','Interpreter','tex')
 xlabel('UTM X');ylabel('UTM Y');grid on; box on
 
 subplot(4,2,4)
@@ -42,7 +42,7 @@ scatter(d_well_hard(:,1),d_well_hard(:,2),15,d_well_hard(:,4),'filled')
 axis image;axis(ax)
 set(gca,'ydir','normal')
 colorbar
-title('c) P(Channel | I_{well-soft})','Interpreter','tex')
+title('c) P(Channel | I_{well-hard})','Interpreter','tex')
 xlabel('UTM X');ylabel('UTM Y');grid on;box on
 
 subplot(4,2,5)

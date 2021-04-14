@@ -236,9 +236,9 @@ if (O.debug>-1), disp(sprintf('%s: running ''%s''',mfilename,cmd)); end
 
 
 % run the algorithm
-tic;
+t_init=now;
 [status,cmdout]=system(cmd);
-O.time=toc;
+O.time = (now-t_init)*3600*24;
 
 if (O.debug>0), 
     disp(sprintf('%s: output:',mfilename)); 

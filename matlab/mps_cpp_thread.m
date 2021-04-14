@@ -24,8 +24,7 @@ if ~isfield(O,'n_real');
 end
 if ~isfield(O,'rseed');O.rseed=1;end
 
-
-%% try to hety
+%% try to use parpool
 try
     %poolobj = gcp('nocreate');
     poolobj = gcp;
@@ -91,6 +90,7 @@ end
 %%
 
 cwd=pwd;
+t_init=now;
 parfor i=1:actual_threads;
     cd(cwd);
     cd(outdir{i});
@@ -99,6 +99,11 @@ parfor i=1:actual_threads;
         disp(sprintf('%s: running thread #%d in %s',mfilename,i,outdir{i}));
     end
     [r{i},Othread{i}]=mps_cpp(TI,SIM,Othread{i});
+end
+t_total = (now-t_init)*3600*24;
+
+for i=1:actual_threads;
+    t_thread(i) = Othread{i}.time;
 end
 %%
 cd(cwd);
@@ -121,11 +126,14 @@ end
 %%
 if nargout>1
     fn=fieldnames(Othread{1});
+    t_sum=0;
     for i=1:length(fn)
         if ~isfield(O,fn{i})
             O.(fn{i})=Othread{1}.(fn{i});
         end
     end
+    O.time = t_total;
+    O.time_thread = t_thread;
 end
 %% Extract entropy 
 if (O.doEntropy>0)
