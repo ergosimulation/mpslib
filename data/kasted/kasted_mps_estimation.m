@@ -6,7 +6,7 @@ n_workers = p.NumWorkers;
 
 doPlot=1;
 n_max_ite=100000;1000000;
-n_max_cpdf_count= n_workers*4;62000;2000;
+n_max_cpdf_count= n_workers*10;2000;
 n_real = n_max_cpdf_count;1000;
 
 
