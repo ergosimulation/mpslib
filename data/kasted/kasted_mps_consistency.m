@@ -101,7 +101,7 @@ i_not = [35];
 i_ok = setxor(1:size(d_hard,1),i_not)
 d_hard = d_hard(i_ok,:)
 
-write_eas('kasted_hard_well_conistent.dat',d_hard)
+%write_eas('kasted_hard_well_conistent.dat',d_hard)
 
 n_use = size(d_hard,1);
 %rng(1);
