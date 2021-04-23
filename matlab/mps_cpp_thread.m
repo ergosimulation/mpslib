@@ -23,6 +23,7 @@ if ~isfield(O,'n_real');
     O.n_real=1;
 end
 if ~isfield(O,'rseed');O.rseed=1;end
+if ~isfield(O,'debug');O.debug=0;end
 
 %% try to use parpool
 try
