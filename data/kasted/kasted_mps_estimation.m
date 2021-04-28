@@ -6,8 +6,11 @@ n_workers = p.NumWorkers;
 
 doPlot=1;
 n_max_ite=100000;1000000;
-n_max_cpdf_count= n_workers*10;2000;
+n_max_cpdf_count= n_workers*50;2000;
 n_real = n_max_cpdf_count;1000;
+
+n_max_cpdf_count= 2000;
+n_real = 100;
 
 
 n_conds = [1,2,4,9,25,36];
@@ -17,11 +20,7 @@ n_conds = [1,2,4,9, 16, 25, 36,49, 64, 81];
 min_dists = [0.1 0.15 0.2 0.25];
 
 n_conds = [1,2,4,9];
-min_dists = [0.2];
-
-
-%n_conds = [25];
-%min_dists = [0.15, 0.2, 0.25, 0.35];
+min_dists = [0.1 0.2 0.3];
 
 
 if ~exist('n_conds','var')
@@ -68,11 +67,13 @@ O.rseed=1;
 O.hard_data_search_radius=10000000;
 % Conditional data
 O.d_hard = d_well_hard;
-n_use_hard = 7;
-rng(1);
-i_hard_use = randomsample(size(O.d_hard,1),n_use_hard);
-O.d_hard = O.d_hard(i_hard_use,:);
-
+useSubset=1;
+if useSubset==1
+    n_use_hard = 7;
+    rng(1);
+    i_hard_use = randsample(size(O.d_hard,1),n_use_hard);
+    O.d_hard = O.d_hard(i_hard_use,:);
+end
 
 %Oc.d_soft = d_res;
 %Oc.d_soft = d_ele;
@@ -125,10 +126,11 @@ for i=1:length(n_conds);
         disp(sprintf('EST DONE, t=%5.1fs',Oest.time))
         
         try
-        P(:,:,1)=P_SIM{i,j,1};P(:,:,2)=1-P_SIM{i,j};H_SIM_2d{i,j}=entropy_2d(P);
-        H_SIM(i,j)=sum(sum(H_SIM_2d{i,j}));
-        P(:,:,1)=P_EST{i,j};P(:,:,2)=1-P_EST{i,j};H_EST_2d{i,j}=entropy_2d(P);
-        H_EST(i,j)=sum(sum(H_EST_2d{i,j}));
+            P(:,:,1)=P_SIM{i,j,1};P(:,:,2)=1-P_SIM{i,j};
+            H_SIM_2d{i,j}=entropy_2d(P);
+            H_SIM(i,j)=sum(sum(H_SIM_2d{i,j}));
+            P(:,:,1)=P_EST{i,j};P(:,:,2)=1-P_EST{i,j};H_EST_2d{i,j}=entropy_2d(P);
+            H_EST(i,j)=sum(sum(H_EST_2d{i,j}));
         end
         T_SIM(i,j)=Osim.time;
         T_EST(i,j)=Oest.time;
@@ -194,7 +196,7 @@ for i=1:n1
         ix=[1:nx]+x0;
         iy=[1:ny]+y0;
         bEST(iy,ix)=P_EST{i,j};
-        bSIM(iy,ix)=P_SIM{i,j};       
+        bSIM(iy,ix)=P_SIM{i,j};
     end
 end
 
