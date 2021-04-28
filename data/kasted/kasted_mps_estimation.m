@@ -4,13 +4,13 @@ clear all;close all;
 p=gcp;
 n_workers = p.NumWorkers;
 
-doPlot=1;
+doPlot=2;
 n_max_ite=100000;1000000;
 n_max_cpdf_count= n_workers*50;2000;
 n_real = n_max_cpdf_count;1000;
 
 n_max_cpdf_count= 2000;
-n_real = 100;
+n_real = 1000;
 
 
 n_conds = [1,2,4,9,25,36];
@@ -19,8 +19,9 @@ min_dists = [0:0.1:1];
 n_conds = [1,2,4,9, 16, 25, 36,49, 64, 81];
 min_dists = [0.1 0.15 0.2 0.25];
 
-n_conds = [1,2,4,9];
-min_dists = [0.1 0.2 0.3];
+n_conds = [1,2,4,9,18];
+min_dists = [0.15 0.2 0.25 0.35];
+min_dists = [0:0.05:1];
 
 
 if ~exist('n_conds','var')
@@ -31,11 +32,10 @@ if ~exist('min_dists','var')
     min_dists = [0 0.15, 0.2, 0.25, 0.35];
 end
 
-
 % load kasted adta
 dx=50;
 %dx=100;
-dx=200;
+%dx=200;
 kasted_load;
 % SET SIZE OF SIMULATION GRID
 x1 = 562000-200;
@@ -67,7 +67,7 @@ O.rseed=1;
 O.hard_data_search_radius=10000000;
 % Conditional data
 O.d_hard = d_well_hard;
-useSubset=1;
+useSubset=0;
 if useSubset==1
     n_use_hard = 7;
     rng(1);
@@ -95,10 +95,14 @@ end
 txt=sprintf('kasted_dx%d_mul_%d_%d_c%d_nr%d_nh%d',dx,length(min_dists),length(n_conds),n_max_cpdf_count, n_real, n_hard);
 
 
+
+
+%title(sprin
 %% ESTIMATION
 k=0;
 for i=1:length(n_conds);
     for j=1:length(min_dists);
+        close all;
         disp(sprintf('nc=%d, min_dist=%3.2f',n_conds(i), min_dists(j)))
         k=k+1;
         Oc=O;
@@ -175,6 +179,7 @@ for i=1:length(n_conds);
             end
             try;print_mul(sprintf('%s_sim',txt));end
         end
+        
         drawnow;pause(.1);
         
     end
