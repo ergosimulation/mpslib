@@ -165,7 +165,7 @@ for i=1:length(n_conds);
             hold off
             caxis([0 1])
             title(sprintf('Estimation - d_{min}=%3.2f n_c=%d',Oc.distance_min, Oc.n_cond(1)))
-            try;print_mul(sprintf('%s_est',txt));end
+            try;print_mul(sprintf('%s_nc%d_mind%d_est',txt,n_conds(i),100*min_dists(j)));end
         end
         %PLOT reals
         if doPlot>1
@@ -177,7 +177,7 @@ for i=1:length(n_conds);
                 set(gca,'ydir','normal')
                 axis image
             end
-            try;print_mul(sprintf('%s_sim',txt));end
+            try;print_mul(sprintf('%s_nc%d_mind%d_sim',txt,n_conds(i),100*min_dists(j)));end
         end
         
         drawnow;pause(.1);
