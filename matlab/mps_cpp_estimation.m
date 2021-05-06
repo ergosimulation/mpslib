@@ -13,6 +13,14 @@ doPlot=0;
 
 O.n_real=1;
 O.doEstimation = 1;
+
+if isfield(O,'n_max_cpdf_count');
+    if O.n_max_cpdf_count==1;
+        O.n_max_cpdf_count=500;
+        disp(sprintf('%s: Setting O.n_max_cpdf_count=%d, for estimation modes',mfilename,O.n_max_cpdf_count))
+    end
+end
+
 if nargin<4, use_parfor=1;end
 
 if (license('test','Distrib_Computing_Toolbox')==0);
