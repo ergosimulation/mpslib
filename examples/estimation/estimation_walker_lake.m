@@ -9,7 +9,7 @@
 % http://trainingimages.org/uploads/3/4/7/0/34703305/a_wlreferencecat.zip, 
 %
 
-clear all
+clear all;close all
 
 % load data
 TI = read_eas_matrix('C_WLTICAT.sgems');
@@ -44,8 +44,8 @@ SIM=ones(ny,nx).*NaN;
 
 n_real = 100;
 n_cond_sim = 36;
-n_cond_est = 5;
-distance_min=0.3;
+n_cond_est = 9;
+distance_min=0.1;
 n_max_ite=10000;
 
 clear O
@@ -108,8 +108,8 @@ Oest=O;
 Oest.n_cond = n_cond_est ;
 %Oest.doEstimation = 1;
 %Oest.n_real = 1;
-Oest.distance_min=0.4;
-Oest.n_cond = 9 ;
+%Oest.distance_min=0.4;
+%Oest.n_cond = 9 ;
 [ests,Oest]=mps_cpp_estimation(TI,SIM,Oest);
 Pest= Oest.cg;
 
