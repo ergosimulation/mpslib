@@ -1,27 +1,32 @@
-%kasted_mps_estimation
+%kasted_mps_estimati%on
 clear all;close all;
+useRef=0;doPlot=1;
+%useRef=1;doPlot=1;
 
 p=gcp;
 n_workers = p.NumWorkers;
 
-doPlot=1;
-n_max_ite=100000;1000000;
-n_max_cpdf_count= n_workers*10;2000;
+n_max_ite=100000;1000000; % TRY TO REDUCE THIS???
+n_max_cpdf_count=1+n_workers*20;2000;
 n_real = n_max_cpdf_count;1000;
 
+%n_max_cpdf_count=990;
+%n_max_ite=10000;
 
-n_conds = [1,2,4,9,25,36];
-min_dists = [0:0.1:1];
+
+n_conds = [1,2,4,9,25,36,49];
+min_dists = [0:0.025:1];
 
 n_conds = [1,2,4,9, 16, 25, 36,49, 64, 81];
-min_dists = [0.1 0.15 0.2 0.25];
+min_dists = [0:0.1:1];
 
-n_conds = [1,2,4,9];
-min_dists = [0.2];
+%n_conds = [1,2,4,9];
+%min_dists = [0.1];
 
 
-%n_conds = [25];
-%min_dists = [0.15, 0.2, 0.25, 0.35];
+n_conds = [1,2,4,9,16,25,36];
+n_conds = [1,2,4,9,16,25];
+min_dists = [0:0.025:1.0];
 
 
 if ~exist('n_conds','var')
@@ -52,7 +57,7 @@ nx=length(O.x);
 ny=length(O.y);
 SIM=zeros(ny,nx).*NaN;
 
-d_well_hard  = read_eas('kasted_hard_well_conistent.dat');
+%d_well_hard  = read_eas('kasted_hard_well_conistent.dat');
 
 % Simulation
 O.debug=-1;
@@ -64,21 +69,15 @@ O.d_hard = d_well_hard;
 O.n_max_ite=n_max_ite;
 O.n_max_cpdf_count=1; % DS
 O.rseed=1;
-
 O.hard_data_search_radius=10000000;
 % Conditional data
 O.d_hard = d_well_hard;
-n_use_hard = 7;
-rng(1);
-i_hard_use = randomsample(size(O.d_hard,1),n_use_hard);
-O.d_hard = O.d_hard(i_hard_use,:);
 
 
 %Oc.d_soft = d_res;
 %Oc.d_soft = d_ele;
 %i_use_soft_well = find(d_well(:,4)-0.5);
 %Oc.d_soft = d_well(i_use_soft_well,:);
-n_hard = size(O.d_hard,1);
 
 
 pmarg1d(2)=sum(TI(:))/prod(size(TI));
@@ -90,8 +89,35 @@ catch
     cmap=hot;
 end
 
+%% MAKE REF DATA? FROM TI
+if useRef==1;
+    d_hard = d_well_hard;
+    for i=1:size(d_hard,1);
+        ix1=8000/dx+ceil((d_hard(i,1)-O.x(1))/dx);
+        iy1=2000/dx+ceil((d_hard(i,2)-O.y(1))/dx);
+        
+        d_hard(i,4)=TI(iy1,ix1,1);
+        
+    end
+    O.d_hard = d_hard;
+    figure;
+    scatter(d_hard(:,1),d_hard(:,2),10,d_hard(:,4),'filled');
+    axis image
+    axis(ax);
+   
+end
 
-txt=sprintf('kasted_dx%d_mul_%d_%d_c%d_nr%d_nh%d',dx,length(min_dists),length(n_conds),n_max_cpdf_count, n_real, n_hard);
+%% SUBSET
+useSubSet = 1;
+if useSubSet == 1;
+    n_use_hard = 24;
+    rng(1);
+    i_hard_use = randomsample(size(O.d_hard,1),n_use_hard);
+    O.d_hard = O.d_hard(i_hard_use,:);
+end
+
+n_hard = size(O.d_hard,1);
+txt=sprintf('kasted_dx%d_mul_%d_%d_c%d_nr%d_nh%d_R%d',dx,length(min_dists),length(n_conds),n_max_cpdf_count, n_real, n_hard,useRef);
 
 
 %% ESTIMATION
@@ -201,15 +227,37 @@ end
 figure(10);
 imagesc(bEST);
 axis image;colormap(cmap);colorbar
+hold on
+for i=1:(length(min_dists)-1);plot(0.5+[1 1].*(i*nx),ylim,'k-','LineWidth',1);end
+for i=1:(length(n_conds)-1);plot(xlim,0.5+[1 1].*(i*ny),'k-','LineWidth',1);end
+hold off
+set(gca,'xTick',[1:1:length(min_dists)].*nx-nx/2)
+set(gca,'xTickLabel',num2str(min_dists'))
+xlabel('d_{max}')
+set(gca,'yTick',[1:1:length(n_conds)].*ny-nx/2)
+set(gca,'yTickLabel',num2str(n_conds'))
+ylabel('n_c')
 set(gca,'ydir','normal')
 try;print_mul([txt,'_EST']);end
 
 figure(11);
 imagesc(bSIM);
 axis image;colormap(cmap);colorbar
+hold on
+for i=1:(length(min_dists)-1);plot(0.5+[1 1].*(i*nx),ylim,'k-','LineWidth',1);end
+for i=1:(length(n_conds)-1);plot(xlim,0.5+[1 1].*(i*ny),'k-','LineWidth',1);end
+hold off
+set(gca,'xTick',[1:1:length(min_dists)].*nx-nx/2)
+set(gca,'xTickLabel',num2str(min_dists'))
+xlabel('d_{max}')
+set(gca,'yTick',[1:1:length(n_conds)].*ny-nx/2)
+set(gca,'yTickLabel',num2str(n_conds'))
+ylabel('n_c')
 set(gca,'ydir','normal')
 try;print_mul([txt,'_SIM']);end
 
+
+%%
 figure(12);clf;
 h1=loglog(n_conds,T_EST,'-*');legend(num2str(min_dists'));
 hold on
@@ -219,17 +267,19 @@ xlabel('N_c')
 hold off
 for ih=1:length(h1);set(h2(ih),'color',get(h1(ih),'color'));end
 title('Simulation time, SIM(--) EST(-)')
+grid on
 try;print_mul([txt,'_T']);end
 
 figure(13);clf;
-h1=semilogy(min_dists,T_EST,'-*');legend(num2str(n_conds'));
+h1=semilogy(min_dists,T_EST','-*');legend(num2str(n_conds'));
 hold on
-h2=semilogy(min_dists,T_SIM,'--*');legend(num2str(n_conds'));
+h2=semilogy(min_dists,T_SIM','--*');legend(num2str(n_conds'));
 xlabel('d_{max}')
 ylabel('Time (s)')
 hold off
 for ih=1:length(h1);set(h2(ih),'color',get(h1(ih),'color'));end
 title('Simulation time, SIM(--) EST(-)')
+grid on
 try;print_mul([txt,'_T2']);end
 
 
@@ -243,19 +293,22 @@ for ih=1:length(h1);set(h2(ih),'color',get(h1(ih),'color'));end
 xlabel('N_c')
 ylabel('Entropy')
 title('Entropy, SIM(--) EST(-)')
+grid on
 try;print_mul([txt,'_H']);end
 
 
 figure(15);clf;
-h1=plot(min_dists,H_EST,'-*');legend(num2str(n_conds'));
+h1=plot(min_dists,H_EST','-*');legend(num2str(n_conds'));
 hold on
-h2=plot(min_dists,H_SIM,'--*');legend(num2str(n_conds'));
+h2=plot(min_dists,H_SIM','--*');legend(num2str(n_conds'));
 hold off
+for ih=1:length(h1);set(h2(ih),'color',get(h1(ih),'color'));end
 xlabel('N_c')
 ylabel('Entropy')
 xlabel('d_{max}')
 ylabel('Entropy')
 title('Entropy, SIM(--) EST(-)')
+grid on
 try;print_mul([txt,'_H2']);end
 
 
