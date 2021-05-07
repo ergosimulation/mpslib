@@ -24,9 +24,9 @@ x=1:dx:nx;
 y=1:dx:ny;
 z=0;
 
-x=100:1:200;nx=length(x);
-y=100:1:170;ny=length(y);
-z=0;
+%x=100:1:200;nx=length(x);
+%y=100:1:170;ny=length(y);
+%z=0;
 
 
 
@@ -37,15 +37,15 @@ title('Walke Lake - TI')
 colorbar
 
 subplot(1,3,2);
-imagesc(x,y,d_ref);axis image;
+imagesc(d_ref);axis image;
 hold on
 plot(d_obs(:,1),d_obs(:,2),'w.','MarkerSize',12)
 scatter(d_obs(:,1),d_obs(:,2),10,d_obs(:,4),'filled');
 hold off
 colorbar
-
 title('Walke Lake - Reference')
 ax=axis;
+
 subplot(1,3,3);
 scatter(d_obs(:,1),d_obs(:,2),20,d_obs(:,4),'filled');
 box on
@@ -62,7 +62,7 @@ title('Walke Lake - d_{obs}')
 % Simulation
 SIM=ones(ny,nx).*NaN;
 
-n_real = 100;
+n_real = 500;
 n_cond_sim = 36;
 n_cond_est = 9;
 distance_min=0.1;
@@ -84,6 +84,7 @@ O.method = 'mps_genesim';
 O.n_max_ite=n_max_ite;
 O.n_max_cpdf_count=1; % DS
 O.distance_min = distance_min;
+O.max_search_radius=[100,100];
 
 %O.method = 'mps_snesim_tree';
 
@@ -129,6 +130,7 @@ drawnow;
 
 
 %% estimation
+n_cond_est = 4;
 Oest=O;
 Oest.n_cond = n_cond_est ;
 %Oest.doEstimation = 1;
@@ -136,44 +138,62 @@ Oest.n_cond = n_cond_est ;
 %Oest.distance_min=0.2;
 %Oest.n_cond = 9 ;
 Oest.debug=-2;
-Oest.n_max_cpdf_count=1500;
-Oest.n_max_ite=100000;
-
+Oest.n_max_cpdf_count=400;
+Oest.n_max_ite=1000000;
+ncat = length(unique(TI(:)));
+clear N
 i=0;
-for n_cond = [9,6,3]
-    disp(sprintf('Using n_cond = %d',n_cond))
+n_cond = n_cond_est;
+distance_min  =O.distance_min;
+%for n_cond = [5,4,3,2,1]
+%for distance_min = linspace(O.distance_min,1,21)
+for distance_min = [O.distance_min:0.02:1];
+    disp(sprintf('Using n_cond = %d, distance_min=%3.1f',n_cond,distance_min))
     i=i+1;
     Oest.n_cond = n_cond;
-    Oest.distance_min = 0.2;
-    [est_mul{i},Oest_mul{i}]=mps_cpp_estimation(TI,SIM,Oest);
+    Oest.distance_min = distance_min;
     
-    d_mask = Oest_mul{i}.TG2<20;
-    ii=find(d_mask);
-    ii_not=find(1-d_mask);
+    % set mask
+    if i==1;
+        est=ones(ny,nx,ncat).*NaN;
+    end
+    mask = isnan(est(:,:,1));
+    ii_mask=find(mask);
+    ii_done=find(1-mask);
+    %N(i)=length(ii_mask)
+    if length(ii_mask)>100;
         
-    if i==1
-        est = est_mul{i};       
+        Oest.d_mask = mask;
+        [est_mul{i},Oest_mul{i}]=mps_cpp_estimation(TI,SIM,Oest);
+        
+        t(i)=Oest_mul{i}.time;
+        min_count = 200;
+        ok_grid = Oest_mul{i}.TG2>min_count;
+        ii_ok=find(ok_grid);
+        ii_not_ok=find(1-ok_grid);
+        
+        for icat = 1:ncat;
+            est_mul_tmp = est_mul{i}(:,:,icat);
+            est_tmp = est(:,:,icat);
+            est_tmp(ii_ok)=est_mul_tmp(ii_ok);
+            est(:,:,icat)=est_tmp;
+        end
+        
+        Mest{i}=est;
+        
+        
+        figure(11);
+        nnt=4;
+        nr=8;
+        ip=i;
+        if ip>nr, ip=nr;end
+        nn0=(ip-1)*nnt;
+        subplot(nr,nnt,nn0+1);imagesc(mask);axis image;caxis([0 1]);colorbar;title('mask')
+        subplot(nr,nnt,nn0+2);imagesc(Oest_mul{i}.TG2);axis image;colorbar;title('TG2')
+        subplot(nr,nnt,nn0+3);imagesc(est_mul{i}(:,:,1));axis image;caxis([-1 1]);title('est_mul')
+        subplot(nr,nnt,nn0+4);imagesc(est(:,:,1));axis image;caxis([-1 1]);title('est')
+        drawnow
     end
-    for icat = 1:size(est,3);
-        est_old = est_mul{i};
-        est_new_tmp = est_old(:,:,icat);
-        est_tmp = est(:,:,icat);
-        est_tmp(ii_not)=est_new_tmp(ii_not);
-        est_tmp(ii)=NaN;
-        est(:,:,icat)=est_tmp;
-    end
-    
-    %Oest.n_cond = 4;
-    
-    figure(11);
-    nnt=6;
-    nn0=(i-1)*nnt;
-    subplot(4,nnt,nn0+1);imagesc(Oest_mul{i}.TG2);axis image;colorbar;title('TG2')
-    subplot(4,nnt,nn0+2);imagesc(d_mask);axis image;caxis([0 1]);colorbar;title('mask')
-    subplot(4,nnt,nn0+3);imagesc(est_mul{i}(:,:,1));axis image;caxis([-1 1]);title('est_mul')
-    subplot(4,nnt,nn0+4);imagesc(est(:,:,1));axis image;caxis([-1 1]);title('est')
-    drawnow
-    
 end
 
 %Oest.n_cond = 4;
@@ -181,7 +201,7 @@ end
 
 
 %%
-Pest= Oest.cg;
+Pest= est;
 
 
 figure(5);
