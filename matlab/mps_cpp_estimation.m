@@ -13,6 +13,19 @@ doPlot=0;
 
 O.n_real=1;
 O.doEstimation = 1;
+
+O.autoSetMaxDist = 1;
+if O.autoSetMaxDist==1;
+    O.debug=max([O.debug 2]);
+end
+
+if isfield(O,'n_max_cpdf_count');
+    if O.n_max_cpdf_count==1;
+        O.n_max_cpdf_count=500;
+        disp(sprintf('%s: Setting O.n_max_cpdf_count=%d, for estimation modes',mfilename,O.n_max_cpdf_count))
+    end
+end
+
 if nargin<4, use_parfor=1;end
 
 if (license('test','Distrib_Computing_Toolbox')==0);
@@ -128,7 +141,7 @@ if use_parfor==1;
     for i=1:n_threads;
         for ix=1:nx
         for iy=1:ny
-        for iz=1:nz
+        for iz=1:nz            
             if Othread{i}.d_mask(iy,ix,iz)==1;
                 if nz==1
                     %est(iy,ix,:)=Othread{i}.cg(iy,ix,:);
@@ -154,7 +167,6 @@ if use_parfor==1;
     %O.cg=est;
     est=O.cg;
     O.time = (now-t_init)*3600*24;
-    
 else
     [reals,O]=mps_cpp(TI,SIM,O);
     est = O.cg;

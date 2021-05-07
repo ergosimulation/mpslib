@@ -48,6 +48,7 @@ if nargin==0;
     O.n_real=1;             %  optional number of realization
     [reals,O]=mps_cpp(TI,SIM,O);
     imagesc(reals);drawnow;
+    return
 end
 
 if nargin<1; TI=channels;end
