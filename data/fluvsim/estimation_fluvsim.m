@@ -78,7 +78,7 @@ clear O
 O.x=x;
 O.y=y;
 O.debug=-1;
-O.n_real = 6;
+O.n_real = 500;
 
 
 O.method = 'mps_genesim';
