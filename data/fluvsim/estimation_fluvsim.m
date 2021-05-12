@@ -34,6 +34,7 @@ d_obs=[ix_obs(:) iy_obs(:) iy_obs(:).*0 d(:)];
 figure(1);
 subplot(1,2,1);
 imagesc(TI(:,:,iref)');axis image
+xlabel('x');ylabel('y');
 colormap(gca,cmap)
 caxis(cax)
 colorbar
@@ -41,6 +42,7 @@ title('One 2D slice of the 3D training image')
 
 subplot(1,2,2);
 scatter(d_obs(:,2),d_obs(:,1),50,d_obs(:,4),'filled');
+xlabel('x');ylabel('y');
 caxis(cax)
 colormap(gca,cmap)
 axis image;
@@ -60,7 +62,6 @@ print('-dpng','fluvsim_ti_data')
 % Simulation
 SIM=ones(ny,nx).*NaN;
 
-n_real = 60;
 n_cond_sim = 36;
 n_cond_est = 9;
 distance_min=0.1;
@@ -75,7 +76,7 @@ clear O
 O.x=x;
 O.y=y;
 O.debug=-1;
-O.n_real = n_real;
+O.n_real = 60;
 
 
 O.method = 'mps_genesim';
@@ -95,7 +96,6 @@ O.rseed=2;
 Osim=O;
 Osim.n_cond = n_cond_sim ;
 Osim.n_max_cpdf_count=1; % DS
-Osim.n_real = n_real;
 [reals,Osim]=mps_cpp_thread(TI,SIM,Osim);
 
 % compute probability of facies
@@ -116,6 +116,7 @@ for i=1:min([size(reals,3),9])
     colormap(gca,cmap)
     axis image
 end
+print('-dpng','fluvsim_simulation_reals')
 
 figure(3);
 ncat=5;
@@ -132,6 +133,7 @@ for i=1:ncat;
     title(sprintf('P(m_i=%d)',i-1))
     colorbar
 end
+print('-dpng','fluvsim_simulation_prob')
 drawnow;
 
 
@@ -142,9 +144,7 @@ n_cond_est = 10;
 Oest=O;
 Oest.n_cond = n_cond_est ;
 %Oest.doEstimation = 1;
-%Oest.n_real = 1;
-%Oest.distance_min=0.2;
-%Oest.n_cond = 9 ;
+Oest.n_real = 1;
 Oest.debug=-2;
 Oest.n_max_cpdf_count=400;
 Oest.n_max_ite=1000000;
@@ -229,6 +229,7 @@ for i=1:5;
     colorbar
 end
 drawnow;
+print('-dpng','fluvsim_estimation_prob')
 
 
 

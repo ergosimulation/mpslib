@@ -34,6 +34,7 @@ d_obs=[ix_obs(:) iy_obs(:) iy_obs(:).*0 d(:)];
 figure(1);
 subplot(1,2,1);
 imagesc(TI(:,:,iref)');axis image
+xlabel()
 colormap(gca,cmap)
 caxis(cax)
 colorbar
@@ -50,6 +51,8 @@ set(gca,'ydir','revers')
 colorbar
 drawnow;
 title('Conditional data')
+
+print('-dpng','fluvsim_ti_data')
 
 % 
 
@@ -101,17 +104,20 @@ clear Psim
 for ic=1:ncat
     Psim(:,:,ic)=sum(reals==(ic-1),3)/Osim.n_real;
 end
-Psim(:,:,2)=sum(reals==1,3)/Osim.n_real;
-Psim(:,:,3)=sum(reals==2,3)/Osim.n_real;
-Psim(:,:,4)=sum(reals==3,3)/Osim.n_real;
-Psim(:,:,5)=sum(reals==4,3)/Osim.n_real;
+%Psim(:,:,2)=sum(reals==1,3)/Osim.n_real;
+%Psim(:,:,3)=sum(reals==2,3)/Osim.n_real;
+%Psim(:,:,4)=sum(reals==3,3)/Osim.n_real;
+%Psim(:,:,5)=sum(reals==4,3)/Osim.n_real;
 
 figure(2);
 for i=1:min([size(reals,3),9])
     subplot(3,3,i);
     imagesc(y,x,reals(:,:,i)');
+    caxis(cax)
+    colormap(gca,cmap)
     axis image
 end
+print('-dpng','fluvsim_simulation_reals')
 
 figure(3);
 ncat=5;
@@ -128,6 +134,7 @@ for i=1:ncat;
     title(sprintf('P(m_i=%d)',i-1))
     colorbar
 end
+print('-dpng','fluvsim_simulation_prob')
 drawnow;
 
 
@@ -225,6 +232,7 @@ for i=1:5;
     colorbar
 end
 drawnow;
+print('-dpng','fluvsim_estimation_prob')
 
 
 
