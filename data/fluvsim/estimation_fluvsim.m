@@ -15,7 +15,9 @@ z=0;
 SIM = ones(ny,nx).*NaN;
 
 N_obs = 20;rng(2)
-%N_obs = 10;rng(4)
+N_obs = 10;rng(4)
+N_obs = 6;rng(1)
+N_obs = 6;rng(3)
 ix_obs = randi(nx,N_obs,1);
 iy_obs = randi(ny,N_obs,1);
 iref=11;
@@ -76,7 +78,7 @@ clear O
 O.x=x;
 O.y=y;
 O.debug=-1;
-O.n_real = 60;
+O.n_real = 6;
 
 
 O.method = 'mps_genesim';
@@ -103,10 +105,6 @@ clear Psim
 for ic=1:ncat
     Psim(:,:,ic)=sum(reals==(ic-1),3)/Osim.n_real;
 end
-%Psim(:,:,2)=sum(reals==1,3)/Osim.n_real;
-%Psim(:,:,3)=sum(reals==2,3)/Osim.n_real;
-%Psim(:,:,4)=sum(reals==3,3)/Osim.n_real;
-%Psim(:,:,5)=sum(reals==4,3)/Osim.n_real;
 
 figure(2);
 for i=1:min([size(reals,3),9])
@@ -119,7 +117,6 @@ end
 print('-dpng','fluvsim_simulation_reals')
 
 figure(3);
-ncat=5;
 for i=1:ncat;
     subplot(1,ncat,i);
     imagesc(y,x,Psim(:,:,i)');
@@ -140,7 +137,7 @@ drawnow;
 
 
 %% estimation
-n_cond_est = 10;
+n_cond_est = 400;
 Oest=O;
 Oest.n_cond = n_cond_est ;
 %Oest.doEstimation = 1;
@@ -148,7 +145,6 @@ Oest.n_real = 1;
 Oest.debug=-2;
 Oest.n_max_cpdf_count=400;
 Oest.n_max_ite=1000000;
-ncat = length(unique(TI(:)));
 clear N
 i=0;
 n_cond = n_cond_est;
@@ -156,7 +152,6 @@ distance_min  =O.distance_min;
 %for n_cond = [5,4,3,2,1]
 %for distance_min = linspace(O.distance_min,1,21)
 distance_min_arr = [O.distance_min:0.02:1];
-
 distance_min_arr = [0.1];
 
 for distance_min=distance_min_arr;
@@ -231,8 +226,25 @@ end
 drawnow;
 print('-dpng','fluvsim_estimation_prob')
 
+%% Entropy maps
+figure(9);clf;
+subplot(1,2,1);
+imagesc(y,x,entropy_2d(Psim)');
+axis image
+caxis([0 1])
+colormap(flipud(gray));colorbar;
+xlabel('x');ylabel('y')
+title('from sequential simulation')
 
+subplot(1,2,2);
+imagesc(y,x,entropy_2d(Pest)');
+axis image
+caxis([0 1])
+colormap(flipud(gray));colorbar;
+xlabel('x');ylabel('y')
+title('from estimation')
 
+sgtitle('Marginal entropy, H(m_i)')
 
-
+print('-dpng','fluvsim_entropy')
 
