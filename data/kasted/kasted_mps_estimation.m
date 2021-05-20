@@ -6,7 +6,7 @@ useRef=0;
 doPlot=1; 
 doPlot=2; % more figures
 useSubSet = 0;
-dx=200;
+dx=50;
 %dx=100; 
 %dx=200; % choose for faster simulation on coarser grid
 
@@ -40,7 +40,7 @@ min_dists = [0.15 0.2 0.25 0.35];
 min_dists = [0:0.05:1];
 
 
-n_real = 1000;
+n_real = 32*10;
 n_conds = [4,9,16];
 min_dists = [0.2:0.05:0.35];
 
