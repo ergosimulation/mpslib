@@ -1,4 +1,4 @@
-%kasted_mps_estimati%on
+%kasted_mps_estimation
 clear all;close all;
 
 % basic settings
@@ -44,9 +44,8 @@ n_real = 1000;
 n_conds = [2,6,10,18];
 min_dists = [0.15, 0.2, 0.25, 0.35];
 
-
 if ~exist('n_conds','var')
-    n_conds = [4];
+    n_conds = [4, 10, 18];
 end
 
 if ~exist('min_dists','var')
