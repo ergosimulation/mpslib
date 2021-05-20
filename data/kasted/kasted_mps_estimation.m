@@ -123,7 +123,8 @@ useSubSet = 1;
 if useSubSet == 1;
     n_use_hard = 24;
     rng(1);
-    i_hard_use = randomsample(size(O.d_hard,1),n_use_hard);
+    %i_hard_use = randomsample(size(O.d_hard,1),n_use_hard);
+    i_hard_use = randsample(size(O.d_hard,1),n_use_hard)';
     O.d_hard = O.d_hard(i_hard_use,:);
 end
 
