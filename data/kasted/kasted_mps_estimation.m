@@ -15,7 +15,6 @@ n_max_cpdf_count= 2000;
 n_real = 1000;
 
 
-
 n_conds = [1,2,4,9,25,36,49];
 min_dists = [0:0.025:1];
 
@@ -30,6 +29,11 @@ min_dists = [0.15 0.2 0.25 0.35];
 min_dists = [0:0.05:1];
 
 
+n_real = 100;
+n_conds = [4];
+min_dists = [0.2];
+
+
 if ~exist('n_conds','var')
     n_conds = [4];
 end
@@ -41,7 +45,7 @@ end
 % load kasted adta
 dx=50;
 %dx=100;
-%dx=200;
+dx=200;
 kasted_load;
 % SET SIZE OF SIMULATION GRID
 x1 = 562000-200;

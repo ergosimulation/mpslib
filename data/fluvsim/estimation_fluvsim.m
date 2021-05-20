@@ -18,6 +18,7 @@ N_obs = 20;rng(2)
 N_obs = 10;rng(4)
 N_obs = 6;rng(1)
 N_obs = 6;rng(3)
+N_obs = 4;rng(3)
 ix_obs = randi(nx,N_obs,1);
 iy_obs = randi(ny,N_obs,1);
 iref=11;
@@ -62,6 +63,7 @@ print('-dpng','fluvsim_ti_data')
 %% Setup mpslib
 
 % Simulation
+n_real = 60;
 SIM=ones(ny,nx).*NaN;
 
 n_cond_sim = 36;
@@ -78,7 +80,7 @@ clear O
 O.x=x;
 O.y=y;
 O.debug=-1;
-O.n_real = 500;
+O.n_real = n_real;
 
 
 O.method = 'mps_genesim';
