@@ -1,12 +1,23 @@
 %kasted_mps_estimati%on
 clear all;close all;
-useRef=0;doPlot=1;
+
+% basic settings
+useRef=0;
+doPlot=1; 
+doPlot=2; % more figures
+useSubSet = 0;
+dx=50;
+%dx=100; 
+%dx=200; % choose for faster simulation on coarser grid
+
+%
+
+
 %useRef=1;doPlot=1;
 
 p=gcp;
 n_workers = p.NumWorkers;
 
-doPlot=2;
 n_max_ite=100000;1000000;
 n_max_cpdf_count= n_workers*50;2000;
 n_real = n_max_cpdf_count;1000;
@@ -29,9 +40,9 @@ min_dists = [0.15 0.2 0.25 0.35];
 min_dists = [0:0.05:1];
 
 
-n_real = 100;
-n_conds = [4];
-min_dists = [0.2];
+n_real = 1000;
+n_conds = [4,9,16];
+min_dists = [0.2:0.5:0.35];
 
 
 if ~exist('n_conds','var')
@@ -43,9 +54,6 @@ if ~exist('min_dists','var')
 end
 
 % load kasted adta
-dx=50;
-%dx=100;
-dx=200;
 kasted_load;
 % SET SIZE OF SIMULATION GRID
 x1 = 562000-200;
@@ -76,14 +84,6 @@ O.rseed=1;
 O.hard_data_search_radius=10000000;
 % Conditional data
 O.d_hard = d_well_hard;
-
-useSubset=0;
-if useSubset==1
-    n_use_hard = 7;
-    rng(1);
-    i_hard_use = randsample(size(O.d_hard,1),n_use_hard);
-    O.d_hard = O.d_hard(i_hard_use,:);
-end
 
 %Oc.d_soft = d_res;
 %Oc.d_soft = d_ele;
@@ -119,7 +119,6 @@ if useRef==1;
 end
 
 %% SUBSET
-useSubSet = 1;
 if useSubSet == 1;
     n_use_hard = 24;
     rng(1);
