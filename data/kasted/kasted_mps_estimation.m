@@ -41,8 +41,8 @@ min_dists = [0:0.05:1];
 
 
 n_real = 32*10;
-n_conds = [4,9,16];
-min_dists = [0.2:0.05:0.35];
+n_conds = [2,6,10,18];
+min_dists = [0.15, 0.2, 0.25, 0.35];
 
 
 if ~exist('n_conds','var')
