@@ -400,15 +400,19 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	//std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
 	
 
-	//for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
 	int i_ti_p;
-	for (i_ti_p = 0; i_ti_p<_tiPath.size(); i_ti_p++) {
+	//for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
+	//	int i_ti_p;
+	//for  = 0; i_ti_p<_tiPath.size(); i_ti_p++) {
+	for (i_ti_p  = 0; i_ti_p<_tiPath.size(); i_ti_p++) {
 		// Simple way to randomly choose a start position when scanning the TI
 		ti_shift = (std::rand() % (int)(_tiPath.size() ));
 		i_ti_path = i_ti_p + ti_shift;
 		if (i_ti_path>_tiPath.size()) {
 			i_ti_path = i_ti_path - _tiPath.size();
 		}
+		
+		//std::cout << " " << i_ti_path;
 
 		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
 
@@ -589,7 +593,6 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 			}
 
 		}
-
 		
 		if (_debugMode > 2) {
 			std::cout << "  " << "i_ti_path=" << i_ti_path << " ===";
@@ -607,9 +610,11 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 		}
 
 		// Stop looking if we have reached the maximum number of allowed iterations in TI
-		if (i_ti_path>_maxIterations) {
+		//if (i_ti_path>_maxIterations) {
+		if (i_ti_p>_maxIterations) {
 			if (_debugMode > 2) {
-				std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations << std::endl;
+				//std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations << std::endl;
+				std::cout << "Max Ite Reached i_ti_path=" << i_ti_p << " - nmax_ite=" << _maxIterations << std::endl;
 			}
 			break;
 		}

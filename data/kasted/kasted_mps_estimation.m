@@ -19,9 +19,10 @@ n_conds = [1,2,4,9, 16, 25, 36,49, 64, 81];
 min_dists = [0:0.1:1];
 
 
-n_real = 1000;
-n_conds = [2,6,10,18];
 min_dists = [0.15, 0.2, 0.25, 0.35];
+n_conds = [2,6,10,18];
+n_conds = [2,5,8];
+n_real = 100;
 
 if ~exist('n_reals','var')
     n_reals = 1000;
@@ -212,8 +213,8 @@ clear reals_cond
 save(txt)
 
 %% OPTIONALLY LOAD ALLREADY ESTIMATED/SIMULATED DATA
-clear all;load kasted_dx50_mul_4_4_c1000_nr100_nh112_R0.mat
-
+%clear all;load kasted_dx50_mul_4_4_c1000_nr100_nh112_R0.mat
+%clear all;load kasted_dx50_mul_4_2_c1000_nr1000_nh112_R0.mat
 %% PLOT ALL
 n1=length(n_conds);
 n2=length(min_dists);
