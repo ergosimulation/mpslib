@@ -13,7 +13,7 @@ n_real=1000;
 %n_conds = [2,6,10] ;
 %min_dists = [0.05 0.25 0.8];
 %n_real=100;dx=50;
-%n_real=1000;dx=200
+n_real=1000;dx=200
 
 debug_level=-1;
 debug_level=2;

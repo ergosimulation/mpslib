@@ -1,7 +1,7 @@
 %kasted_mps_estimation
 clear all;close all;
 
-% basic settings
+%% basic settings
 useRef=0;
 doPlot=1; 
 doPlot=2; % more figures
@@ -10,39 +10,28 @@ dx=50;
 %dx=100; 
 %dx=200; % choose for faster simulation on coarser grid
 
-%
-
-
-%useRef=1;doPlot=1;
-
 p=gcp;
 n_workers = p.NumWorkers;
 
 n_max_ite=100000;1000000;
-n_max_cpdf_count= n_workers*50;2000;
-n_real = n_max_cpdf_count;1000;
-
-n_max_cpdf_count= 2000;
-n_real = 1000;
-
-
-n_conds = [1,2,4,9,25,36,49];
-min_dists = [0:0.025:1];
 
 n_conds = [1,2,4,9, 16, 25, 36,49, 64, 81];
 min_dists = [0:0.1:1];
 
 
-n_conds = [1,2,4,9,16,25,36];
-n_conds = [1,2,4,9,16,25];
-n_conds = [1,2,4,9,18];
-min_dists = [0.15 0.2 0.25 0.35];
-min_dists = [0:0.05:1];
-
-
 n_real = 1000;
 n_conds = [2,6,10,18];
 min_dists = [0.15, 0.2, 0.25, 0.35];
+
+if ~exist('n_reals','var')
+    n_reals = 1000;
+end
+
+if ~exist('n_max_cpdf_count','var')
+    n_max_cpdf_count= n_reals;
+    %n_max_cpdf_count= 1000;
+end
+
 
 if ~exist('n_conds','var')
     n_conds = [4, 10, 18];
@@ -147,7 +136,7 @@ for i=1:length(n_conds);
         n_cond_soft = 0; % non-colocate soft data - only for GENESIM
         
         Oc.n_cond=[n_cond_hard, n_cond_soft];
-        
+                
         % SIM
         Oc.n_max_cpdf_count=1; % DS
         [reals_cond,Osim]=mps_cpp_thread(TI,SIM,Oc);
@@ -222,6 +211,9 @@ end
 clear reals_cond
 save(txt)
 
+%% OPTIONALLY LOAD ALLREADY ESTIMATED/SIMULATED DATA
+clear all;load kasted_dx50_mul_4_4_c1000_nr100_nh112_R0.mat
+
 %% PLOT ALL
 n1=length(n_conds);
 n2=length(min_dists);
@@ -250,7 +242,7 @@ hold off
 set(gca,'xTick',[1:1:length(min_dists)].*nx-nx/2)
 set(gca,'xTickLabel',num2str(min_dists'))
 xlabel('d_{max}')
-set(gca,'yTick',[1:1:length(n_conds)].*ny-nx/2)
+set(gca,'yTick',[1:1:length(n_conds)].*ny-ny/2)
 set(gca,'yTickLabel',num2str(n_conds'))
 ylabel('n_c')
 set(gca,'ydir','normal')
@@ -266,7 +258,7 @@ hold off
 set(gca,'xTick',[1:1:length(min_dists)].*nx-nx/2)
 set(gca,'xTickLabel',num2str(min_dists'))
 xlabel('d_{max}')
-set(gca,'yTick',[1:1:length(n_conds)].*ny-nx/2)
+set(gca,'yTick',[1:1:length(n_conds)].*ny-ny/2)
 set(gca,'yTickLabel',num2str(n_conds'))
 ylabel('n_c')
 set(gca,'ydir','normal')

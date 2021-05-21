@@ -379,13 +379,14 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 
 	}
 
+	
 	// The path scanning the training image is shifted such that a random start location is chosen
+	// TODO: This is very slow large TIs!
+	// TODO: This is significant when n_c is low. for n_c=0, most computation time is related to this rotation!
 	int ti_shift;
 	ti_shift = (std::rand() % (int)(_tiPath.size() ));
 	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
 	
-	
-
 	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
 	// to find the local conditional pdf f_TI(m_i | m_c)
 
