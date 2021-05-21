@@ -24,12 +24,12 @@ n_conds = [2,6,10,18];
 %n_conds = [2,5,8];
 %n_real = 100;
 
-if ~exist('n_reals','var')
-    n_reals = 1000;
+if ~exist('n_real','var')
+    n_real = 1000;
 end
 
 if ~exist('n_max_cpdf_count','var')
-    n_max_cpdf_count= n_reals;
+    n_max_cpdf_count= n_real;
     %n_max_cpdf_count= 1000;
 end
 
