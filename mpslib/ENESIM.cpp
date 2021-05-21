@@ -380,13 +380,6 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	}
 
 	
-	// The path scanning the training image is shifted such that a random start location is chosen
-	// TODO: This is very slow large TIs!
-	// TODO: This is significant when n_c is low. for n_c=0, most computation time is related to this rotation!
-	int ti_shift;
-	ti_shift = (std::rand() % (int)(_tiPath.size() ));
-	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
-	
 	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
 	// to find the local conditional pdf f_TI(m_i | m_c)
 
@@ -398,7 +391,25 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	float minDist = std::numeric_limits<float>::max(); // Dummy for testing
 	unsigned int i_ti_path;
 	
-	for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
+	
+	// The path scanning the training image is shifted such that a random start location is chosen
+	// TODO: This is very slow large TIs!
+	// TODO: This is significant when n_c is low. for n_c=0, most computation time is related to this rotation!
+	int ti_shift;
+	//ti_shift = (std::rand() % (int)(_tiPath.size() ));
+	//std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
+	
+
+	//for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
+	int i_ti_p;
+	for (i_ti_p = 0; i_ti_p<_tiPath.size(); i_ti_p++) {
+		// Simple way to randomly choose a start position when scanning the TI
+		ti_shift = (std::rand() % (int)(_tiPath.size() ));
+		i_ti_path = i_ti_p + ti_shift;
+		if (i_ti_path>_tiPath.size()) {
+			i_ti_path = i_ti_path - _tiPath.size();
+		}
+
 		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
 
 		// Get the centered value in the TI
