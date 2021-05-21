@@ -19,10 +19,10 @@ n_conds = [1,2,4,9, 16, 25, 36,49, 64, 81];
 min_dists = [0:0.1:1];
 
 
-min_dists = [0.15, 0.2, 0.25, 0.35];
+min_dists = [0.05,0.15, 0.2, 0.25, 0.35, 0.5];
 n_conds = [2,6,10,18];
-n_conds = [2,5,8];
-n_real = 100;
+%n_conds = [2,5,8];
+%n_real = 100;
 
 if ~exist('n_reals','var')
     n_reals = 1000;
