@@ -25,6 +25,17 @@ try
     cmd=[fn,'_tg*'];
     %%disp(sprintf('%s: trying to delete ''%s''',mfilename,cmd));
     delete(cmd);
+    
+    cmd=[fn,'_cg*'];
+    %%disp(sprintf('%s: trying to delete ''%s''',mfilename,cmd));
+    delete(cmd);
 
+    cmd=[fn,'_ent*'];
+    %%disp(sprintf('%s: trying to delete ''%s''',mfilename,cmd));
+    delete(cmd);
 
+    cmd=[fn,'_selfInf*'];
+    %%disp(sprintf('%s: trying to delete ''%s''',mfilename,cmd));
+    delete(cmd);
+    
 end

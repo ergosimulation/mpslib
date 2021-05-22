@@ -1,6 +1,7 @@
 % kasted_load: load Kasted data
 % TI
 if ~exist('dx');dx=50;end
+if ~exist('doPlot');doPlot=1;end
 TI=read_eas_matrix(sprintf('kasted_ti_dx%d.dat',dx));
 x_ti=[1:1:size(TI,2)].*dx;
 y_ti=[1:1:size(TI,1)].*dx;
@@ -18,9 +19,12 @@ d_ele=read_eas('kasted_soft_ele.dat');
 % resistivity data
 d_res=read_eas('kasted_soft_res.dat');
 
-
-figure(1);clf;try;set_paper('portrait');end
 ax=[0.5620    0.5764    6.2254    6.2354].*1e+6;
+
+if doPlot==0 
+    return
+end
+figure(1);clf;try;set_paper('portrait');end
 subplot(4,1,1)
 imagesc(x_ti,y_ti,TI(:,:,1));colorbar
 axis image;

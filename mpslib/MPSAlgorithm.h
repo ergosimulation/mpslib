@@ -259,7 +259,7 @@ protected:
 	/**
 	* @brief Make a random training image path
 	*/
-	bool _shuffleTiPath;
+	int _shuffleTiPath;
 	/**
 	* @brief Training image search path
 	*/
@@ -712,12 +712,12 @@ public:
 	* @brief Getter shuffleTiPath
 	* @return shuffleTiPath
 	*/
-	inline bool shuffleTiPath() const {return _shuffleTiPath;}
+	inline int shuffleTiPath() const {return _shuffleTiPath;}
 	/**
 	* @brief Setter ShuffleTiPath
 	* @param shuffleTiPath new value
 	*/
-	inline void setShuffleTiPath(bool shuffleTiPath) {_shuffleTiPath = shuffleTiPath;}
+	inline void setShuffleTiPath(int shuffleTiPath) {_shuffleTiPath = shuffleTiPath;}
 	/**
 	* @brief Getter tiPath
 	* @return tiPath

@@ -183,7 +183,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	
 	// Shuffle TI Path
 	_readLineConfiguration(file, ss, data, s, str);
-	_shuffleTiPath = (stoi(data[1]) != 0);
+	_shuffleTiPath = (stoi(data[1]));
 	// Hard data
 	_readLineConfiguration(file, ss, data, s, str);
 	data[1].erase(std::remove_if(data[1].begin(), data[1].end(), [] (char x){return std::isspace(x); }), data[1].end()); //Removing spaces
@@ -396,9 +396,11 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	// TODO: This is very slow large TIs!
 	// TODO: This is significant when n_c is low. for n_c=0, most computation time is related to this rotation!
 	int ti_shift;
-	//ti_shift = (std::rand() % (int)(_tiPath.size() ));
-	//std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
-	
+
+	if (_shuffleTiPath>1) {
+		ti_shift = (std::rand() % (int)(_tiPath.size() ));
+		std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
+	}
 
 	int i_ti_p;
 	//for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
@@ -406,7 +408,11 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 	//for  = 0; i_ti_p<_tiPath.size(); i_ti_p++) {
 	for (i_ti_p  = 0; i_ti_p<_tiPath.size(); i_ti_p++) {
 		// Simple way to randomly choose a start position when scanning the TI
-		ti_shift = (std::rand() % (int)(_tiPath.size() ));
+		if (_shuffleTiPath>0) {
+			ti_shift = (std::rand() % (int)(_tiPath.size() ));
+		} else {
+			ti_shift = 0;
+		}
 		i_ti_path = i_ti_p + ti_shift;
 		if (i_ti_path>_tiPath.size()) {
 			i_ti_path = i_ti_path - _tiPath.size();

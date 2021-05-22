@@ -1,6 +1,10 @@
 %kasted_mps_estimation
 clear all;close all;
 
+if ~exist('mps_cpp.m','file')
+    addpath(sprintf('..%s..%smatlab%s',filesep,filesep,filesep));
+end
+
 %% basic settings
 useRef=0;
 doPlot=1; 
@@ -21,8 +25,11 @@ min_dists = [0:0.1:1];
 
 min_dists = [0.05,0.15, 0.2, 0.25, 0.35, 0.5];
 n_conds = [2,6,10,18];
-%n_conds = [2,5,8];
-%n_real = 100;
+
+dx=200;
+min_dists = [0.1];
+n_conds = [4];
+n_real = 10;
 
 if ~exist('n_real','var')
     n_real = 1000;
@@ -61,7 +68,7 @@ SIM=zeros(ny,nx).*NaN;
 %d_well_hard  = read_eas('kasted_hard_well_conistent.dat');
 
 % Simulation
-O.debug=-1;
+O.debug=2;
 O.method = 'mps_genesim';
 O.n_real = n_real;
 O.doEntropy = 0; % compute entropy and self-information
@@ -139,6 +146,7 @@ for i=1:length(n_conds);
         Oc.n_cond=[n_cond_hard, n_cond_soft];
                 
         % SIM
+        Oc.parameter_filename=[Oc.method,'_sim.txt'];
         Oc.n_max_cpdf_count=1; % DS
         [reals_cond,Osim]=mps_cpp_thread(TI,SIM,Oc);
         [em, ev]=etype(reals_cond);
@@ -146,6 +154,7 @@ for i=1:length(n_conds);
         disp(sprintf('SIM DONE, t=%5.1fs',Osim.time))
         
         % EST
+        Oc.parameter_filename=[Oc.method,'_est.txt'];
         Oc.doEstimation=1;
         Oc.n_real=1;
         Oc.n_max_cpdf_count=n_max_cpdf_count;;
