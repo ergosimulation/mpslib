@@ -1,14 +1,15 @@
-%% DEFAULTS
-% HVor mange counts skal der til før at c_pdf(m_i|m_c) bliver acceptabel?
-% med høj n_c får vi et lavtr antal counts
-%
-
+% kasted_mps_genesim_subset
 clear all;close all
+if ~exist('mps_cpp.m','file')
+    addpath(sprintf('..%s..%smatlab%s',filesep,filesep,filesep));
+end
 
-dx=50;
+dx=100;
 n_conds = [2,6,10,14,18,36] ;
 min_dists = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.5, 0.7, 1];
-n_real=1000;
+n_real=100;
+
+use_parfor = 0;
 
 %n_conds = [2,6,10] ;
 %min_dists = [0.05 0.25 0.8];
@@ -18,16 +19,18 @@ n_real=1000;
 debug_level=-1;
 debug_level=2;
 doSIM=1;
-use_parfor=1;
 use_mask=3;
 
 %%
-if ~exist('plots');plots=1;end %1 for running once, plots = 2 for running mulitple times
+if ~exist('plots');plots=0;end %1 for running once, plots = 2 for running mulitple times
 if ~exist('rseed');rseed=2;end
 if ~exist('dx');dx=50;end
 if ~exist('max_cpdf_count'); max_cpdf_count=n_real;end
 if ~exist('doSIM'); doSIM=0;;end
 if ~exist('debug_level');debug_level=-1;end
+
+%% Load data
+doPlot=0;
 kasted_load;
 
 % set hard data
@@ -107,9 +110,6 @@ print_mul(sprintf('kasted_hard_obs_mask%d',use_mask))
 val=unique(TI(:));
 nval=length(val);
 
-
-
-
 %%
 
 matfile=sprintf('est_%d_%d_%d_m%d_dx%d',length(n_conds),length(min_dists),max_cpdf_count,use_mask,dx);
@@ -140,10 +140,11 @@ else
             if useGenesim==1
                 O.method='mps_genesim';
                 O.parameter_filename='mps_genesim_test.txt';
-                O.n_max_ite=1000000000;
-                O.n_cond=[n_cond 2];
+                O.n_max_ite=5000;
+                O.n_cond=[n_cond 0];
                 O.n_max_cpdf_count=max_cpdf_count;
                 O.distance_min=distance_min;
+                O.distance_pow=3;
             else
                 O.method='mps_snesim_tree';
                 O.parameter_filename='mps_snesim_test.txt';

@@ -6,6 +6,9 @@ if ~exist('mps_cpp.m','file')
 end
 
 %% basic settings
+n_max_ite=5000;
+distance_pow = 2;
+use_parfor = 1;
 useRef=0;
 doPlot=1; 
 doPlot=2; % more figures
@@ -14,22 +17,12 @@ dx=50;
 %dx=100; 
 %dx=200; % choose for faster simulation on coarser grid
 
-p=gcp;
-n_workers = p.NumWorkers;
-
-n_max_ite=100000;1000000;
-
-n_conds = [1,2,4,9, 16, 25, 36,49, 64, 81];
-min_dists = [0:0.1:1];
-
-
+% manuscript run
 min_dists = [0.05,0.15, 0.2, 0.25, 0.35, 0.5];
 n_conds = [2,6,10,18];
 
-dx=200;
-min_dists = [0.1];
-n_conds = [4];
-n_real = 10;
+% small test
+%dx=100;min_dists = [0.2];n_conds = [6 9];n_real = 501;
 
 if ~exist('n_real','var')
     n_real = 1000;
@@ -49,8 +42,15 @@ if ~exist('min_dists','var')
     min_dists = [0 0.15, 0.2, 0.25, 0.35];
 end
 
-% load kasted adta
+if use_parfor == 1;
+    p=gcp;
+    n_workers = p.NumWorkers;
+end
+
+%% load kasted adta
+doPlot=0;
 kasted_load;
+doPlot=1;
 % SET SIZE OF SIMULATION GRID
 x1 = 562000-200;
 x2 = 576400+200;
@@ -77,6 +77,7 @@ O.d_hard = d_well_hard;
 O.n_max_ite=n_max_ite;
 O.n_max_cpdf_count=1; % DS
 O.rseed=1;
+O.distance_pow=distance_pow;
 O.hard_data_search_radius=10000000;
 % Conditional data
 O.d_hard = d_well_hard;
@@ -124,13 +125,10 @@ if useSubSet == 1;
 end
 
 n_hard = size(O.d_hard,1);
-txt=sprintf('kasted_dx%d_mul_%d_%d_c%d_nr%d_nh%d_R%d',dx,length(min_dists),length(n_conds),n_max_cpdf_count, n_real, n_hard,useRef);
+txt=sprintf('kasted_dx%d_mul_%d_%d_c%d_nr%d_nh%d_R%d_p%d_pf%d',dx,length(min_dists),length(n_conds),n_max_cpdf_count, n_real, n_hard,useRef,O.distance_pow,use_parfor);
 
 
-
-
-%title(sprin
-%% ESTIMATION
+%% ESTIMATION AND SIMULATION
 k=0;
 for i=1:length(n_conds);
     for j=1:length(min_dists);
@@ -148,7 +146,11 @@ for i=1:length(n_conds);
         % SIM
         Oc.parameter_filename=[Oc.method,'_sim.txt'];
         Oc.n_max_cpdf_count=1; % DS
-        [reals_cond,Osim]=mps_cpp_thread(TI,SIM,Oc);
+        if use_parfor == 1;
+            [reals_cond,Osim]=mps_cpp_thread(TI,SIM,Oc);
+        else
+            [reals_cond,Osim]=mps_cpp(TI,SIM,Oc);
+        end
         [em, ev]=etype(reals_cond);
         P_SIM{i,j}=em;
         disp(sprintf('SIM DONE, t=%5.1fs',Osim.time))
@@ -159,7 +161,7 @@ for i=1:length(n_conds);
         Oc.n_real=1;
         Oc.n_max_cpdf_count=n_max_cpdf_count;;
         %[reals_est,Oest]=mps_cpp(TI,SIM,Oc);
-        [reals_est,Oest]=mps_cpp_estimation(TI,SIM,Oc,1);
+        [reals_est,Oest]=mps_cpp_estimation(TI,SIM,Oc,use_parfor);
         P_EST{i,j}=Oest.cg(:,:,2);
         disp(sprintf('EST DONE, t=%5.1fs',Oest.time))
         
