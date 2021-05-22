@@ -5,9 +5,10 @@ if ~exist('mps_cpp.m','file')
 end
 
 dx=100;
+dx=50;
 n_conds = [2,6,10,14,18,36] ;
 min_dists = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.5, 0.7, 1];
-n_real=100;
+n_real=500;
 
 use_parfor = 0;
 
