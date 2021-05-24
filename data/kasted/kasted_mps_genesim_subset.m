@@ -4,31 +4,31 @@ if ~exist('mps_cpp.m','file')
     addpath(sprintf('..%s..%smatlab%s',filesep,filesep,filesep));
 end
 
-dx=100;
+
 dx=50;
+%dx=50;
 n_conds = [2,6,10,14,18,36] ;
 min_dists = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.5, 0.7, 1];
 n_real=500;
 
-use_parfor = 0;
+use_parfor = 1;
+distance_pow=1;
 
 %n_conds = [2,6,10] ;
 %min_dists = [0.05 0.25 0.8];
 %n_real=100;dx=50;
 %n_real=1000;dx=200
 
-debug_level=-1;
-debug_level=2;
-doSIM=1;
 use_mask=3;
-
+n_max_ite=5000;
 %%
+if ~exist('distance_pow');distance_pow=1;end
 if ~exist('plots');plots=0;end %1 for running once, plots = 2 for running mulitple times
 if ~exist('rseed');rseed=2;end
 if ~exist('dx');dx=50;end
 if ~exist('max_cpdf_count'); max_cpdf_count=n_real;end
-if ~exist('doSIM'); doSIM=0;;end
-if ~exist('debug_level');debug_level=-1;end
+if ~exist('doSIM'); doSIM=1;;end
+if ~exist('debug_level');debug_level=2;end
 
 %% Load data
 doPlot=0;
@@ -59,6 +59,9 @@ if use_mask ==2;
 elseif use_mask == 3
     xlim =  [0 50*0.05]+[568.4];xlim=xlim*1000;
     ylim = [0 50*0.05 ]+[6229];ylim=ylim*1000;
+elseif use_mask == 4
+    xlim =  [0 50*0.07]+[571.4];xlim=xlim*1000;
+    ylim = [0 50*0.07 ]+[6228];ylim=ylim*1000;
 end
 xl=[xlim(1) xlim(1) xlim(2) xlim(2) xlim(1)] ;
 yl=[ylim(1) ylim(2) ylim(2) ylim(1) ylim(1)]; 
@@ -73,6 +76,10 @@ iy2=find(O.y<=ylim(2));iy2=iy2(end);
 
 mask_x_bounds = [ix1 ix2];
 mask_y_bounds = [iy1 iy2];
+
+
+txt=sprintf('est_%d_%d_%d_m%d_dx%d_pf%d_p%d_nmi%d_M%d',length(n_conds),length(min_dists),max_cpdf_count,use_mask,dx,use_parfor,distance_pow,n_max_ite,use_mask);
+
 
 %% plot data
 pmarg1d(2)=sum(TI(:))/prod(size(TI));
@@ -100,11 +107,12 @@ cb=colorbar;
 set(cb,'Ytick',[0.25 0.75]);set(cb,'YtickLabel',{'None','Channel'})
 set(gca,'FontSize',7)
 
-print_mul(sprintf('kasted_hard_obs'))
+print_mul(sprintf('%s_kasted_hard_obs',txt))
 hold on
 plot(xl,yl,'k--')
 hold off
-print_mul(sprintf('kasted_hard_obs_mask%d',use_mask))
+print_mul(sprintf('kasted_hard_obs',use_mask))
+
 
 %% Run estimations and plot
 [ti_ny,ti_nx]=size(TI);
@@ -113,10 +121,9 @@ nval=length(val);
 
 %%
 
-matfile=sprintf('est_%d_%d_%d_m%d_dx%d',length(n_conds),length(min_dists),max_cpdf_count,use_mask,dx);
-if exist([matfile,'.mat'],'file');
-    disp(sprintf('Loading %s',matfile))
-    load(matfile)
+if exist([txt,'.mat'],'file');
+    disp(sprintf('Loading %s',txt))
+    load(txt)
 else
     % Simulation Grid Size
     
@@ -141,11 +148,11 @@ else
             if useGenesim==1
                 O.method='mps_genesim';
                 O.parameter_filename='mps_genesim_test.txt';
-                O.n_max_ite=5000;
+                O.n_max_ite=n_max_ite;
                 O.n_cond=[n_cond 0];
                 O.n_max_cpdf_count=max_cpdf_count;
                 O.distance_min=distance_min;
-                O.distance_pow=3;
+                O.distance_pow=distance_pow;
             else
                 O.method='mps_snesim_tree';
                 O.parameter_filename='mps_snesim_test.txt';
@@ -231,7 +238,7 @@ else
         end
         %save(sprintf('est_%d_%d_%d',length(n_conds),length(min_dists),O.n_max_cpdf_count))
     end
-    save(matfile)
+    save(txt)
 end
 
 
@@ -299,10 +306,7 @@ cmap=cmap_linear([col0;1 1 1;col1],[0 pmarg1d(2) 1]);
 colormap(cmap)
 colorbar
 
-
-
-%title(sprintf('Sensitivity analysis, max_cpdf = %i', max_cpdf_count))
-print_mul(sprintf('est_%d_%d_%d_%d',length(n_conds),length(min_dists),O.n_max_cpdf_count,n_real))
+print_mul(sprintf('%s_est',txt))
 
 
 
@@ -353,7 +357,8 @@ if isfield(myOest{1,1},'TG2');
     cb=colorbar;
     set(get(cb,'Ylabel'),'String','Counts in conditional pd')
     %title(sprintf('Sensitivity analysis, max_cpdf = %i', max_cpdf_count))
-    print_mul(sprintf('est_counts_%d_%d_%d_%d',length(n_conds),length(min_dists),O.n_max_cpdf_count,n_real))
+    print_mul(sprintf('%s_est_counts',txt))
+
 end
 
 
@@ -423,8 +428,8 @@ if doSIM==1;
     
     
     %title(sprintf('Sensitivity analysis, max_cpdf = %i', max_cpdf_count))
-    print_mul(sprintf('simest_%d_%d_%d_%d',length(n_conds),length(min_dists),O.n_max_cpdf_count,n_real))
-    
+    print_mul(sprintf('%s_simest',txt))
+
 end
 
 
@@ -443,11 +448,11 @@ legend(p1,num2str(n_conds(:)))
 grid on
 ylabel('CPU time (s)')
 xlabel('distance')
-print_mul(sprintf('time_%d_%d_%d_%d',length(n_conds),length(min_dists),O.n_max_cpdf_count,n_real))
+print_mul(sprintf('%s_time',txt))
 
-%%
-figure;clf
-imagesc([t_grid{1};t_grid{2}])
-
-figure;clf
-imagesc([c{1};c{2}])
+%%%
+%figure;clf
+%imagesc([t_grid{1};t_grid{2}])
+%
+%figure;clf
+%imagesc([c{1};c{2}])

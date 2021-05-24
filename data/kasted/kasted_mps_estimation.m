@@ -7,15 +7,19 @@ end
 
 %% basic settings
 n_max_ite=5000;
-distance_pow = 2;
+distance_pow = 1;
 use_parfor = 1;
 useRef=0;
 doPlot=1; 
 doPlot=2; % more figures
 useSubSet = 0;
-dx=50;
+%dx=200;
 %dx=100; 
 %dx=200; % choose for faster simulation on coarser grid
+
+% Detailed run 
+%min_dists = [0:0.05:1];
+%n_conds = [1:1:6].^2;
 
 % manuscript run
 min_dists = [0.05,0.15, 0.2, 0.25, 0.35, 0.5];
