@@ -7,44 +7,31 @@ end
 
 %% basic settings
 n_max_ite=5000;
-distance_pow = 1;
 use_parfor = 1;
 useRef=0;
 doPlot=1; 
 doPlot=2; % more figures
 useSubSet = 0;
-%dx=200;
-%dx=100; 
-%dx=200; % choose for faster simulation on coarser grid
 
 % Detailed run 
 %min_dists = [0:0.05:1];
 %n_conds = [1:1:6].^2;
 
-% manuscript run
-min_dists = [0.05,0.15, 0.2, 0.25, 0.35, 0.5];
-n_conds = [2,6,10,18];
-
 % small test
 %dx=100;min_dists = [0.2];n_conds = [6 9];n_real = 501;
 
-if ~exist('n_real','var')
-    n_real = 1000;
-end
-
-if ~exist('n_max_cpdf_count','var')
-    n_max_cpdf_count= n_real;
-    %n_max_cpdf_count= 1000;
-end
-
-
 if ~exist('n_conds','var')
-    n_conds = [4, 10, 18];
+    n_conds = [2,6,10,18];
 end
 
 if ~exist('min_dists','var')
-    min_dists = [0 0.15, 0.2, 0.25, 0.35];
+    min_dists = [0.05,0.15, 0.2, 0.25, 0.35, 0.5];
 end
+
+if ~exist('dx','var');dx = 50;end
+if ~exist('n_real','var');n_real = 1000;end
+if ~exist('n_max_cpdf_count','var');n_max_cpdf_count= n_real;end
+if ~exist('distance_pow','var');distance_pow=1;end
 
 if use_parfor == 1;
     p=gcp;
@@ -227,9 +214,43 @@ end
 clear reals_cond
 save(txt)
 
+
 %% OPTIONALLY LOAD ALLREADY ESTIMATED/SIMULATED DATA
 %clear all;load kasted_dx50_mul_4_4_c1000_nr100_nh112_R0.mat
 %clear all;load kasted_dx50_mul_4_2_c1000_nr1000_nh112_R0.mat
+
+%% PLOT ESTS
+M={'EST','SIM'}
+for i=1:length(n_conds);
+    for j=1:length(min_dists);
+        for k=1:length(M);
+        figure(1);clf;
+        subplot(1,1,1);
+        if strcmp(M{k},'EST');
+            pcolor(Oest.x/1000,Oest.y/1000,P_EST{i,j});
+        else
+            pcolor(Oest.x/1000,Oest.y/1000,P_SIM{i,j});
+        end
+        shading flat
+        caxis([0 1])
+        axis image;axis(ax./1000);colormap(cmap);
+        xlabel('UTMX (km)')
+        ylabel('UTMY (km)')
+
+        hold on
+        plot(O.d_hard(:,1)/1000,O.d_hard(:,2)/1000,'w.','MarkerSize',24);
+        scatter(O.d_hard(:,1)/1000,O.d_hard(:,2)/1000,10,O.d_hard(:,4),'filled')
+        hold off
+        set(gca,'FontSize',8);
+        
+        print_mul(sprintf('%s_%s_nc%d_md%d',txt,M{k},n_conds(i),100.*min_dists(j)))
+        end
+        
+        %P_EST{i,j};
+        %P_SIM{i,j};
+    end
+end
+
 %% PLOT ALL
 n1=length(n_conds);
 n2=length(min_dists);

@@ -1,34 +1,25 @@
 % kasted_mps_genesim_subset
-clear all;close all
+%clear all;close all
 if ~exist('mps_cpp.m','file')
     addpath(sprintf('..%s..%smatlab%s',filesep,filesep,filesep));
 end
 
-
-dx=50;
 %dx=50;
 n_conds = [2,6,10,14,18,36] ;
 min_dists = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.5, 0.7, 1];
-n_real=500;
 
-use_parfor = 1;
-distance_pow=1;
-
-%n_conds = [2,6,10] ;
-%min_dists = [0.05 0.25 0.8];
-%n_real=100;dx=50;
-%n_real=1000;dx=200
-
-use_mask=3;
-n_max_ite=5000;
 %%
+if ~exist('dx');dx=50;end
 if ~exist('distance_pow');distance_pow=1;end
 if ~exist('plots');plots=0;end %1 for running once, plots = 2 for running mulitple times
 if ~exist('rseed');rseed=2;end
-if ~exist('dx');dx=50;end
+if ~exist('n_real');n_real=1000;end
+if ~exist('n_max_ite');n_max_ite=5000;end
 if ~exist('max_cpdf_count'); max_cpdf_count=n_real;end
 if ~exist('doSIM'); doSIM=1;;end
 if ~exist('debug_level');debug_level=2;end
+if ~exist('use_parfor');use_parfor=1;end
+if ~exist('use_mask');use_mask=3;end
 
 %% Load data
 doPlot=0;
@@ -166,7 +157,6 @@ else
             O.doEntropy=0;
             O.debug=debug_level;
             O.distance_measure=1;
-            O.distance_pow=1;
             O.output_folder='output';%sprintf('output%i',ind);
             O.output_folder='.';%sprintf('output%i',ind);
             r=10000;
