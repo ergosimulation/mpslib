@@ -12,10 +12,22 @@
 
 clear all;close all
 
+ncores=feature('numcores');
+delete(gcp('nocreate'))
+parpool(ncores)
+
 %% load data
 TI = read_eas_matrix('C_WLTICAT.sgems');
 d_obs = read_eas('B_WLCATsamples.sgems');
 d_ref = read_eas_matrix('A_WLreferenceCAT.sgems');
+TI=d_ref
+
+n_use = 100;
+if n_use~=100
+    nd = size(d_obs,1);
+    i_use=randsample(nd,nd_use);
+    d_obs=d_obs(i_use,:);
+end
 
 
 [ny,nx,nz]=size(d_ref);
@@ -54,7 +66,6 @@ axis image;axis(ax)
 colorbar
 drawnow;
 title('Walke Lake - d_{obs}')
-
 
 
 %% Setup mpslib
@@ -126,11 +137,8 @@ for i=1:3;
 end
 drawnow;
 
-
-
-
 %% estimation
-n_cond_est = 4;
+n_cond_est = 9;
 Oest=O;
 Oest.n_cond = n_cond_est ;
 %Oest.doEstimation = 1;
@@ -144,6 +152,7 @@ ncat = length(unique(TI(:)));
 clear N
 i=0;
 n_cond = n_cond_est;
+O.distance_min = 0.4;
 distance_min  =O.distance_min;
 %for n_cond = [5,4,3,2,1]
 %for distance_min = linspace(O.distance_min,1,21)

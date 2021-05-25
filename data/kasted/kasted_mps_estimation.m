@@ -1,12 +1,11 @@
 %kasted_mps_estimation
-clear all;close all;
+%clear all;close all;
 
 if ~exist('mps_cpp.m','file')
     addpath(sprintf('..%s..%smatlab%s',filesep,filesep,filesep));
 end
 
 %% basic settings
-n_max_ite=5000;
 use_parfor = 1;
 useRef=0;
 doPlot=1; 
@@ -28,6 +27,7 @@ if ~exist('min_dists','var')
     min_dists = [0.05,0.15, 0.2, 0.25, 0.35, 0.5];
 end
 
+if ~exist('n_max_ite','var');n_max_ite = 5000;end
 if ~exist('dx','var');dx = 50;end
 if ~exist('n_real','var');n_real = 1000;end
 if ~exist('n_max_cpdf_count','var');n_max_cpdf_count= n_real;end
@@ -356,4 +356,38 @@ title('Entropy, SIM(--) EST(-)')
 grid on
 try;print_mul([txt,'_H2']);end
 
+
+%% Manus figrues
+M={'EST','SIM'}
+s=0;
+for i=find(n_conds==18);
+    for j=2:5;
+        s=s+1;
+        for k=1:length(M);
+        figure(1);clf;
+        subplot(1,1,1);
+        if strcmp(M{k},'EST');
+            pcolor(Oest.x/1000,Oest.y/1000,P_EST{i,j});            
+        else
+            pcolor(Oest.x/1000,Oest.y/1000,P_SIM{i,j});
+        end
+        shading flat
+        caxis([0 1])
+        axis image;axis(ax./1000);colormap(cmap);
+        xlabel('UTMX (km)')
+        ylabel('UTMY (km)')
+        text(-.05,1.05,sprintf('%s)',96+s),'Units','Normalized','FontSize',14)
+        hold on
+        plot(O.d_hard(:,1)/1000,O.d_hard(:,2)/1000,'w.','MarkerSize',24);
+        scatter(O.d_hard(:,1)/1000,O.d_hard(:,2)/1000,10,O.d_hard(:,4),'filled')
+        hold off
+        set(gca,'FontSize',8);
+        
+        print_mul(sprintf('%s_%s_nc%d_md%d',txt,M{k},n_conds(i),100.*min_dists(j)))
+        end
+        
+        %P_EST{i,j};
+        %P_SIM{i,j};
+    end
+end
 

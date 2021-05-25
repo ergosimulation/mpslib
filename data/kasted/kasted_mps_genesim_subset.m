@@ -68,9 +68,8 @@ iy2=find(O.y<=ylim(2));iy2=iy2(end);
 mask_x_bounds = [ix1 ix2];
 mask_y_bounds = [iy1 iy2];
 
-
-txt=sprintf('est_%d_%d_%d_m%d_dx%d_pf%d_p%d_nmi%d_M%d',length(n_conds),length(min_dists),max_cpdf_count,use_mask,dx,use_parfor,distance_pow,n_max_ite,use_mask);
-
+n_hard = size(O.d_hard,1);
+txt=sprintf('est_%d_%d_%d_dx%d_p%d_nmi%d_M%d_nh%d_pf%d',length(n_conds),length(min_dists),max_cpdf_count,dx,distance_pow,n_max_ite,use_mask,n_hard,use_parfor);
 
 %% plot data
 pmarg1d(2)=sum(TI(:))/prod(size(TI));
@@ -97,12 +96,12 @@ colormap(cmap_discrete)
 cb=colorbar;
 set(cb,'Ytick',[0.25 0.75]);set(cb,'YtickLabel',{'None','Channel'})
 set(gca,'FontSize',7)
-
 print_mul(sprintf('%s_kasted_hard_obs',txt))
+
 hold on
 plot(xl,yl,'k--')
 hold off
-print_mul(sprintf('kasted_hard_obs',use_mask))
+print_mul(sprintf('%s_kasted_hard_obs_mask',txt))
 
 
 %% Run estimations and plot

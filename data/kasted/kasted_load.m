@@ -11,7 +11,7 @@ d_well_soft=read_eas('kasted_soft_well.dat');
 
 % Hard well data
 d_well_hard=read_eas('kasted_hard_well.dat');
-%d_well_hard=read_eas('kasted_hard_well_org.dat');
+d_well_hard=read_eas('kasted_hard_well_org.dat');
 
 % elevation data
 d_ele=read_eas('kasted_soft_ele.dat');
