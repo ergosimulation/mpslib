@@ -45,6 +45,8 @@ SIM=zeros(ny,nx).*NaN;
 % make MASK
 xlim =  [0 50*0.05]+[565.4];xlim=xlim*1000;
 ylim = [-50*0.05 0]+[6232.3];ylim=ylim*1000;
+xlim =  1000*[0 50*0.05]+[568000];
+ylim = 1000*[0 50*0.05]+[6229000];
 if use_mask ==2;
     ylim = [-50*0.05 0]+[6234.8];ylim=ylim*1000;
 elseif use_mask == 3
