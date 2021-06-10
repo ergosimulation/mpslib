@@ -6,6 +6,10 @@ close(1)
 %%
 xlim =  [0 50*0.05]+[565.4];
 ylim = [0 -50*0.05]+[6232.3];
+xlim =  [0 50*0.05]+[568.0];
+ylim = [0 50*0.05]+[6229];
+
+
 xl=[xlim(1) xlim(1) xlim(2) xlim(2) xlim(1)] ;
 yl=[ylim(1) ylim(2) ylim(2) ylim(1) ylim(1)]; 
 
