@@ -2,6 +2,24 @@
 % TI
 if ~exist('dx');dx=50;end
 if ~exist('doPlot');doPlot=1;end
+if ~exist('createCoarse');createCoarse=0;end
+
+%% Create training TI at subpixel resolution?
+if createCoarse == 1;
+    TI=read_eas_matrix('kasted_shrunk_ti.dat'); % The TI from Figure 7a, in Johannsson and Hansen (2021)
+    for dx_use = [50,100,150,200,300,400];
+        dx_org = 50;
+        ds = dx_use/dx_org;
+        TI_sub=ti_subsample_2d(TI,ds);
+        
+        fname = sprintf('kasted_ti_dx%d.dat',dx_use);
+        disp(fname)
+        write_eas_matrix(fname,TI_sub);
+    
+    end
+end
+
+%% Load the data
 TI=read_eas_matrix(sprintf('kasted_ti_dx%d.dat',dx));
 x_ti=[1:1:size(TI,2)].*dx;
 y_ti=[1:1:size(TI,1)].*dx;
@@ -11,7 +29,6 @@ d_well_soft=read_eas('kasted_soft_well.dat');
 
 % Hard well data
 d_well_hard=read_eas('kasted_hard_well.dat');
-d_well_hard=read_eas('kasted_hard_well_org.dat');
 
 % elevation data
 d_ele=read_eas('kasted_soft_ele.dat');
