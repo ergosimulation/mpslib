@@ -1,4 +1,6 @@
 % kasted_mps_genesim_subset
+% Creates Figures 8-10 in Johannsson and Hansen (2021) 
+
 %clear all;close all
 if ~exist('mps_cpp.m','file')
     addpath(sprintf('..%s..%smatlab%s',filesep,filesep,filesep));
@@ -96,12 +98,12 @@ colormap(cmap_discrete)
 cb=colorbar;
 set(cb,'Ytick',[0.25 0.75]);set(cb,'YtickLabel',{'None','Channel'})
 set(gca,'FontSize',7)
-print_mul(sprintf('%s_kasted_hard_obs',txt))
+try;print_mul(sprintf('%s_kasted_hard_obs',txt));end
 
 hold on
 plot(xl,yl,'k--')
 hold off
-print_mul(sprintf('%s_kasted_hard_obs_mask',txt))
+try;print_mul(sprintf('%s_kasted_hard_obs_mask',txt));end
 
 
 %% Run estimations and plot
@@ -296,7 +298,7 @@ cmap=cmap_linear([col0;1 1 1;col1],[0 pmarg1d(2) 1]);
 colormap(cmap)
 colorbar
 
-print_mul(sprintf('%s_est',txt))
+try,print_mul(sprintf('%s_est',txt));end
 
 
 
@@ -347,7 +349,7 @@ if isfield(myOest{1,1},'TG2');
     cb=colorbar;
     set(get(cb,'Ylabel'),'String','Counts in conditional pd')
     %title(sprintf('Sensitivity analysis, max_cpdf = %i', max_cpdf_count))
-    print_mul(sprintf('%s_est_counts',txt))
+    try;print_mul(sprintf('%s_est_counts',txt));end
 
 end
 
@@ -418,7 +420,7 @@ if doSIM==1;
     
     
     %title(sprintf('Sensitivity analysis, max_cpdf = %i', max_cpdf_count))
-    print_mul(sprintf('%s_simest',txt))
+    try;print_mul(sprintf('%s_simest',txt));end
 
 end
 
@@ -438,7 +440,7 @@ legend(p1,num2str(n_conds(:)))
 grid on
 ylabel('CPU time (s)')
 xlabel('distance')
-print_mul(sprintf('%s_time',txt))
+try;print_mul(sprintf('%s_time',txt));end
 
 %%%
 %figure;clf

@@ -39,13 +39,11 @@ cb=colorbar;
 set(cb,'Ytick',[0.25 0.75]);set(cb,'YtickLabel',{'None','Channel'})
 set(gca,'FontSize',7)
 
-print_mul(sprintf('kasted_hard_obs'))
+try;print_mul(sprintf('kasted_hard_obs'));end
 
 hold on
     plot(xl,yl,'k--')
 hold off
 
-print_mul(sprintf('kasted_hard_obs_mask'))
+try,print_mul(sprintf('kasted_hard_obs_mask'));end
 
-
-return

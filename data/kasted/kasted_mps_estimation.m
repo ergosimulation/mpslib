@@ -1,4 +1,8 @@
 %kasted_mps_estimation
+%
+% Performs MPS simulation and estimation using data from kasted
+% Creates Figures 13-14 in Johannsson and Hansen (2021)
+%
 %clear all;close all;
 
 if ~exist('mps_cpp.m','file')
@@ -243,7 +247,7 @@ for i=1:length(n_conds);
         hold off
         set(gca,'FontSize',8);
         
-        print_mul(sprintf('%s_%s_nc%d_md%d',txt,M{k},n_conds(i),100.*min_dists(j)))
+        try,print_mul(sprintf('%s_%s_nc%d_md%d',txt,M{k},n_conds(i),100.*min_dists(j)));end
         end
         
         %P_EST{i,j};

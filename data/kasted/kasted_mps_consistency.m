@@ -1,4 +1,7 @@
-%kasted_mps_estimation
+% kasted_mps_consisteency
+% 
+% Which hard log data are least consistent with the MPS from the TI?
+% 
 clear all;close all;
 doPlot=1;
 n_max_ite=100000;1000000;

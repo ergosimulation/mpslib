@@ -1,10 +1,10 @@
-Data written by mGstat 10-Feb-2021
+Soft probability from well logs from Kasted
 5
-col1, unknown
-col2, unknown
-col3, unknown
-col4, unknown
-col5, unknown
+UTM X
+UTM Y
+UTM Z
+P SAND
+P CLAY
             563564              6233181                    0                  0.9                  0.1
             563208              6231666                    0                  0.5                  0.5
             566323              6234585                    0                  0.5                  0.5
