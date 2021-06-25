@@ -12,7 +12,7 @@
 %   %O.method='mps_genesim'; %
 %   O.n_real=1;             %  optional number of realization
 %   [reals,O]=mps_cpp(TI,SIM,O);
-% 
+%
 % % Hard data
 %   % set as d_hard parameter:
 %   O.d_hard [x y z d_hard]
@@ -76,7 +76,7 @@ if ~isfield(O,'rseed');O.rseed=0;end
 if ~isfield(O,'output_folder');O.output_folder='.';end
 
 %% write ti
-if isfield(O,'ti_filename') 
+if isfield(O,'ti_filename')
     if ~exist([pwd,filesep,O.ti_filename],'file')
         O.WriteTI=1;
     end
@@ -88,7 +88,7 @@ if O.WriteTI==1;
     if ~isfield(O,'ti_filename')
         O.ti_filename='ti.dat';
     end
-    if (O.debug>1) 
+    if (O.debug>1)
         disp(sprintf('%s: writing ti %s',mfilename,O.ti_filename))
     end
     write_eas_matrix(O.ti_filename,TI);
@@ -138,23 +138,53 @@ if isfield(O,'d_hard');
     write_eas(O.hard_data_filename,O.d_hard);
 else
     % TEST FOR NON-NAN NUMBERS IN SIM-grid
-    if  O.simulation_grid_size(3)==1;
+    n_hard = sum(~isnan(SIM(:)));
+    if n_hard > 1
+        disp(sprintf('%s: Using %d hard data from simulation grid',mfilename,n_hard))
         x=[0:1:O.simulation_grid_size(1)-1]*O.grid_cell_size(1)+O.origin(1);
         y=[0:1:O.simulation_grid_size(2)-1]*O.grid_cell_size(2)+O.origin(2);
         z=[0:1:O.simulation_grid_size(3)-1]*O.grid_cell_size(3)+O.origin(3);
-        [xx,yy,zz]=meshgrid(x,y,z);
-        i_hard=find(~isnan(SIM));
-        if ~isempty(i_hard)            
-            x_hard=xx(i_hard);
-            y_hard=yy(i_hard);
-            z_hard=zz(i_hard);
-            sim_hard=SIM(i_hard);
-            O.d_hard=[x_hard(:) y_hard(:) z_hard(:) sim_hard(:)];
-            %O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];
-            write_eas(O.hard_data_filename,O.d_hard);
+        j=0;
+        x_hard=zeros(1,n_hard);
+        y_hard=zeros(1,n_hard);
+        z_hard=zeros(1,n_hard);
+        sim_hard=zeros(1,n_hard);
+        for ix=1:length(x)
+            for iy=1:length(y)
+                for iz=1:length(z)
+                    if ~isnan(SIM(iy,ix,iz))
+                        j=j+1;
+                        x_hard(j) = x(ix);
+                        y_hard(j) = y(iy);
+                        z_hard(j) = z(iz);
+                        sim_hard(j) = SIM(iy,ix,iz);
+                        % this is a hard data
+                    end
+                end
+            end
         end
-        
+        O.d_hard=[x_hard(:) y_hard(:) z_hard(:) sim_hard(:)];
+        %O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];
+        write_eas(O.hard_data_filename,O.d_hard);
     end
+    
+    %     if  O.simulation_grid_size(3)==1;
+    %         x=[0:1:O.simulation_grid_size(1)-1]*O.grid_cell_size(1)+O.origin(1);
+    %         y=[0:1:O.simulation_grid_size(2)-1]*O.grid_cell_size(2)+O.origin(2);
+    %         z=[0:1:O.simulation_grid_size(3)-1]*O.grid_cell_size(3)+O.origin(3);
+    %         [xx,yy,zz]=meshgrid(x,y,z);
+    %         i_hard=find(~isnan(SIM));
+    %         if ~isempty(i_hard)
+    %             x_hard=xx(i_hard);
+    %             y_hard=yy(i_hard);
+    %             z_hard=zz(i_hard);
+    %             sim_hard=SIM(i_hard);
+    %             O.d_hard=[x_hard(:) y_hard(:) z_hard(:) sim_hard(:)];
+    %             %O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];
+    %             write_eas(O.hard_data_filename,O.d_hard);
+    %         end
+    %
+    %     end
 end
 
 
@@ -241,8 +271,8 @@ t_init=now;
 [status,cmdout]=system(cmd);
 O.time = (now-t_init)*3600*24;
 
-if (O.debug>0), 
-    disp(sprintf('%s: output:',mfilename)); 
+if (O.debug>0),
+    disp(sprintf('%s: output:',mfilename));
     disp(cmdout);
 end
 
@@ -255,50 +285,50 @@ O.z=[0:1:(O.simulation_grid_size(3)-1)].*O.grid_cell_size(3)+O.origin(3);
 [p,f,e]=fileparts(O.ti_filename);
 clear D;
 for i=1:O.n_real
-  fname=sprintf('%s%s%s%s_sg_%d.gslib',O.output_folder,filesep,f,e,i-1);  
-  try
-      D=read_eas_matrix(fname);
-  catch
-      disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
-  end
-  
-  if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
-    % 1D
-    reals(i,:)=D;
-  elseif (O.simulation_grid_size(3)==1)
-    % 2D
-    %reals(:,:,i)=reshape(D,O.simulation_grid_size(1),O.simulation_grid_size(2))';
-    reals(:,:,i)=D;
-  else
-    % 3D
-    reals(:,:,:,i)=D;
-  end
-  
+    fname=sprintf('%s%s%s%s_sg_%d.gslib',O.output_folder,filesep,f,e,i-1);
+    try
+        D=read_eas_matrix(fname);
+    catch
+        disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
+    end
+    
+    if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
+        % 1D
+        reals(i,:)=D;
+    elseif (O.simulation_grid_size(3)==1)
+        % 2D
+        %reals(:,:,i)=reshape(D,O.simulation_grid_size(1),O.simulation_grid_size(2))';
+        reals(:,:,i)=D;
+    else
+        % 3D
+        reals(:,:,:,i)=D;
+    end
+    
 end
 
 %% Read conditional estimated grid
 if isfield(O,'doEstimation');
-    if O.doEstimation==1;        
+    if O.doEstimation==1;
         nc=1;
-        fname=sprintf('%s%s%s%s_cg_%d.gslib',O.output_folder,filesep,f,e,nc-1);            
+        fname=sprintf('%s%s%s%s_cg_%d.gslib',O.output_folder,filesep,f,e,nc-1);
         while (exist(fname,'file'))
             %disp(fname)
             try
-                D=read_eas_matrix(fname);                
+                D=read_eas_matrix(fname);
             catch
                 disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
-            end     
-            try
-            if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
-                % 1D
-                O.cg=D;
-            elseif (O.simulation_grid_size(3)==1)
-                % 2D
-                O.cg(:,:,nc)=D;
-            else
-                % 3D
-                O.cg(:,:,:,nc)=D;
             end
+            try
+                if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
+                    % 1D
+                    O.cg=D;
+                elseif (O.simulation_grid_size(3)==1)
+                    % 2D
+                    O.cg(:,:,nc)=D;
+                else
+                    % 3D
+                    O.cg(:,:,:,nc)=D;
+                end
             catch
                 disp(sprintf('%s: COULD NOT HANDLE %s',mfilename,fname))
             end
@@ -311,29 +341,29 @@ if isfield(O,'doEstimation');
         % only works in 2D
         handleNaN=1;
         if handleNaN==1;
-        if isfield(O,'d_hard')&&(O.simulation_grid_size(3)==1);
-            s=size(O.cg);nc=s(end);
-            vals=[0:1:nc-1];
-            try
-            for i=1:size(O.d_hard,1);
-                P=zeros(1,nc);
-                P(O.d_hard(i,4)==vals)=1;
-                ix1=ceil((O.d_hard(i,1)-O.origin(1))/O.grid_cell_size(1));
-                iy1=ceil((O.d_hard(i,2)-O.origin(2))/O.grid_cell_size(2));
-                for ic=1:nc
-                    try
-                        if (ix1>=1)&(iy1>=1)&(ix1<=O.simulation_grid_size(1))&(iy1<=O.simulation_grid_size(2))                        
-                            O.cg(iy1,ix1,ic)=P(ic);
+            if isfield(O,'d_hard')&&(O.simulation_grid_size(3)==1);
+                s=size(O.cg);nc=s(end);
+                vals=[0:1:nc-1];
+                try
+                    for i=1:size(O.d_hard,1);
+                        P=zeros(1,nc);
+                        P(O.d_hard(i,4)==vals)=1;
+                        ix1=ceil((O.d_hard(i,1)-O.origin(1))/O.grid_cell_size(1));
+                        iy1=ceil((O.d_hard(i,2)-O.origin(2))/O.grid_cell_size(2));
+                        for ic=1:nc
+                            try
+                                if (ix1>=1)&(iy1>=1)&(ix1<=O.simulation_grid_size(1))&(iy1<=O.simulation_grid_size(2))
+                                    O.cg(iy1,ix1,ic)=P(ic);
+                                end
+                            catch
+                                keyboard
+                            end
                         end
-                    catch
-                        keyboard
                     end
+                catch
+                    disp('O.cg prob')
                 end
             end
-            catch
-                disp('O.cg prob')
-            end
-        end
         end
     end
 end
@@ -346,29 +376,29 @@ if (O.doEntropy>0)
         O.SI=load(fname);
     catch
         disp(sprintf('Could not load %s',fname));
-    end       
+    end
     O.H=mean(O.SI);
-
-    for i=1:O.n_real                 
-         fname=sprintf('%s%s%s%s_ent_%d.gslib',O.output_folder,filesep,f,e,i-1);
-         try
-             D=read_eas_matrix(fname);
-             %O.selfE(i)=nansum(D(:));
-         catch
-             disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
-         end
-         
-         if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
-             % 1D
-             O.E(i,:)=D;
-         elseif (O.simulation_grid_size(3)==1)
-             % 2D
-             O.E(:,:,i)=D;
-         else
-             % 3D
-             O.E(:,:,:,i)=D;
-         end
-     end
+    
+    for i=1:O.n_real
+        fname=sprintf('%s%s%s%s_ent_%d.gslib',O.output_folder,filesep,f,e,i-1);
+        try
+            D=read_eas_matrix(fname);
+            %O.selfE(i)=nansum(D(:));
+        catch
+            disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
+        end
+        
+        if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
+            % 1D
+            O.E(i,:)=D;
+        elseif (O.simulation_grid_size(3)==1)
+            % 2D
+            O.E(:,:,i)=D;
+        else
+            % 3D
+            O.E(:,:,:,i)=D;
+        end
+    end
 end
 
 %% READ TEMPORARY GRID VALUES
@@ -383,7 +413,7 @@ if (O.debug>1)
     end
     
     % PATH
-    fname=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,0);    
+    fname=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,0);
     if exist(fname,'file')
         
         O.I_PATH=ones([O.simulation_grid_size(2) O.simulation_grid_size(1) O.simulation_grid_size(3)]).*NaN;;
@@ -408,16 +438,16 @@ end
 %% relocation grids
 if (O.debug>2)
     try
-    j=0;
-    for ilevel=O.n_multiple_grids:-1:0;
-        j=j+1;
-                                              
-        O.D_A_before{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_A_before_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
-        O.D_B_after_relocate{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_B_after_hard_relocation_before_simulation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
-        O.D_C_after_sim{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_C_after_simulation_before_cleaning_relocation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
-        O.D_D_after_sim{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_D_after_hard_cleaning_relocation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
-        
-    end
+        j=0;
+        for ilevel=O.n_multiple_grids:-1:0;
+            j=j+1;
+            
+            O.D_A_before{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_A_before_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));
+            O.D_B_after_relocate{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_B_after_hard_relocation_before_simulation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));
+            O.D_C_after_sim{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_C_after_simulation_before_cleaning_relocation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));
+            O.D_D_after_sim{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_D_after_hard_cleaning_relocation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));
+            
+        end
     catch
         disp(sprintf('%s: Could not read relocation grids',mfilename))
     end
@@ -427,37 +457,37 @@ end
 %% paths at grids
 if (O.debug>2)
     try
-    j=0;
-    for ilevel=O.n_multiple_grids:-1:0;
-        j=j+1;
-        O.nmg_path{j}.index=read_eas(sprintf('%s%s%s%s_path_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
-        [O.nmg_path{j}.ix,O.nmg_path{j}.iy]=ind2sub([length(O.x) length(O.y)],O.nmg_path{j}.index+1);       
-    end
-    
+        j=0;
+        for ilevel=O.n_multiple_grids:-1:0;
+            j=j+1;
+            O.nmg_path{j}.index=read_eas(sprintf('%s%s%s%s_path_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));
+            [O.nmg_path{j}.ix,O.nmg_path{j}.iy]=ind2sub([length(O.x) length(O.y)],O.nmg_path{j}.index+1);
+        end
+        
     catch
-    disp(sprintf('%s: Could not read nmg paths',mfilename))
+        disp(sprintf('%s: Could not read nmg paths',mfilename))
     end
 end
 
 %% SOFT GRIDS
 if (O.debug>2)
     try
-    j=0;
-    for ilevel=O.n_multiple_grids:-1:0;
-        j=j+1;       
-        O.SOFT_before{j}=read_eas_matrix(sprintf('%s%s%s%s_sdg_before_shuffling_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
-        O.SOFT_after{j}=read_eas_matrix(sprintf('%s%s%s%s_sdg_after_shuffling_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
-    end
-    
+        j=0;
+        for ilevel=O.n_multiple_grids:-1:0;
+            j=j+1;
+            O.SOFT_before{j}=read_eas_matrix(sprintf('%s%s%s%s_sdg_before_shuffling_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));
+            O.SOFT_after{j}=read_eas_matrix(sprintf('%s%s%s%s_sdg_after_shuffling_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));
+        end
+        
     catch
-        disp(sprintf('%s: Could not read soft data',mfilename))        
+        disp(sprintf('%s: Could not read soft data',mfilename))
     end
 end
 
 
 %%
 if ~isfield(O,'clean'), O.clean=1; end
-if (O.clean)  
+if (O.clean)
     mps_cpp_clean(O);
 end
 
