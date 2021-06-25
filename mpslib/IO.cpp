@@ -52,6 +52,7 @@ namespace MPS {
 		* @return true if the reading process is sucessful
 		*/
 		bool readTIFromGSLIBFile(const std::string& fileName, std::vector<std::vector<std::vector<float>>>& ti, const int& channelIdx, const float& meanFactor) {
+			int nanValGslib = -997799;
 			std::ifstream file;
 			file.open(fileName, std::ios::in);
 			if (!file.is_open()) {
@@ -85,18 +86,7 @@ namespace MPS {
 				//cout << str << endl;
 			}
 
-			//Data
 			//Initialize TI dimensions
-
-			/*ti.resize(dimensions[2]);
-			for(int i=0; i<dimensions[2]; i++) {
-			ti[i].resize(dimensions[0]);
-			for(int j=0; j<dimensions[0]; j++) {
-			ti[i][j].resize(dimensions[1]);
-			}
-			}*/
-
-
 			ti.resize(dimensions[2]);
 			for(int i=0; i<dimensions[2]; i++) {
 				ti[i].resize(dimensions[1]);
@@ -104,7 +94,6 @@ namespace MPS {
 					ti[i][j].resize(dimensions[0]);
 				}
 			}
-
 
 			//Putting data inside
 			int dataCnt = 0, idxX = 0, idxY = 0, idxZ;
@@ -131,15 +120,14 @@ namespace MPS {
 				} else {
 					dataValue = 0; //Put 0 if get no channel
 				}
+				MPS::utility::oneDTo3D(dataCnt, dimensions[0], dimensions[1], idxX, idxY, idxZ);	
+				if (dataValue==nanValGslib) {
+					// if nanValGslib is found, set it as NaN
+					ti[idxZ][idxY][idxX]  = std::numeric_limits<float>::quiet_NaN() ;
+				} else {
+					ti[idxZ][idxY][idxX] = dataValue / meanFactor;
+				}
 
-				/*idxX = (dataCnt / dimensions[2]) % dimensions[0];
-				idxY = dataCnt / (dimensions[0] * dimensions[2]);
-				idxZ = dataCnt % dimensions[2];*/
-
-				//std::cout << dimensions[0] << " " << dimensions[1] << std::endl;
-
-				MPS::utility::oneDTo3D(dataCnt, dimensions[0], dimensions[1], idxX, idxY, idxZ);
-				ti[idxZ][idxY][idxX] = dataValue / meanFactor;
 				dataCnt ++;
 			}
 			return true;

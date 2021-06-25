@@ -520,7 +520,7 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 			for (int x=0; x<_tiDimX; x+=1) {
 				//For each pixel
 				float val = _TI[z][y][z];
-				if (std::find(_dataCategories.begin(), _dataCategories.end(), val) != _dataCategories.end()) {
+				if ((MPS::utility::is_nan(val))||(std::find(_dataCategories.begin(), _dataCategories.end(), val) != _dataCategories.end())) {
 					//
 				} else {					
 					_dataCategories.push_back(val);
@@ -539,7 +539,6 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 	
 	// Update the soft data categories read in par file
 	_softDataCategories = _dataCategories;
-
 
   
   if (_dataCategories.size() < 20 ) {
@@ -560,7 +559,8 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 		}
 	} else {
 		if (_debugMode>1) {
-			std::cout << "-- probably a continious training image!";		
+			std::cout << "-- probably a continuous training image!";
+			std::cout << "- Ncategories = " << _dataCategories.size() << std::endl;
 		}
 	}
 }
