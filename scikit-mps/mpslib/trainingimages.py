@@ -144,7 +144,8 @@ The training images
 def fluvsim():
     local_file = 'ti_fluvsim.dat';
     filename_in_zip='ti_fluvsim_big_channels3D.SGEMS'
-    url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_fluvsim_big_channels3d.zip';
+    #url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_fluvsim_big_channels3d.zip';
+    url = 'https://github.com/GAIA-UNIL/trainingimages/raw/master/MPS_book_data/Part2/ti_fluvsim_big_channels3D.zip';
     is_zip=1;
     local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
     Deas = eas.read(local_file)
@@ -154,9 +155,9 @@ def fluvsim():
 
 def horizons():
     local_file = 'ti_horizons.dat';
-    url='http://trainingimages.org/uploads/3/4/7/0/34703305/ti_horizons_continuous.zip'
-    filename_in_zip='TI_horizons_continuous.SGEMS'
-    is_zip=1;
+    url='https://github.com/GAIA-UNIL/trainingimages/raw/master/MPS_book_data/Part2/TI_horizons_continuous.SGEMS'
+    #filename_in_zip='TI_horizons_continuous.SGEMS'
+    is_zip=0;
     local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
     Deas = eas.read(local_file)
     TI = Deas['Dmat']
@@ -166,7 +167,7 @@ def horizons():
 
 def rot90():
     local_file = 'ti_tot90.dat';
-    url='http://trainingimages.org/uploads/3/4/7/0/34703305/checker_rotinvariant_90.zip'
+    url='https://github.com/GAIA-UNIL/trainingimages/raw/master/MPS_book_data/Part2/checker_rtoinvariant_90.zip'
     filename_in_zip='checker_rtoinvariant_90.SGEMS'
     is_zip=1;
     local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
@@ -177,7 +178,7 @@ def rot90():
 
 def rot20():
     local_file = 'ti_rot20.dat';
-    url='http://trainingimages.org/uploads/3/4/7/0/34703305/checker_rotinvariant_20.zip'
+    url='https://github.com/GAIA-UNIL/trainingimages/blob/master/MPS_book_data/Part2/checker_rtoinvariant_20.zip'
     filename_in_zip='checker_rtoinvariant_20.SGEMS'
     is_zip=1;
     local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
@@ -189,7 +190,7 @@ def rot20():
 
 def strebelle(di=1, coarse3d=0):
     
-    url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_strebelle.sgems';
+    url = 'https://github.com/GAIA-UNIL/trainingimages/raw/master/MPS_book_data/Part2/ti_strebelle.sgems';
     local_file = get_remote(url,'ti_strebelle.dat')
     Deas = eas.read(local_file)
     TI = Deas['Dmat']
@@ -213,7 +214,7 @@ def strebelle(di=1, coarse3d=0):
 
 def lines(di=1,coarse3d=0):
     local_file = 'ti_lines.dat';
-    url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_lines_arrows.sgems';
+    url = 'https://github.com/GAIA-UNIL/trainingimages/raw/master/MPS_book_data/Part2/ti_lines_arrows.sgems';
     get_remote(url,local_file)
     Deas = eas.read(local_file)
     TI = Deas['Dmat']
@@ -232,7 +233,7 @@ def lines(di=1,coarse3d=0):
 
 def stones():
     local_file = 'ti_stones.dat';
-    url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_stonewall.sgems';
+    url = 'https://github.com/GAIA-UNIL/trainingimages/raw/master/MPS_book_data/Part2/ti_stonewall.sgems';
     get_remote(url,local_file)
     Deas = eas.read(local_file)
     TI = Deas['Dmat']
@@ -240,7 +241,7 @@ def stones():
 
 def bangladesh(di=1,coarse3d=0):
     local_file = 'ti_bangladesh.dat';
-    url = 'http://trainingimages.org/uploads/3/4/7/0/34703305/bangladesh.sgems';
+    url = 'https://github.com/GAIA-UNIL/trainingimages/raw/master/MPS_book_data/Part2/bangladesh.sgems';
     get_remote(url,local_file)
     Deas = eas.read(local_file)
     TI = Deas['Dmat']
