@@ -8,22 +8,11 @@ n_max_ite=100000;1000000;
 n_max_cpdf_count= 10000000; 1000;2000;
 n_real = n_max_cpdf_count;1000;
 
-n_conds = [1,2,4,9,25,36, 49];
-min_dists = [0 0.1 0.15, 0.2, 0.25, 0.35 0.5 1];
-
 n_conds = [1,2,4,9,25];
 min_dists = [0.15, 0.2, 0.25, 0.35];
 
 n_conds = [4];
 min_dists = [0.1];
-
-if ~exist('n_conds','var')
-    n_conds = [4];
-end
-
-if ~exist('min_dists','var')
-    min_dists = [0 0.15, 0.2, 0.25, 0.35];
-end
 
 % load kasted adta
 dx=200;
@@ -130,10 +119,12 @@ for i_use = 1:n_hard;
     
     mask(iy,ix)=1;
     Oc.d_mask = mask;
-    
+    Oc.debug=2;
     [reals_est,Oest]=mps_cpp(TI,SIM,Oc);
     P_est(i_use,:) = squeeze(Oest.cg(iy,ix,:)); 
     P_local(i_use,:) = [1-d_hard(i_use,4) d_hard(i_use,4)];
+    N_count(i_use) = Oest.TG2(iy,ix);
+    Dis(i_use) = Oest.TG1(iy,ix);
     
     KL_dis(i_use) = kl(P_local(i_use,:),P_est(i_use,:));
 end
@@ -144,7 +135,7 @@ KL_dis(find(isinf(KL_dis)))=max(KL_dis);
 
 DD =sortrows([[1:n_hard]',KL_dis(:)],2,'des');
 n_show = 5;
-disp(sprintf('The 5 most inconsistent data are: '))
+disp(sprintf('The 5 most inconsistent data are (highest KL distance) '))
 disp(DD(1:n_show,1)')
 
 
@@ -152,14 +143,8 @@ disp(DD(1:n_show,1)')
 
 %%
 figure(1);
-subplot(2,2,1);
-scatter(d_hard(:,1),d_hard(:,2),50,P_local(:,2),'filled');
-colormap(gca,cmap)
-axis image
-set(gca,'ydir','normal')
-colorbar
 
-subplot(2,2,2);
+subplot(2,2,1);
 scatter(d_hard(:,1),d_hard(:,2),50,P_local(:,2),'filled');
 hold on
 scatter(d_hard(:,1),d_hard(:,2),20,P_est(:,2),'filled');
@@ -168,8 +153,9 @@ colormap(gca,cmap)
 axis image
 set(gca,'ydir','normal')
 colorbar
+title('Pchannel -outer ( from data), innner (from estimation)')
 
-subplot(2,2,3);
+subplot(2,2,2);
 plot(d_hard(:,1),d_hard(:,2),'k.','MarkerSIze',30);
 hold on
 scatter(d_hard(:,1),d_hard(:,2),0.1+KL_dis*10,d_hard(:,4),'filled');
@@ -177,8 +163,10 @@ hold off
 axis image
 colormap(gca,parula)
 colorbar
+title('Hard DATA - (size of inner cirle reflect KL distance)')
 
-subplot(2,2,4);
+
+subplot(2,2,3);
 scatter(d_hard(:,1),d_hard(:,2),50,KL_dis,'filled');
 hold on
 for i=1:n_hard
@@ -189,4 +177,15 @@ axis image
 colormap(gca,cmap_geosoft)
 %colormap(gca,flipud(copper))
 colorbar
-            
+title('KL DIstance')            
+
+
+subplot(2,2,4);
+semilogx(N_count,KL_dis,'k.');
+for i=1:n_hard
+    text(N_count(i),KL_dis(i),sprintf('%d',i),'HOrizontalAlignment','center')
+end
+xlabel('N COUNTS')
+ylabel('KL DIST')
+grid on
+
