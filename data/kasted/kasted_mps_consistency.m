@@ -156,12 +156,12 @@ colorbar
 title('Pchannel -outer ( from data), innner (from estimation)')
 
 subplot(2,2,2);
-plot(d_hard(:,1),d_hard(:,2),'k.','MarkerSIze',30);
+plot(d_hard(:,1),d_hard(:,2),'g.','MarkerSIze',30);
 hold on
 scatter(d_hard(:,1),d_hard(:,2),0.1+KL_dis*10,d_hard(:,4),'filled');
 hold off
 axis image
-colormap(gca,parula)
+colormap(gca,hot)
 colorbar
 title('Hard DATA - (size of inner cirle reflect KL distance)')
 
@@ -182,6 +182,7 @@ title('KL DIstance')
 
 subplot(2,2,4);
 semilogx(N_count,KL_dis,'k.');
+plot(N_count,KL_dis,'k.');
 for i=1:n_hard
     text(N_count(i),KL_dis(i),sprintf('%d',i),'HOrizontalAlignment','center')
 end
@@ -189,3 +190,4 @@ xlabel('N COUNTS')
 ylabel('KL DIST')
 grid on
 
+print -dpng KastedConstency.png
