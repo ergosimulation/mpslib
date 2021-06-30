@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mpslib" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="mps_genesim">
+				<Option output="../mps_genesim" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="mps_snesim_tree">
+				<Option output="../mps_snesim_tree" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="mps_snesim_list">
+				<Option output="../mps_snesim_list" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="DEV genesim">
+				<Option output="../mps_genesim_DEV" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-std=c++11" />
+					<Add option="-pg" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+				</Linker>
+			</Target>
+			<Target title="DEV snesim_tree">
+				<Option output="../mps_snesim_tree_DEV" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-std=c++11" />
+					<Add option="-pg" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+				</Linker>
+			</Target>
+			<Target title="DEV snesim_list">
+				<Option output="../mps_snesim_list_DEV" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
+				<Option object_output="obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-pg" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="ALL" targets="mps_genesim;mps_snesim_tree;mps_snesim_list;" />
+			<Add alias="ALL DEV" targets="DEV genesim;DEV snesim_tree;DEV snesim_list;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Linker>
+			<Add option="-static" />
+		</Linker>
+		<Unit filename="../ENESIM_GENERAL.cpp">
+			<Option target="mps_genesim" />
+			<Option target="DEV genesim" />
+		</Unit>
+		<Unit filename="../ENESIM_GENERAL.h">
+			<Option target="mps_genesim" />
+			<Option target="DEV genesim" />
+		</Unit>
+		<Unit filename="../SNESIMList.cpp">
+			<Option target="mps_snesim_list" />
+			<Option target="DEV snesim_list" />
+		</Unit>
+		<Unit filename="../SNESIMList.h">
+			<Option target="mps_snesim_list" />
+			<Option target="DEV snesim_list" />
+		</Unit>
+		<Unit filename="../SNESIMTree.cpp">
+			<Option target="mps_snesim_tree" />
+			<Option target="DEV snesim_tree" />
+		</Unit>
+		<Unit filename="../SNESIMTree.h">
+			<Option target="mps_snesim_tree" />
+			<Option target="DEV snesim_tree" />
+		</Unit>
+		<Unit filename="../mps_genesim.cpp">
+			<Option target="mps_genesim" />
+			<Option target="DEV genesim" />
+		</Unit>
+		<Unit filename="../mps_snesim_list.cpp">
+			<Option target="mps_snesim_list" />
+			<Option target="DEV snesim_list" />
+		</Unit>
+		<Unit filename="../mps_snesim_tree.cpp">
+			<Option target="mps_snesim_tree" />
+			<Option target="DEV snesim_tree" />
+		</Unit>
+		<Unit filename="../mpslib/Coords3D.cpp" />
+		<Unit filename="../mpslib/Coords3D.h" />
+		<Unit filename="../mpslib/Coords4D.cpp" />
+		<Unit filename="../mpslib/Coords4D.h" />
+		<Unit filename="../mpslib/ENESIM.cpp" />
+		<Unit filename="../mpslib/ENESIM.h" />
+		<Unit filename="../mpslib/IO.cpp" />
+		<Unit filename="../mpslib/IO.h" />
+		<Unit filename="../mpslib/MPSAlgorithm.cpp" />
+		<Unit filename="../mpslib/MPSAlgorithm.h" />
+		<Unit filename="../mpslib/SNESIM.cpp">
+			<Option target="mps_snesim_tree" />
+			<Option target="mps_snesim_list" />
+			<Option target="DEV snesim_tree" />
+			<Option target="DEV snesim_list" />
+		</Unit>
+		<Unit filename="../mpslib/SNESIM.h">
+			<Option target="mps_snesim_tree" />
+			<Option target="mps_snesim_list" />
+			<Option target="DEV snesim_tree" />
+			<Option target="DEV snesim_list" />
+		</Unit>
+		<Unit filename="../mpslib/Utility.cpp" />
+		<Unit filename="../mpslib/Utility.h" />
+		<Unit filename="mps_snesim_tree/main.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="mpslib/main.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
