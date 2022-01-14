@@ -23,6 +23,7 @@
 #include <sstream>
 #include <algorithm>
 #include <climits>
+#include <limits>
 
 namespace MPS {
 	namespace io {
