@@ -16,6 +16,7 @@ O.doEstimation = 1;
 
 O.autoSetMaxDist = 1;
 if O.autoSetMaxDist==1;
+    if ~isfield(O,'debug');O.debug=2;end
     O.debug=max([O.debug 2]);
 end
 
