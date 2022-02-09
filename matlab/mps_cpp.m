@@ -139,7 +139,7 @@ if isfield(O,'d_hard');
 else
     % TEST FOR NON-NAN NUMBERS IN SIM-grid
     n_hard = sum(~isnan(SIM(:)));
-    if n_hard > 1
+    if n_hard > 0
         disp(sprintf('%s: Using %d hard data from simulation grid',mfilename,n_hard))
         x=[0:1:O.simulation_grid_size(1)-1]*O.grid_cell_size(1)+O.origin(1);
         y=[0:1:O.simulation_grid_size(2)-1]*O.grid_cell_size(2)+O.origin(2);
