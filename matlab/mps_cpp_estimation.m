@@ -27,12 +27,22 @@ if isfield(O,'n_max_cpdf_count');
     end
 end
 
-if nargin<4, use_parfor=1;end
 
 if (license('test','Distrib_Computing_Toolbox')==0);
     disp(sprintf('%s: parallel toolbox not available - using single thread',mfilename))
     use_parfor=0;
 end
+
+if nargin<4, 
+    use_parfor=1;
+    try 
+        tmp=ver('distcomp');
+    catch
+        use_parfor=0;
+        %fprintf('Not installed')
+    end
+end
+
 
 if use_parfor==1;
 
