@@ -21,7 +21,6 @@ Development has been funded by the Danish National Hightech Foundation (now: the
 [Niels Bohr Institute](http://nbi.ku.dk/).
 
 ## Try in Google Colab [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb)
-<br><br>
 Try out MPSlib using the Python interface (scikit-mps) through Google Colab.
 <br><br>
 ## Download
@@ -36,7 +35,6 @@ git clone https://github.com/ergosimulation/mpslib.git MPSlib
 cd MPSlib
 make
 ```
-
 ## Documentation
 Documentation is available through [https://mpslib.readthedocs.io/en/latest/](https://mpslib.readthedocs.io/en/latest/).
 
@@ -169,26 +167,16 @@ Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # -2
 ```
 
 A few lines in the parameter files are specific to the GENESIM type algorithm, and will be discussed below:
+`n_max_count_cpdf`: This parameter defines the maximum number of counts in the conditional distribution obtained from the training image - when `n_max_count_cpdf` has been reached the scanning of the training image stops.
 
-#### line 3: Maximum number of counts for conditional pdf, n_max_count_cpdf
-n_max_count_cpdf defines the maximum number of counts in the conditional distribtion obtained from the training image.
-When n_max_count_cpdf has been reached the scanning of the training image stops.
-
-##### ENESIM style
-In case n_max_count_cpdf=infinity, mps_genesim will behave exactly to the classical ENESIM
-algorithm, where the full training is scanned at each iteration
-
-##### Direct sampling style
-In case n_max_count_cpdf=1, mps_genesim will behave similar to the direct sampling algorithm,
-
-#### line 4: Max number for conditional points, n_cond
-A maximum of n_cond conditional data are considered at each iteration when inferring the
+**Observation: In case `n_max_count_cpdf=infinity`, `mps_genesim` will behave exactly to the classical ENESIM
+algorithm, where the full training is scanned at each iteration. Also, in case `n_max_count_cpdf=1`, `mps_genesim` will behave similar to the Direct Sampling algorithm.**
+<br><br>
+`n_cond`: A maximum of `n_cond` conditional data are considered at each iteration when inferring the
 conditional pdf from the training image.
-
-#### line 5:Max number of iterations, n_max_ite
-A maximum of n_max_ite iterations of searching through the training image are performed.
-
-
+<br><br>
+`n_max_ite`: A maximum of iterations of searching through the training image are performed.
+<br><br>
 ## General options in the parameter files
 The following entries appear in all parameter files:
 <br><br>
