@@ -142,7 +142,7 @@ conditional distribution is above n_min_node.
 n_cond is the maximum number of conditional point used, within the search template
 
 #### lines 6-8, the search template, tem_nx, tem_ny, tem_nz
-The search template defines the size of the template that is used to prescan the traning image
+The search template defines the size of the template that is used to prescan the training image
 and store (using a tree or list) the conditional distribution for all figurations of the data template.
 
 ## Generalized ENESIM: mps_genesim
@@ -185,82 +185,64 @@ When n_max_count_cpdf has been reached the scanning of the training image stops.
 
 ##### ENESIM style
 In case n_max_count_cpdf=infinity, mps_genesim will behave exactly to the classical ENESIM
-algorithm, where the full traning is scanned at each iteration
+algorithm, where the full training is scanned at each iteration
 
 ##### Direct sampling style
 In case n_max_count_cpdf=1, mps_genesim will behave similar to the direct sampling algorithm,
 
 #### line 4: Max number for conditional points, n_cond
-A maximum of n_cond conditional data are considered at each iteration when infering the
+A maximum of n_cond conditional data are considered at each iteration when inferring the
 conditional pdf from the training image.
 
 #### line 5:Max number of iterations, n_max_ite
 A maximum of n_max_ite iterations of searching through the training image are performed.
 
 
-
 ## General options in the parameter files
-The following entrie appear in all parameter files
-
-
-#### Number of realizations
-The number of realizations to generate
-
-#### Random Seed
-An integer determines the random seed. A fixed value will return the same realizations for each run.
-+ [0] assign a 'random' seed at each iteratoin (new seed every second)
-
-#### Simulation grid size X, Y, Z
-The number of grid cells in the simulation grid
-
-#### Simulation grid origin X, Y, Z
-The value coordinate of the first pixel in the X, Y, and Z direction.
-
-#### Simulation grid grid cell size X #
-The size of each pixel in the simulation grid, in the X, Y, and Z direction.
-
-#### Training image file
-The name of the training image file (no spaces allowed).
-it must be in GLSIB/EAS ASCII format, and the first line (the 'title') must contain the
-dimension of the traning file as 'NXxNYxNZ'.
-See the TI folder for examples.
-
-
-#### Output folder (spaces in name not allowed)
-The path to the folder containing all output. Use forward slash '/' to separate folders.
-
-
-
-#### Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
-+ [0] sequential path through simulation grid (possibly a multiple grid)
-+ [1] random path through simulation grid
-
-#### Maximum number of counts for condtitional pdf
-
-#### Shuffle Training Image path (1 : random, 0 : sequential)
-(Does not affect snesim type algrothms)
-+ [0] sequential path
-+ [1] random path
-
-#### HardData filaneme  
-EAS filename wity 4 columns: X, Y, Z, and D
-
-#### HardData seach radius
-(world units)
-
-#### Softdata categories
-(separated by ;)
-
-#### Soft datafilenames
-(separated by ; only need (number_categories - 1) grids)
-
-#### Number of threads (minimum 1, maximum 8 - depend on your CPU)
+The following entries appear in all parameter files:
+<br><br>
+`Number of realizations`: The number of realizations to run and generate.
+<br><br>
+`random_seed`: An integer that determines the random seed. A fixed value will return the same realizations for each run.
+<br>
+**Observation: Assigning `0` to `random_seed` will generate a new seed at each iteration**
+<br><br>
+`simulation_grid_size`: The dimensions of the simulation grid cell, a `numpy` array with 3 dimensions - X, Y, Z.
+<br><br>
+`origin`: Simulation grid origin X, Y, Z, must be a `numpy` array of integers - refers to the value of the coordinates in the X, Y, and Z direction.
+<br><br>
+`grid_cell_size`: The size of each pixel in the simulation grid, in the X, Y, and Z direction.
+<br><br>
+`ti_fnam`: The name of the training image file (no spaces allowed). It must be in GLSIB/EAS ASCII format, and the first line (the 'title') must contain the dimension of the training file as nX, nY, nZ.
+<br><br>
+`out_folder`: The path to the folder containing all output. Use forward slash '/' to separate folders - also, spaces in the folder name are not allowed.
+<br><br>
+`shuffle_simulation_grid`: Shuffle simulation grid path:
+- `0`: follows a sequential path through the simulation grid.
+- `1`: follows a random path through the simulation grid.
+- `2`: follows a preferential path.
+<br><br>
+`n_max_cpdf_count`: The maximum number of counts for conditional PDF.
+<br><br>
+`shuffle_ti_grid`: Shuffle Training Image path - does not affect SNESIM type algrothms.
+- `0`: sequential path
+- `1`: random path
+<br><br>
+`hard_data_fnam`: Hard data filename - this file consists of an EAS archive with 4 columns: X, Y, Z, and D
+<br><br>
+`hard_data_search_radius`: World units around the search radius for hard data.
+<br><br>
+`soft_data_categories`: Soft data categories, separated by `;`.
+<br><br>
+`soft_data_fnam`: Soft data filenames - separated by `;` only need `number_categories - 1` grids
+<br><br>
+`n_threads`: Refers to the quantity of CPUs to use for simulation (minimum 1, maximum 8 - depends on your CPU)
 Currently not used.
-
-#### Debug mode
-+ [-2]: No information is written to screen or files on disk
-+ [-1]: + Simulation output is written to files on disk
-+ [ 0]: + Information about simulation is written to screen
-+ [ 1]: + Simulated realization(s) are shown in terminal
-+ [ 2]: + Extra information is written to disk (Random path, ...)
-+ [ 3]: + Debug information written to screen (in general not useful for an end-user)
+<br><br>
+`debug_level`: Refers to the level of debugging during processing. 
+- `-2`: No information is written to screen or files on disk
+- `-1`: + Simulation output is written to files on disk.
+- `0`: + Information about the simulations is written to the console
+- `1`: + Simulated realization(s) are shown in terminal
+- `2`: + Extra information is written to disk (Random path, ...)
+- `3`: + Debug information written to screen (in general not useful for an end-user)
