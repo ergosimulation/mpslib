@@ -76,10 +76,9 @@ Initial release of MPSlib, with
 `mps_genesim`.
 
 
-# Running MPS algorithms
-The MPS algorithms are run from the commandline using a parameter filename as an argument.
-If no argument is give, the deafault parameter file is assumed to the be name of the simulation
-algorithm appended with '.txt'.
+## Running MPS algorithms
+The MPS algorithms are run from the command line prompt using a parameter filename as an argument -
+if there is no argument file, the default parameter file is assumed to the be name of the simulation algorithm appended with `.txt`.
 
 Therefore
 ```
@@ -90,18 +89,17 @@ and
 ```
 mps_genesim mps_genesim.txt
 ```
-has the same meaning.
+have the same meaning.
 
 
 ## SNESIM: `mps_snesim_tree` and `mps_snesim_list`
-the `mps_snesim_tree` and `mps_snesim_list` differ only in the way conditional data are stored in memory
-(using either a tree or a list structure).
+The `mps_snesim_tree` and `mps_snesim_list` differ only in the way conditional data is stored in memory - using either a tree or a list structure.
 
 Both algorithms share the same format for the required parameter file:
 ```
 Number of realizations # 1
 Random Seed (0 for not random seed) # 0
-Number of mulitple grids # 2
+Number of multiple grids # 2
 Min Node count (0 if not set any limit) # 0
 Max Conditional count (-1 if not using any limit) # -1
 Search template size X # 5
@@ -128,23 +126,16 @@ Soft datafilenames (separated by ; only need (number_categories - 1) grids) # so
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
 Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1
 ```
-
-A few lines in the paremeter files are specific to the SNESIM type algorithms, and will be discussed below:
-#### line 3, n_mul_grids
-n_mul_grids defines the number of multiple grids used.
-n_mul_grids=0, means that no multiple grid will be used.
-
-#### line 4, n_min_node
-The search tree will only be searched to a level where the number of counts in the
-conditional distribution is above n_min_node.
-
-#### line 5, n_cond
-n_cond is the maximum number of conditional point used, within the search template
-
-#### lines 6-8, the search template, tem_nx, tem_ny, tem_nz
-The search template defines the size of the template that is used to prescan the training image
-and store (using a tree or list) the conditional distribution for all figurations of the data template.
-
+<br><br>
+A few lines in the parameter files are specific to the SNESIM type algorithms, and will be discussed below:
+`n_mul_grids`: This parameter defines the number of multiple grids used. By assigning to 0, no multiple grid will be used.
+<br><br>
+`n_min_node`: The search tree will be searched only to the level where the number of counts in the conditional distribution exceeds `n_min_node`.
+<br><br>
+`n_cond`: Refers to the maximum number of conditional points used, within the search template.
+<br><br>
+`tem_nx, tem_ny, tem_nz`: The search template specifies the size of the template that is used to prescan the training picture and save the conditional distribution for all data template configurations - through a tree or list.
+<br><br>
 ## Generalized ENESIM: mps_genesim
 `mps_genesim` is a generalized version of the ENESIM algorithm, that can be used to perform MPS simulation
 similar to both ENESIM and Direct sampling (and in-between) depending how it is run.
