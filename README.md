@@ -7,12 +7,12 @@ on sequential simulation, for simulation of multiple point statistical models.
 The code should be easy to compile and extend, and should be allowed for both
 commercial and non-commercial use.
 
-MPSlib (version 1.0) has been developed by
+> MPSlib (version 1.0) has been developed by
 [I-GIS](http://www.i-gis.dk/)
 and
 [Solid Earth Physics, Niels Bohr Institute](http://imgp.nbi.ku.dk/).
 
-MPSlib (version 1.4) updated by
+>MPSlib (version 1.4) updated by
 Thomas Mejer Hansen (tmeha@geo.au.dk)
 
 Development has been funded by the Danish National Hightech Foundation (now: the Innovation fund) through the ERGO (Effective high-resolution Geological Modeling) project, a collaboration between
@@ -20,56 +20,56 @@ Development has been funded by the Danish National Hightech Foundation (now: the
 [GEUS](http://geus.dk/), and
 [Niels Bohr Institute](http://nbi.ku.dk/).
 
-# Try in Google Colab
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb)
+## Try in Google Colab [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb)
+<br><br>
 Try out MPSlib using the Python interface (scikit-mps) through Google Colab.
-
-
-
-# Download
-The latest relases, containing statically compiles binaries for windows and Linux, can be found here:
+<br><br>
+## Download
+The latest releases, containing statically compiled binaries for Windows and Linux, can be found here:
 [https://github.com/ergosimulation/mpslib/releases/latest](https://github.com/ergosimulation/mpslib/releases/latest).
 
-The source can be downloaded from github
+The source code can be downloaded from Github
 [https://github.com/ergosimulation/mpslib](https://github.com/ergosimulation/mpslib)
 and compiled using
+```bash
+git clone https://github.com/ergosimulation/mpslib.git MPSlib
+cd MPSlib
+make
+```
 
-	git clone https://github.com/ergosimulation/mpslib.git MPSlib
-	cd MPSlib
-	make
-
-# Documentation
+## Documentation
 Documentation is available through [https://mpslib.readthedocs.io/en/latest/](https://mpslib.readthedocs.io/en/latest/).
 
-# Compilation
+## Compilation
 The MPSlib codes are written in standard [C++11](https://www.wikiwand.com/en/C%2B%2B11).
 
 MPSlib has been developed using the GNU C++ compiler (tested on Windows, Linux and OSX), and Visual Studio C++.
 
-## Linux or macOS, with c++11
-In general MPSLIB can be compiled using GCC ( > 4.8.1 ),  using
+## Linux or macOS, with C++11
+In general, MPSLIB can be compiled using GCC ( > 4.8.1 ),  using
+```bash
+make
+```
 
-	make
-
-## Windows: (mingw-w64)
+## Windows: (MINGW-W64)
 Compiler flags:
-
+```bash
 CPPFLAGS = -static -O3
+```
+MPSlib has been tested using MINGW in Windows. Note that not all builds of MINGW will work. Therefore, we specifically make use of MINGW-w64 ([http://MINGW-w64.org/doku.php]), which can be obtained in a number of ways.
 
-MPSlib has been tested using mingw in windows. Note that not all builds of mingw will work. Therefor we specifically make use of mingw-w64 ([http://mingw-w64.org/doku.php]), which can be obtained in a number of ways.
+One (recommended) approach is to make use of MSYS2. Follow the guide at [http://msys2.github.io/] to install MSYS2, and then install the MINGW_w64 toolchain using:
+```bash
+pacman -S MINGW-w64-x86_64-gcc
+pacman -S make
+```
 
-One (recommended) approach is to make use of MSYS2. Follow the guide at [http://msys2.github.io/] to install MSYS2, and then install the mingw_w64 toolchain using:
+## Release history
 
-		pacman -S mingw-w64-x86_64-gcc
-		pacman -S make
-
-
-# Release history
-
-## v1.4 [01-01-2021]
+### v1.4 [01-01-2021]
 Support for sequential estimation
 
-## v1.0 [15-02-2016]
+### v1.0 [15-02-2016]
 Initial release of MPSlib, with
 `mps_snesim_list`,
 `mps_snesim_tree`, and
