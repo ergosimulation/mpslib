@@ -12,4 +12,7 @@ make
 
 # install scikit-mps
 cd scikit-mps
-pip install .
+pip install -e .
+
+# Test installation
+python -c "import mpslib as mps;O=mps.mpslib()"
