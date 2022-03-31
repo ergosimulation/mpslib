@@ -894,7 +894,7 @@ class mpslib:
         '''
         import numpy as np
         from scipy import stats
-        from scipy import squeeze
+        from numpy import squeeze
        
         # compute Etype
         emean =squeeze(np.mean(self.sim, axis=0))
@@ -914,7 +914,7 @@ class mpslib:
         import numpy as np
         import os
         from scipy import stats
-        from scipy import squeeze
+        from numpy import squeeze
    
         # read soft data ('check if it exist')
         use_soft = 0
@@ -962,7 +962,7 @@ class mpslib:
                         vmax=vmax)
         plt.colorbar(im, fraction=0.046, pad=0.04)
         if (use_hard):
-            plt.plot(self.d_hard[:, 0], self.d_hard[:, 1], "k.", MarkerSize=25, zorder=0)
+            plt.plot(self.d_hard[:, 0], self.d_hard[:, 1], "k.", zorder=0)
             plt.scatter(self.d_hard[:, 0], self.d_hard[:, 1], c=self.d_hard[:, 3], s=25, zorder=1)
         if (use_soft):
             #plt.plot(self.d_soft[:, 0], self.d_soft[:, 1], "o", color=((.4, .4, .4)), MarkerSize=10, zorder=0)
