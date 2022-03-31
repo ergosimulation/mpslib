@@ -36,11 +36,24 @@ class mpslib:
         '''Initialize variables in Class'''
 
         mpslib_py_path, fn = os.path.split(__file__)
+        print("%s" % (mpslib_py_path) )
         if len(mpslib_exe_folder)==0:
-            mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
-            print("Using MPSlib installed in %s (from %s)" % (mpslib_exe_folder,__file__))
+            
+            mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, 'bin'))
+            self.mpslib_exe_folder = mpslib_exe_folder
+            if self.which(method,0) is None:
+                mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
+                self.mpslib_exe_folder = mpslib_exe_folder
+                
+            self.which(method,1)
+            
+            #print("Using MPSlib installed in %s (scikit-mps in %s)" % (mpslib_exe_folder,__file__))
             # self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
-        self.mpslib_exe_folder = mpslib_exe_folder
+        
+        print("Using %s installed in %s (scikit-mps in %s)" % (method,self.mpslib_exe_folder,__file__))
+            
+        
+
         self.blank_grid = None
         self.blank_val = np.NaN
         self.parameter_filename = parameter_filename.lower()  # change string to lower case
@@ -104,7 +117,7 @@ class mpslib:
         if (os.name == 'nt'):
             self.iswin = 1
 
-    def which(self, program):
+    def which(self, program, verb=1):
         '''
         self.which: Locate executable in the following order:
             1) current directotu
@@ -127,14 +140,14 @@ class mpslib:
                     exe_file = os.path.join(path, program)
                     if is_exe(exe_file):
                         return exe_file
-
-                print("################################################################")
-                print("#")
-                print("# mpslib: " + program + " not found !!!!")
-                print("# PLEASE ADD THE MPSLIB PROGRAM TO THE SYSTEM PATH")
-                print("# OR ADD THE LOCATION OF THE MPSLIB PROGRAMS TO THE SYSTEM PATH")
-                print("#")
-                print("#################################################################")
+                if verb>0:
+                    print("################################################################")
+                    print("#")
+                    print("# mpslib: " + program + " not found !!!!")
+                    print("# PLEASE ADD THE MPSLIB PROGRAM TO THE SYSTEM PATH")
+                    print("# OR ADD THE LOCATION OF THE MPSLIB PROGRAMS TO THE SYSTEM PATH")
+                    print("#")
+                    print("#################################################################")
 
                 return None
 
@@ -846,7 +859,7 @@ class mpslib:
         import matplotlib.pyplot as plt
         import matplotlib.gridspec as gridspec
         import numpy as np
-        from scipy import squeeze
+        from numpy import squeeze
         
         
         nx, ny, nz = self.par['simulation_grid_size']
