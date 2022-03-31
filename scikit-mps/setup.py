@@ -15,7 +15,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name = "scikit-mps",
-    version = "0.3.1",
+    version = "0.3.2",
     description = 'Multiple point statistical (MPS) simulation',
     long_description=long_description,
     long_description_content_type='text/x-rst',
@@ -26,10 +26,10 @@ setup(
     keywords = ['geostatistics', 'simulation', 'MPS'], # arbitrary keywords
 
     packages = find_packages(),
-    install_requires=['numpy >= 1.0.2', 'matplotlib >= 1.0.0' ],
+    install_requires=['numpy >= 1.0.2', 'matplotlib >= 1.0.0', 'scipy >= 1.0.0' ],
     package_data = {
         # If any package contains *.txt or *.rst files, include them:
-        '': ['*.txt', 'bin/mps_*.exe', 'bin/mps_snesim_tree', 'bin/mps_snesim_list', 'bin/mps_genesim'],
+        '': ['*.txt', 'bin/mps_*.exe', 'bin/mps_snesim_tree', 'bin/mps_snesim_list', 'bin/mps_genesim', 'bin/install_latest_mpslib.sh' ],
         # And include any *.msg files found in the 'hello' package, too:
         'hello': ['*.msg'],
     },
