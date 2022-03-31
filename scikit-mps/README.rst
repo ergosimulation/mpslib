@@ -47,6 +47,7 @@ Requirements
 Installing
 ~~~~~~~~~~~~~~
 * Via pip: pip3 install scikit-mps
+
 .. code::
 
    cd ROOT_OF_MPSLIB/python   
@@ -57,3 +58,4 @@ If you wish to develop the scikit-mps package, then install it in editable devel
 .. code::
 
     pip3 install -e .
+
