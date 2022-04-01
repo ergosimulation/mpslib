@@ -397,19 +397,29 @@ class mpslib:
         Ncpu_used = len(Oall)
 
         # Perform simulation in parallal
+        t_start = time.time()
         print('parallel: Using %d of max %d threads' % (Ncpu_used,Ncpu) )
         print('__name__ = %s' % __name__)
         freeze_support()
         p = Pool(Ncpu)
         Omul = p.map(mpslib.run_unpack, Oall)
 
-
+        t_end = time.time()
+        self.time = t_end-t_start
+        
         # Collect some data
         print('parallel job done. Collecting data from threads')
         self.x=Omul[0].x
         self.y=Omul[0].y
         self.z=Omul[0].z
+        
+        if self.par['do_entropy']==1:
+            self.SI = []
+        
         for ithread in range(len(Omul)):
+            if self.par['do_entropy']==1:
+                self.SI.append(Omul[ithread].SI)
+
             if (ithread==0):
                 self.sim = Omul[ithread].sim
             else:
@@ -419,6 +429,12 @@ class mpslib:
                 else:
                     print('parallel: could not use data from thread %d' % ithread)
 
+        if self.par['do_entropy']==1:
+            self.SI.append(Omul[ithread].SI)
+            self.SI = np.concatenate(self.SI)
+            self.H = np.mean(self.SI)
+
+                    
         print('parallel: collected %d realizations' % (len(self.sim)))
 
         return Omul
