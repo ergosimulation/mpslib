@@ -702,7 +702,8 @@ class mpslib:
     def load_conditional_entropy(self):
         # Check if entropy results are already imported
         if hasattr(self, 'Hcond'):
-            print('Entropy results already imported - overwriting')
+            if self.verbose_level>0:
+                print('Entropy results already imported - overwriting')
             
         if (self.par['do_entropy']==1):
             filename = '%s_ent_0.gslib' % (self.par['ti_fnam'])
