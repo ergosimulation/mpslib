@@ -19,41 +19,27 @@ def is_exe(filename):
 class mpslib:
 
     def __init__(self, parameter_filename='mps.txt', method='mps_genesim', debug_level=-1, n_real=1, rseed=1,
-                 out_folder='.', ti_fnam='ti.dat', simulation_grid_size=np.array([80, 40, 1]),
+                 out_folder='.', ti_fnam='ti.dat', simulation_grid_size=np.array([40, 20, 1]),
                  mask_fnam='mask.dat',
                  origin=np.zeros(3), grid_cell_size=np.array([1, 1, 1]), hard_data_fnam='hard.dat',
                  shuffle_simulation_grid=2, entropyfactor_simulation_grid=4, shuffle_ti_grid=1,
                  hard_data_search_radius=1,
                  soft_data_categories=np.arange(2), soft_data_fnam='soft.dat', n_threads=-1, verbose_level=0,
                  template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_cond_soft=1, n_min_node_count=0,
-                 n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
+                 n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_max=0, distance_pow=1,
                  max_search_radius=10000000, max_search_radius_soft=10000000,                  
                  remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
                  colocate_dimension=0,
                  do_estimation=0, 
                  do_entropy=0,
+                 distance_min=-1, #OBSOLETE
                  mpslib_exe_folder=''):
         '''Initialize variables in Class'''
 
-        mpslib_py_path, fn = os.path.split(__file__)
-        print("%s" % (mpslib_py_path) )
-        if len(mpslib_exe_folder)==0:
-            
-            mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, 'bin'))
-            self.mpslib_exe_folder = mpslib_exe_folder
-            if self.which(method,0) is None:
-                mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
-                self.mpslib_exe_folder = mpslib_exe_folder
-                
-            self.which(method,1)
-            
-            #print("Using MPSlib installed in %s (scikit-mps in %s)" % (mpslib_exe_folder,__file__))
-            # self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
+        # Next few lines to keep compatibility with old (and misleading) use of O.par['dist_min']-->O.par['dist_max']
+        if (distance_min>-1):
+            distance_max = distance_min
         
-        print("Using %s installed in %s (scikit-mps in %s)" % (method,self.mpslib_exe_folder,__file__))
-            
-        
-
         self.blank_grid = None
         self.blank_val = np.NaN
         self.parameter_filename = parameter_filename.lower()  # change string to lower case
@@ -96,7 +82,7 @@ class mpslib:
             self.par['n_max_ite'] = n_max_ite
             self.par['n_max_cpdf_count'] = n_max_cpdf_count
             self.par['distance_measure'] = distance_measure
-            self.par['distance_min'] = distance_min
+            self.par['distance_max'] = distance_max
             self.par['distance_pow'] = distance_pow
             self.par['colocate_dimension'] = colocate_dimension
             self.par['max_search_radius'] = max_search_radius
@@ -112,11 +98,36 @@ class mpslib:
 
         # Set verbose_level on eas as well
         eas.debug_level = self.par['debug_level'];
+        
+        
+        if self.verbose_level>0:
+            print("Using %s installed in %s (scikit-mps in %s)" % (method,self.mpslib_exe_folder,__file__))
+            
+        
+
+        
+        
         # Check if on windows
         self.iswin = 0
         if (os.name == 'nt'):
             self.iswin = 1
 
+        # Find folder with executable files
+        mpslib_py_path, fn = os.path.split(__file__)
+        if len(mpslib_exe_folder)==0:
+            
+            mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, 'bin'))
+            #print("B: %s" % (mpslib_exe_folder) )
+            self.mpslib_exe_folder = mpslib_exe_folder
+            if self.which(method,0) is None:
+                mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
+                self.mpslib_exe_folder = mpslib_exe_folder
+                
+            self.which(method,0)
+            
+
+            
+            
     def which(self, program, verb=1):
         '''
         self.which: Locate executable in the following order:
@@ -158,7 +169,7 @@ class mpslib:
         self.par.setdefault('n_max_ite', 10000)
         self.par.setdefault('n_max_cpdf_count', 10)
         self.par.setdefault('distance_measure', 1)
-        self.par.setdefault('distance_min', 0)
+        self.par.setdefault('distance_max', 0)
         self.par.setdefault('distance_pow', 0)
         self.par.setdefault('max_search_radius', 1000000)
         self.par.setdefault('max_search_radius_soft', 1000000)
@@ -205,7 +216,7 @@ class mpslib:
         file.write('Max number of conditional point: Nhard, Nsoft# %d %d\n' % (self.par['n_cond'],self.par['n_cond_soft']))
         file.write('Max number of iterations # %d\n' % self.par['n_max_ite'])
         file.write("Distance measure [1:disc, 2:cont], minimum distance, power # %d %3.1f %3.1f\n" % (
-        self.par['distance_measure'], self.par['distance_min'], self.par['distance_pow']))
+        self.par['distance_measure'], self.par['distance_max'], self.par['distance_pow']))
         file.write('Colocate Dimension # %d \n' % self.par['colocate_dimension'])
         file.write("Max Search Radius for conditional data [hard,soft] # %f %f\n" % (self.par['max_search_radius'], self.par['max_search_radius_soft']))
         file.write('Simulation grid size X # %d\n' % self.par['simulation_grid_size'][0])
@@ -353,8 +364,9 @@ class mpslib:
 
         real_per_thread= np.ceil(self.par['n_real']/Nthreads).astype(int)
         
-        print('parallel: using %d threads to simulate %d realizations' % (Nthreads,self.par['n_real']))
-        print('parallel: with up to %g relizations per thread' % real_per_thread)
+        if self.verbose_level>0:
+            print('parallel: using %d threads to simulate %d realizations' % (Nthreads,self.par['n_real']))
+            print('parallel: with up to %g relizations per thread' % real_per_thread)
 
 
         #%% Setup structure to be parsed to parallel
@@ -398,8 +410,9 @@ class mpslib:
 
         # Perform simulation in parallal
         t_start = time.time()
-        print('parallel: Using %d of max %d threads' % (Ncpu_used,Ncpu) )
-        print('__name__ = %s' % __name__)
+        if self.verbose_level>-1:
+            print('parallel: Using %d of max %d threads' % (Ncpu_used,Ncpu) )
+            #print('__name__ = %s' % __name__)
         freeze_support()
         p = Pool(Ncpu)
         Omul = p.map(mpslib.run_unpack, Oall)
@@ -408,17 +421,18 @@ class mpslib:
         self.time = t_end-t_start
         
         # Collect some data
-        print('parallel job done. Collecting data from threads')
+        if self.verbose_level>0:
+            print('parallel: job done. Collecting data from threads')
         self.x=Omul[0].x
         self.y=Omul[0].y
         self.z=Omul[0].z
         
         if self.par['do_entropy']==1:
-            self.SI = []
+            self.SI = np.array(())
         
         for ithread in range(len(Omul)):
             if self.par['do_entropy']==1:
-                self.SI.append(Omul[ithread].SI)
+                self.SI = np.append(self.SI,Omul[ithread].SI)
 
             if (ithread==0):
                 self.sim = Omul[ithread].sim
@@ -430,12 +444,11 @@ class mpslib:
                     print('parallel: could not use data from thread %d' % ithread)
 
         if self.par['do_entropy']==1:
-            self.SI.append(Omul[ithread].SI)
-            self.SI = np.concatenate(self.SI)
             self.H = np.mean(self.SI)
 
                     
-        print('parallel: collected %d realizations' % (len(self.sim)))
+        if self.verbose_level>0:
+            print('parallel: collected %d realizations' % (len(self.sim)))
 
         return Omul
 
@@ -444,7 +457,7 @@ class mpslib:
         '''Run simulation by unpacking input args
         '''
         Omul, thread = args
-        print('Thread:%s, nr=%d' % (thread,Omul.par['n_real']) ) 
+        #print('Thread:%s, nr=%d' % (thread,Omul.par['n_real']) ) 
         Omul.run(thread=thread)
         return Omul
 
@@ -476,7 +489,8 @@ class mpslib:
 
         # check if TI is set, if not, get the one
         if (not os.path.isfile(self.par['ti_fnam'])) and (not hasattr(self, 'ti')):
-            print('mpslib: Training image "%s" not found - USING DEFAULT!' % (self.par['ti_fnam']))
+            if self.verbose_level>-1:
+                print('mpslib: Training image "%s" not found - USING DEFAULT!' % (self.par['ti_fnam']))
             self.ti = trainingimages.strebelle()[0]
 
         # write training image if set
@@ -517,8 +531,8 @@ class mpslib:
 
         exe_path = self.which(exe_file)
 
-        if (self.verbose_level > -1):
-            print("mpslib: trying to run '%s' on '%s' in folder '%s'" % (exe_file,self.parameter_filename,exe_path))
+        if (self.verbose_level > 0):
+            print("mpslib: trying to run '%s' using '%s'\n" % (exe_path,self.parameter_filename))
 
         if exe_path is None:
             s = 'mpslib: The program {} does not exist or is not executable.'.format(exe_file)
@@ -565,7 +579,7 @@ class mpslib:
             
         t_end = time.time()
         self.time = t_end-t_start
-        if (self.verbose_level > -1):
+        if (self.verbose_level > 0):
             print("mpslib: '%s' ran in  %6.2fs " % (exe_file,self.time))
             
         # read in simulated data
