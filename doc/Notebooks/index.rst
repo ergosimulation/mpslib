@@ -12,6 +12,6 @@ Perhaps the easiest to get starting using MPSlib is by running and adjusting a n
    ex_snesim_varying_template.ipynb
    ex_genesim_distance.ipynb
    ex_mpslib_hard_data.ipynb
+   ex_training_images.ipynb
    
-
 
