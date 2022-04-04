@@ -113,6 +113,7 @@ def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=()
     plot 3D cube using 'pyvista' 
     '''
     import numpy as np 
+    from pyvistaqt import BackgroundPlotter
     
     if module_exists('pyvista',1):
         import pyvista
@@ -153,7 +154,7 @@ def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=()
         plot.show()
     
     else:
-        grid.plot(show_edges=True)
+        grid.plot(show_edges=None)
     
 
 
@@ -329,9 +330,6 @@ def marg1D(O, plot=1, hardcopy=0, hardcopy_filename='marg1D'):
     #%% Probability map
     #for icat in range(ncat):
         
-        
-    
-    
     
             
         

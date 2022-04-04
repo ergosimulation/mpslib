@@ -8,9 +8,9 @@ The code should be easy to compile and extend, and should be allowed for both
 commercial and non-commercial use.
 
 > MPSlib (version 1.0) has been developed by
-[I-GIS](http://www.i-gis.dk/)
+[I-GIS](http://www.i-gis.dk/)  (Le Thanh Vu and Torben Bach) 
 and
-[Solid Earth Physics, Niels Bohr Institute](http://imgp.nbi.ku.dk/).
+[Solid Earth Physics, Niels Bohr Institute](http://imgp.nbi.ku.dk/) (Thomas Mejer Hansen).
 
 > MPSlib (version >1.0) maintained by
 Thomas Mejer Hansen (tmeha@geo.au.dk)
