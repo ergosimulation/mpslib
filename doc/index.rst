@@ -56,6 +56,8 @@ PYTHON and MATLAB interface
 ---------------------------
 Interfaces to :doc:`Matlab/Octave interface <../matlab-interface>` and :doc:`Python <../python-interface>` are available.
 
+:doc:`Python notebooks <Notebooks>` is a good starting point for using MPSlib with Python.
+
 Code
 ====
 
@@ -134,6 +136,7 @@ How is it organized?
    matlab-interface
    python-interface
    Examples/index
+   Notebooks/index
    contributions
    references
 
