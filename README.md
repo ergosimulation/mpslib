@@ -12,7 +12,7 @@ commercial and non-commercial use.
 and
 [Solid Earth Physics, Niels Bohr Institute](http://imgp.nbi.ku.dk/).
 
->MPSlib (version 1.4) updated by
+> MPSlib (version >1.0) maintained by
 Thomas Mejer Hansen (tmeha@geo.au.dk)
 
 Development has been funded by the Danish National Hightech Foundation (now: the Innovation fund) through the ERGO (Effective high-resolution Geological Modeling) project, a collaboration between
@@ -63,6 +63,11 @@ pacman -S make
 ```
 
 ## Release history
+
+### v1.5 []XX-XX-2022]
+Python interface (scikit-mps) updated. scikit-mps can now be installed using 
+
+    pip install scikit-mps
 
 ### v1.4 [01-01-2021]
 Support for sequential estimation
