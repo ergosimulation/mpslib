@@ -102,9 +102,6 @@ def ti_list(show=1):
 
     ti_name.append('rot90')
     ti_desc.append('3D rotation 90')
-    
-    ti_name.append('rot20')
-    ti_desc.append('3D rotation 20')
 
     ti_name.append('horizons')
     ti_desc.append('3D continious horizons')
@@ -158,7 +155,7 @@ def horizons():
     url='https://github.com/GAIA-UNIL/trainingimages/raw/master/MPS_book_data/Part2/TI_horizons_continuous.SGEMS'
     #filename_in_zip='TI_horizons_continuous.SGEMS'
     is_zip=0;
-    local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
+    local_file = get_remote(url,local_file,is_zip=is_zip)
     Deas = eas.read(local_file)
     TI = Deas['Dmat']
     
@@ -176,16 +173,6 @@ def rot90():
     
     return TI, local_file
 
-def rot20():
-    local_file = 'ti_rot20.dat';
-    url='https://github.com/GAIA-UNIL/trainingimages/blob/master/MPS_book_data/Part2/checker_rtoinvariant_20.zip'
-    filename_in_zip='checker_rtoinvariant_20.SGEMS'
-    is_zip=1;
-    local_file = get_remote(url,local_file,is_zip=is_zip, filename_in_zip=filename_in_zip)
-    Deas = eas.read(local_file)
-    TI = Deas['Dmat']
-    
-    return TI, local_file
 
 
 def strebelle(di=1, coarse3d=0):

@@ -9,7 +9,7 @@ Created on Tue Mar 19 10:50:13 2019
 '''
 functions for plotting with mpslib
 '''
-
+  
 
 
 def module_exists(module_name,show_info=0):
@@ -22,6 +22,108 @@ def module_exists(module_name,show_info=0):
         return False
     else:
         return True
+
+if module_exists('pyvista',1):
+    import pyvista
+else:
+    print('pyvista is not installed')
+    
+import numpy as np 
+import matplotlib.pyplot as plt
+
+
+def numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1)):
+    '''
+    Convert 3D numpy array to pyvista uniform grid
+    
+    '''
+  
+    # Create the spatial reference
+    grid = pyvista.UniformGrid()
+    # Set the grid dimensions: shape + 1 because we want to inject our values on the CELL data
+    grid.dimensions = np.array(Data.shape) + 1
+    # Edit the spatial reference
+    grid.origin = origin # The bottom left corner of the data set
+    grid.spacing = spacing # These are the cell sizes along each axis
+    # Add the data values to the cell data
+    grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
+
+    return grid
+
+
+### 2D/3D grid plotting
+
+def plot(D, force_3d=0, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,1,1), cmap='viridis', filename='', header=''):
+    '''Plot matrix in 2D (matplotlib) or 3D (pyvista)
+
+    Parameters
+    ----------
+    
+    '''
+    if (D.ndim == 3)|(force_3d==1):
+        plot_3d(D, plotgrid=plotgrid, slice=slice, threshold=threshold, origin=origin, spacing=spacing, cmap=cmap, filename=filename, header=header )
+    else:
+        plot_2d(D, origin=origin, spacing=spacing, cmap=cmap, filename=filename, header=header)
+        
+
+def plot_2d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,1,1), cmap='viridis', filename='', header='' ):
+    Data=np.squeeze(Data)
+    nx, ny = Data.shape
+    
+    extent = [ origin[0]+-0.5*spacing[0] ,  origin[0]+nx*spacing[0]+0.5*spacing[0] , origin[1]-0.5*spacing[1] ,  ny*spacing[1]+origin[1]+0.5*spacing[1] ]
+    #print(extent)
+    
+    plt.imshow(np.transpose(Data), cmap=cmap, extent=extent)
+    if len(filename)>0:
+        plt.savefig(filename)
+    
+    plt.grid()
+    if len(header)>0:
+        plt.title(header)
+    plt.show()
+    
+    
+
+def plot_3d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,1,1), cmap='viridis', filename='', header='' ):
+    '''
+    plot 3D cube using 'pyvista' 
+    '''
+    #import numpy as np 
+    #from pyvistaqt import BackgroundPlotter as Plotter    
+    from pyvista import Plotter as Plotter    
+    
+    
+    plot = Plotter() # interactive
+    
+    # create uniform grid 
+    if (plotgrid==1)|(slice==1):
+        grid = numpy_to_pvgrid(Data, origin=origin, spacing=spacing)
+    
+    if (plotgrid==1)&(slice==0):
+        plot.add_mesh(grid, cmap=cmap)
+    
+    if (slice==1):
+        grid_slice = grid.slice_orthogonal()
+        plot.add_mesh(grid_slice, cmap=cmap)
+        
+        single_slice = grid.slice(normal=[1, 1, 0])
+        plot.add_mesh(single_slice, cmap=cmap)
+    
+    if (len(threshold)==2):
+        grid_threshold = grid.threshold(threshold)   
+        plot.add_mesh(grid_threshold, cmap=cmap)
+
+        
+    if len(filename)>0:
+        plot.screenshot(filename)
+    
+    plot.add_text(header)
+    plot.show_grid()
+    plot.show()
+
+
+
+#### Plot reals
 
 def plot_3d_reals(O, nshow=4):
     '''Plot realizations in in O.sim in 3D
@@ -78,114 +180,9 @@ def plot_3d_reals_pyvista(O, nshow=4):
         
     plotter.show()
 
-def plot_3d(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
-    '''Plot 3D volumes
-    A wrapper for plot_3d_pyvista'''
-    plot_3d_pyvista(Data, slice, origin, spacing, threshold, filename, header )
 
 
-def numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1)):
-    '''
-    Convert 3D numpy array to pyvista uniform grid
-    
-    '''
-    import numpy as np 
-    
-    if module_exists('pyvista',1):
-        import pyvista
-    else:
-        return 1
-    # Create the spatial reference
-    grid = pyvista.UniformGrid()
-    # Set the grid dimensions: shape + 1 because we want to inject our values on the CELL data
-    grid.dimensions = np.array(Data.shape) + 1
-    # Edit the spatial reference
-    grid.origin = origin # The bottom left corner of the data set
-    grid.spacing = spacing # These are the cell sizes along each axis
-    # Add the data values to the cell data
-    grid.cell_arrays['values'] = Data.flatten(order='F') # Flatten the array!
 
-    return grid
-
-
-def plot_3d_pyvista(Data, slice=0, origin=(0,0,0), spacing=(1,1,1), threshold=(), filename='', header='' ):
-    '''
-    plot 3D cube using 'pyvista' 
-    '''
-    import numpy as np 
-    from pyvistaqt import BackgroundPlotter
-    
-    if module_exists('pyvista',1):
-        import pyvista
-    else:
-        return 1
-    print(filename)
-    
-    # create uniform grid 
-    grid = numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1))
-    
-        # Now plot the grid!
-    if (len(threshold)==2):
-        plot = pyvista.BackgroundPlotter() # interactive
-        #plot = pyvista.Plotter() # interactive
-        grid_threshold = grid.threshold(threshold)   
-        try:
-            pass
-            # crashed in version 0.17.3 on linux
-            # plot.eye_dome_lighting_on()      
-        except:
-            pass
-        plot.add_mesh(grid_threshold)
-        if len(filename)>0:
-            plot.screenshot(filename)
-        plot.show()
-    
-    elif (slice==1):
-        # plot = pyvista.Plotter() # static
-        plot = pyvista.BackgroundPlotter() # interactive
-        
-        grid_slice = grid.slice_orthogonal()
-        plot.add_mesh(grid_slice)
-        
-        plot.add_text(header)
-        plot.show_grid()
-        if len(filename)>0:
-            plot.screenshot(filename)
-        plot.show()
-    
-    else:
-        grid.plot(show_edges=None)
-    
-
-
-#%%
-def plot_3d_mpl(Data):
-    '''
-    Plot 3D numpy array with matplob lib
-    -> currently not very useulf
-    '''
-    import matplotlib.pyplot as plt
-    import numpy as np
-
-    # This import registers the 3D projection, but is otherwise unused.
-    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
-
-    print('USE THIS WITH CAUTION.. ONLY SUITABLE FOR SMALLE 3D MODELS. USE the pyvista interface instead')
-
-    cat0 = Data<.5
-    cat1 = Data>=.5
-
-    # set the colors of each object
-    colors = np.empty(Data.shape, dtype=object)
-    colors[cat0] = 'white'
-    colors[cat1] = 'red'
-    
-    # and plot everything
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    ax.voxels(Data, facecolors=colors, edgecolor='k')
-    
-    plt.show()
 
 
 #%%
