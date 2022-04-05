@@ -4,7 +4,7 @@ Pyhthon Notebook examples
 Perhaps the easiest to get starting using MPSlib is by running and adjusting a number of jupyter notebooks.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 	      
    ex01_mpslib_getting_started.ipynb
    ex_mpslib_hard_and_soft.ipynb
