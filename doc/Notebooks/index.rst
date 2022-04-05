@@ -7,7 +7,7 @@ Perhaps the easiest to get starting using MPSlib is by running and adjusting a n
    :maxdepth: 1
 	      
    ex01_mpslib_getting_started.ipynb
-   ex_mpslib_hard_and_soft_data.ipynb
+   ex_mpslib_hard_and_soft.ipynb
    ex_mpslib_mask.ipynb
    ex_training_images.ipynb
    ex_mpslib_estimation.ipynb
