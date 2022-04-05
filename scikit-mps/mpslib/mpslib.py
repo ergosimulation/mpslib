@@ -99,14 +99,6 @@ class mpslib:
         # Set verbose_level on eas as well
         eas.debug_level = self.par['debug_level'];
         
-        
-        if self.verbose_level>0:
-            print("Using %s installed in %s (scikit-mps in %s)" % (method,self.mpslib_exe_folder,__file__))
-            
-        
-
-        
-        
         # Check if on windows
         self.iswin = 0
         if (os.name == 'nt'):
@@ -125,6 +117,10 @@ class mpslib:
                 
             self.which(method,0)
             
+        
+        if self.verbose_level>0:
+            print("Using %s installed in %s (scikit-mps in %s)" % (method,self.mpslib_exe_folder,__file__))
+        
 
             
             
