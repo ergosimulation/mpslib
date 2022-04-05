@@ -24,9 +24,9 @@ copyright = '2022, Thomas Mejer Hansen'
 author = 'Thomas Mejer Hansen'
 
 # The short X.Y version
-version = '1.3'
+version = '1.4'
 # The full version, including alpha/beta/rc tags
-release = '1.3'
+release = '1.4'
 
 
 # -- General configuration ---------------------------------------------------
@@ -47,8 +47,12 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'nbsphinx',
+    'myst_nb',
 ]
+#    'nbsphinx',
+
+ # myst-nb setting
+jupyter_execute_notebooks = "off"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
