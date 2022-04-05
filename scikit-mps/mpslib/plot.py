@@ -127,26 +127,20 @@ def plot_3d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,
 
 
 
-def plot_reals(O=
-    '''Plot matrix in 2D (matplotlib) or 3D (pyvista)
+def plot_reals(O, nshow=4, slice=0, force_3d=0):
+    '''Plot realizations in 2D (matplotlib) or 3D (pyvista)
 
     Parameters
     ----------
-    
     '''
+    D=np.squeeze(O.sim[0])
     if (D.ndim == 3)|(force_3d==1):
-        plot_3d(D, plotgrid=plotgrid, slice=slice, threshold=threshold, origin=origin, spacing=spacing, cmap=cmap, filename=filename, header=header )
+        plot_3d_reals(O, nshow=nshow,  slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
     else:
-        plot_2d(D, origin=origin, spacing=spacing, cmap=cmap, filename=filename, header=header)
+        plot_2d_reals(O, nshow=nshow)
         
 
 def plot_3d_reals(O, nshow=4):
-    '''Plot realizations in in O.sim in 3D
-    Currently simply a wrapper to plot_3d_reals_pyvista()'''
-    plot_3d_reals_pyvista(O, nshow)
-
-
-def plot_3d_reals_pyvista(O, nshow=4):
     '''Plot realizations in in O.sim in 3D using pyvista
     
     Paramaters
@@ -196,21 +190,23 @@ def plot_3d_reals_pyvista(O, nshow=4):
     plotter.show()
 
 
-
-
-
-
-#%%
-def plot_3d_real(O,ireal=0,slice=0):
-    '''
-    plot 3D relization using pyvista
-    O [MPSlib object]
-    ireal [int] number of realizations
-    slice [int] =1, slice volume
-                =0, 3D cube
-    '''
+def plot_2d_reals(O, nshow=4):
     
-    plot_3d_pyvista(O.sim[ireal], slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
+    nshow=np.min([len(O.sim),nshow])
+    
+    nsp=np.int8(np.ceil(np.sqrt(nshow)))
+    print(nsp)
+    
+    for i in range(nshow):
+        plt.subplot(nsp,nsp,i+1)
+        D=np.transpose(np.squeeze(O.sim[i]))
+        plt.imshow(D)
+        plt.title('#%d' % (i+1))
+    
+
+
+
+######## PLOT EAS
     
 #%%
 def plot_eas(Deas):
@@ -254,7 +250,7 @@ def plot_eas(Deas):
                 plt.xlabel('Y')
                 plt.xlabel('Z')
         else:
-            plot_3d_pyvista(Deas['Dmat'])
+            plot_3d(Deas['Dmat'])
     else:
         # scatter plot
         print('EAS scatter plot not yet implemented')        

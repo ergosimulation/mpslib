@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'MPSlib'
-copyright = '2021, Thomas Mejer Hansen'
+copyright = '2022, Thomas Mejer Hansen'
 author = 'Thomas Mejer Hansen'
 
 # The short X.Y version
