@@ -125,6 +125,21 @@ def plot_3d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,
 
 #### Plot reals
 
+
+
+def plot_reals(O=
+    '''Plot matrix in 2D (matplotlib) or 3D (pyvista)
+
+    Parameters
+    ----------
+    
+    '''
+    if (D.ndim == 3)|(force_3d==1):
+        plot_3d(D, plotgrid=plotgrid, slice=slice, threshold=threshold, origin=origin, spacing=spacing, cmap=cmap, filename=filename, header=header )
+    else:
+        plot_2d(D, origin=origin, spacing=spacing, cmap=cmap, filename=filename, header=header)
+        
+
 def plot_3d_reals(O, nshow=4):
     '''Plot realizations in in O.sim in 3D
     Currently simply a wrapper to plot_3d_reals_pyvista()'''
