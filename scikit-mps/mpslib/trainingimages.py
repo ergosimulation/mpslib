@@ -251,6 +251,28 @@ def maze():
     TI = Deas['Dmat']
     return TI, local_file
 
+def kasted(dx=50):
+    local_file = 'ti_maze.dat';
+    if dx==50:
+        url = 'https://raw.githubusercontent.com/ergosimulation/mpslib/master/data/kasted/kasted_ti_dx50.dat';
+        local_file = 'ti_kasted_dx50.dat';
+    elif dx==100:
+        url = 'https://raw.githubusercontent.com/ergosimulation/mpslib/master/data/kasted/kasted_ti_dx100.dat';
+        local_file = 'ti_kasted_dx100.dat';
+    elif dx==200:
+        url = 'https://raw.githubusercontent.com/ergosimulation/mpslib/master/data/kasted/kasted_ti_dx200.dat';
+        local_file = 'ti_kasted_dx200.dat';
+    elif dx==400:
+        url = 'https://raw.githubusercontent.com/ergosimulation/mpslib/master/data/kasted/kasted_ti_dx400.dat';
+        local_file = 'ti_kasted_dx400.dat';
+    
+    get_remote(url,local_file)
+    Deas = eas.read(local_file)
+    TI = Deas['Dmat']
+    return TI, local_file
+
+
+
 
 
 
