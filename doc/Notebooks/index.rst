@@ -1,5 +1,5 @@
 Pyhthon Notebook examples
-======================
+=========================
 
 Perhaps the easiest to get starting using MPSlib is by running and adjusting a number of jupyter notebooks.
 
@@ -14,5 +14,6 @@ Perhaps the easiest to get starting using MPSlib is by running and adjusting a n
    ex_mpslib_entropy.ipynb
    ex_snesim_varying_template.ipynb
    ex_genesim_distance.ipynb
+   mpslib_in_google_colab.ipynb
    
 

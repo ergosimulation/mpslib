@@ -44,9 +44,9 @@ Entropy
 -------
 The entropy of the (unknown) probability distribution related to a specific choice of 1) training image, 2) simulation algorithm, and 3) options for running the simulation algorithm, can optionally be computed as part of simulation. [HANSEN2020]_.
 
-.. Estimation
-.. ----------
-.. All algorithms can otionally be run in *estimation* mode in which the 1D marginal conditional distribution is directly computed (similar to Etype statistics from a number of realizations) [JOHANNSSON2019]_.
+Estimation
+----------
+All algorithms can optionally be run in *estimation* mode in which the 1D marginal conditional distribution is directly computed (similar to Etype statistics from a number of realizations) [JOHANNSSON2021]_.
 
 
 
@@ -56,7 +56,7 @@ PYTHON and MATLAB interface
 ---------------------------
 Interfaces to :doc:`Matlab/Octave interface <../matlab-interface>` and :doc:`Python <../python-interface>` are available.
 
-:doc:`Python notebooks <Notebooks>` is a good starting point for using MPSlib with Python.
+:doc:`Python notebooks <Notebooks/index>` is a good starting point for using MPSlib with Python.
 
 Code
 ====
@@ -131,6 +131,7 @@ How is it organized?
    :maxdepth: 3
 	      
    chapInstall
+   implementation
    Algorithms/index
    training-image-format
    matlab-interface

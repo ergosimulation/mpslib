@@ -29,7 +29,6 @@ These m-files requires no special toolboxes, and are compatible with GNU
 Octave.
 
 ``mps_cpp`` takes to three inputs, of which the first two are mandatory:
-
 ::
 
     TI  : [1D/2D/3D] matrix with a training image
@@ -40,7 +39,6 @@ Octave.
 ``mps_genesim``, ``mps_snesim_tree``, and ``mps_snesim_list``. By
 default ``mps_snesim_tree`` is used unless the choice of simulation
 algorithm is set in the ``O.method`` field:
-
 ::
 
     O.method='mps_snesim_tree';     
@@ -51,7 +49,6 @@ Getting started in Matlab
 -------------------------
 
 The simplest approach to using ``mps_cpp`` is to use for example
-
 ::
 
     TI=mps_ti;           %  training image
@@ -60,7 +57,6 @@ The simplest approach to using ``mps_cpp`` is to use for example
 
 This will use the classical channel based training image (from Strebelle
 (2000)), and perform unconditinoal simulation (using ``mps_snesim_tree``) in 2D grid of size 80x60 pixels. ``reals`` will contain one single generated realization, and the ``O`` structure will be populated with all the parameters used for ``mps_snesim_tree``:
-
 ::
 
     O = 
@@ -105,19 +101,23 @@ SNESIM type simulation
 -----------------------
 SNESIM, using both search trees and list for lookup, is available using both ``mps_snesim_tree``and ``mps_snesim_list``. Both algorithms make use of the same parameters (and parameter file)'. The choice of simulation algortihm is done using:
 ::
+
     O.method='mps_snesim_list'; 
     O.method='mps_snesim_tree'; 
 
 The main parameters specific for ``mps_snesim_tree`` and ``mps_snesim_list`` are 
 ::
+
                     n_multiple_grids: 3  # Number of multiple grids
                     n_min_node_count: 0  # min number of counts in conditional pdf
                             n_cond: 39   # number of conditional data
                         template_size: [5 5 1]  # the templated size
-
+                        
 A dynamic template size canbe set using 
 ::
+
     O.template_size = [15 15 1; 5 5 1]';
+
 that suggests a template size of [15 15 1] is used at the coarse grid, and [5 5 1] at the finest grid.
 
 
@@ -125,7 +125,6 @@ GENESIM type simulation
 -----------------------
 
 A simple GENESIM type simulation can be obtained using
-
 ::
 
     TI=mps_ti;           %  training image
@@ -134,7 +133,6 @@ A simple GENESIM type simulation can be obtained using
     [reals,O]=mps_cpp(TI,SIM,O);
 
 which return the ``O``\ data structure:
-
 ::
 
     O = 
@@ -189,6 +187,7 @@ The main parameters specific for ``mps_genesim`` are
 The distance ``measure_measure``, ``measure_min``, ``measure_pow`` controls hwo the distance is computed for discrete and continious parameters:
 
 ::
+
                     distance_measure: 1
                         distance_min: 0
                         distance_pow: 0                     
@@ -198,8 +197,7 @@ GENESIM as ENESIM
 ^^^^^^^^^^^^^^^^^
 
 ``mps_genesim`` can act as a classical ENESIM algorithm by scanning the
-whole training image at each iteration: \`
-
+whole training image at each iteration: 
 ::
 
     TI=mps_ti;           %  training image
@@ -213,8 +211,7 @@ GENESIM as DIRECT SAMPLING
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 ``mps_genesim`` can act as the DIRECT SAMPLING algorithm by scanning
 whole training image only until one (the first) matching event is found,
-i.e. by at each iteration: \`
-
+i.e. by at each iteration: 
 ::
 
     TI=mps_ti;           %  training image
@@ -227,7 +224,6 @@ i.e. by at each iteration: \`
 GENESIM, a hybrid between ENESIM and DIRECT SAMPLING
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 GENESIM can run as a hybrid between DIRETC SAMPLING and ENESIM, by setting ``n_max_cpdf_count`` somewhere between 1 (DIRECT SAMPLING) and infinitty (ENESIM). This is especially usefule when conditioning to soft data- 
-
 ::
 
     TI=mps_ti;           %  training image
@@ -241,9 +237,7 @@ GENESIM can run as a hybrid between DIRETC SAMPLING and ENESIM, by setting ``n_m
 
 Plot simulation results
 -----------------------
-
 ``mps_cpp_plot``, can be used used to plot simulation results
-
 ::
 
     [reals,O]=mps_cpp(TI,SIM,O);
@@ -251,7 +245,6 @@ Plot simulation results
 
 If debug level is larger than one, then the number of temporary grids
 with different information, is also visualized.
-
 ::
 
     O.debug_level=2;
@@ -266,7 +259,6 @@ used to split the simulation onto several threads, such that simulation
 will be performed in parallel. (This requires Matlab with the `Matlab
 Parallel
 toolbox <https://mathworks.com/products/parallel-computing/>`__)
-
 ::
 
     TI=mps_ti;           %  training image
@@ -285,7 +277,6 @@ toolbox <https://mathworks.com/products/parallel-computing/>`__)
     disp(sprintf('Elapsed time (parallel): %g s',(now-t0)*(3600*24)))
 
 Provides the following output, running on 4 threads:
-
 ::
 
     Elapsed time (sequential): 21.326 s
@@ -298,10 +289,9 @@ Provides the following output, running on 4 threads:
 
 Sequential Estimation
 ---------------------
- All of ``mps_genesim``, ``mps_snesim_tree``, ``mps_snesim_list`` can used to perform conditinoal 'estimation', rather the the default sequential simulation, simply by setting ``O.doEstimation=1``. 
+All of ``mps_genesim``, ``mps_snesim_tree``, ``mps_snesim_list`` can used to perform conditinoal 'estimation', rather the the default sequential simulation, simply by setting ``O.doEstimation=1``. 
 
- Details about using sequential estimation with MPS algorithms can be found in [JOHANNSSON2019]_
-
+Details about using sequential estimation with MPS algorithms can be found in [JOHANNSSON2021]_
 ::
 
       TI=mps_ti;           %  training image
@@ -329,8 +319,6 @@ The self-information for realizations can be computed by setting ``O.doEntropy=1
 Details about computing the self-information is found in  [HANSEN2020]_.
 
 In this case the self-information of each realization is returned in ``O.SI``, and the entropy is the simply the average of  ``O.SI``.  
-
-
 ::
 
       clear all;

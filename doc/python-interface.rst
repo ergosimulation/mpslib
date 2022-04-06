@@ -1,6 +1,6 @@
-######################################
+########################################
 scikit-mps: a Python interface to MPSlib
-######################################
+########################################
 
 scikit-mps is a Python module that interfaces to MPSlib. It is located in ``mpslib/scikit-mps`` folder. It includes 4 submodules
 ::
@@ -11,12 +11,6 @@ scikit-mps is a Python module that interfaces to MPSlib. It is located in ``mpsl
    mps.plot
 
 and 
-::
-   mps.mpslib
-   mps.eas
-   mps.trainingimages
-   mps.plot
-
 
 ``mps.mpslib`` contains the core function for setting up and running the algorithms in MPSlib.
 ``mps.eas`` contains function to read and write EAS formatted ASCII files.
@@ -86,25 +80,28 @@ To allow editing scikit-mps locally after install use
 Several examples are located in ``mpslib/scikit-mps/examples`` 
    
 ****************************************
-mps.mpslib: The main interface to mpslib
+mps.mpslib: The main interface to MPSlib
 ****************************************
 ``mps.mpslib`` provide a class to allow running MPSlib algorithms.
-An instance ``O`` of the class is class can be created using
-::
+An instance ``O`` of the class is class can be created using::
+
    O=mps.mpslib()
 
 This will use a default choice of simulation method, as defined in ``O.method``
 ::
+
    In [1]: O.method
    Out[1]: 'mps_genesim'
    
 and a default parameter file name, as defined in ``O.parameter_filename``
 ::
+
    In [2]: O.parameter_filename
    Out[2]: 'mps.txt'
    
 and default parameters for the parameter file, as defined in ``O.par``
 ::
+   
    In [3]: O.par
    Out[3]: 
    {'n_real': 1,
@@ -139,6 +136,7 @@ and default parameters for the parameter file, as defined in ``O.par``
 All these parameters can be set when the object is initialized. A common approach to initialized the mpslib object is to initialize it using a specific choice a simulation algorithm, simulation grid size, number of realizations, and number of conditional points.
 This can be done using e.g.
 ::
+
    O = mps.mpslib(method='mps_snesim_tree',
        simulation_grid_size(80,80,1),
        n_cond = 49
@@ -160,6 +158,7 @@ __________________
 
 To read a point data set, use 
 ::
+
    import mpslib as mps
    EAS = mps.eas.read('data.dat')
 
@@ -172,6 +171,7 @@ ___________________
 
 To write a matrix as an EAS formatted point set 
 ::
+
    import mpslib as mps
    mps.eas.write(D, filename='eas.dat', title='eas title', header=[]):
   
@@ -187,14 +187,14 @@ ___________________
 
 An EAS volume data set, is a special version of the EAS file format that allow describing a 1D-3D volume.
 The first line (the title) must contain the dimensions of the data in the eas file formatted as e.g.
-
 ::
+
    100 210 13
 
 to describe a matrix of size nx=100, ny=210, and nz=13.
 It is read as for the points data set
-
 ::
+
    import mpslib as mps
    EAS = mps.eas.read('ti.dat')
 
@@ -204,8 +204,8 @@ It is read as for the points data set
 Write EAS volume set
 ____________________
 A 3D numpy array can be written as an EAS volume set using
-
 ::
+
    import mpslib as mps
    import numpy as no
    D = np.zeros((20,10,30))
@@ -217,6 +217,7 @@ mps.trainingimages: Easy access to training images.
 mps.traningimages contain easy access to a large number of training images.
 To see a list of the available training images call
 ::
+
    In [40]: mps.trainingimages.ti_list()
    Available training images:
    checkerboard - 2D checkerboard
@@ -233,18 +234,21 @@ To see a list of the available training images call
 
 To load and plot the widely used training image from Strebelle, simply call it using e.g.
 ::
+
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.strebelle()
    mps.plot.plot_3d(ti)   
    
 To load and plot a checkerboard training image, use e.g 
 ::
+
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
    mps.plot.plot_3d(ti)   
 
 To load and plot the 3D fluvsim  training image, use e.g 
 ::
+
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.fluvsim()
    mps.plot.plot_3d(ti)   
@@ -253,15 +257,15 @@ To load and plot the 3D fluvsim  training image, use e.g
 ****************************
 mps.plot: Plotting utilities
 ****************************
-''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `pyvista <https://docs.pyvista.org/>`_).
-
+''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `pyvista <https://pyvista.org/>`_).
 
                 
 plot_reals_3d()
--------------------
+===============
 
 To plot several realizations using pyvista from a mpslib object, use
 ::
+
    import mpslib as mps
    O = mps.mpslib(n_real=4)
    O.run
@@ -270,12 +274,14 @@ To plot several realizations using pyvista from a mpslib object, use
 
 To plot a 3D numpy array using pyvista use
 ::
+
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
    mps.plot.plot_3d(ti)
    
 To slice the 3D grid use
 ::
+
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
    mps.plot.plot_3d(ti, slice=1)
@@ -283,6 +289,7 @@ To slice the 3D grid use
 
 To plot only vaĺues in a specific range, e.g. -.5 to 0.5, use 
 ::
+
    import mpslib as mps
    ti, ti_filename = mps.trainingimages.checkerboard()
    mps.plot.plot_3d(ti, threshold = (-0.5, 0.5))

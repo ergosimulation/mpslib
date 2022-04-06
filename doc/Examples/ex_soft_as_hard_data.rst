@@ -93,7 +93,8 @@ If soft information is scattered, and located relatively far away from each othe
 
 where :math:`Nc_{soft}` refer to the number of (the closest) soft conditional points to use. This number of defined right next to the maximum number of hard data used for condisioning. In the example below, the closest 25 hard and 3 soft data is used
 
-.. code-block:: python
+.. code-block:: 
+
    :linenos:
    :lineno-start: 1
    :emphasize-lines: 4

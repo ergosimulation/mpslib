@@ -126,4 +126,4 @@ Estimation
 -  [ 0]: Do not perform sequential estimation
 -  [ 1]: Perform sequential estimation (rather than sequential simulation)
 
-See [JOHANNSSON2019]_ for more information.
+See [JOHANNSSON2021]_ for more information.

@@ -4,11 +4,10 @@ Installation and compilation
 Download
 --------
 
-| The latest release, containing statically compiles binaries for
-  Windows and Linux, can be found here:
-| https://github.com/ergosimulation/mpslib/releases/latest.
+The latest release, containing statically compiles binaries for Windows and Linux, can be found at
+https://github.com/ergosimulation/mpslib/releases/latest.
 
-The source can be downloaded from GitHub
+The source can be downloaded from GitHub at
 https://github.com/ergosimulation/mpslib.
 
 Compilation
