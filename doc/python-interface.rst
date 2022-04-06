@@ -1,13 +1,22 @@
 ######################################
-scikit-mps: Python interface 
+scikit-mps: a Python interface to MPSlib
 ######################################
 
 scikit-mps is a Python module that interfaces to MPSlib. It is located in ``mpslib/scikit-mps`` folder. It includes 4 submodules
+::
+
+   mps.mpslib
+   mps.eas
+   mps.trainingimages
+   mps.plot
+
+and 
 ::
    mps.mpslib
    mps.eas
    mps.trainingimages
    mps.plot
+
 
 ``mps.mpslib`` contains the core function for setting up and running the algorithms in MPSlib.
 ``mps.eas`` contains function to read and write EAS formatted ASCII files.
@@ -20,6 +29,7 @@ It makes use of matplotlib (for 2D graphics) and pyvista [http://docs.pyvista.or
 A simple example of using scikit-mps to generate 4 realizations using ``mps_snesim_tree`` is 
 (from `mpslib_simple.py <https://github.com/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_simple.py>`_):
 ::
+
    import mpslib as mps
 
    # Initialize the MPS object, using a specific algorithm (def='mps_snesim_tree')
@@ -63,11 +73,13 @@ Installation
 ************************************************
 scikit-mps can be installed using pip using 
 ::
+
    cd mpslib/scikit-mps
    pip install .
 
 To allow editing scikit-mps locally after install use
 ::
+
    cd mpslib/scikit-mps
    pip install -e .
 
@@ -175,11 +187,13 @@ ___________________
 
 An EAS volume data set, is a special version of the EAS file format that allow describing a 1D-3D volume.
 The first line (the title) must contain the dimensions of the data in the eas file formatted as e.g.
+
 ::
    100 210 13
 
 to describe a matrix of size nx=100, ny=210, and nz=13.
 It is read as for the points data set
+
 ::
    import mpslib as mps
    EAS = mps.eas.read('ti.dat')
@@ -190,6 +204,7 @@ It is read as for the points data set
 Write EAS volume set
 ____________________
 A 3D numpy array can be written as an EAS volume set using
+
 ::
    import mpslib as mps
    import numpy as no

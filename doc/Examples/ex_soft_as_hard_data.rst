@@ -81,9 +81,9 @@ and
 
 
    
---------------------
+------------------------
 Non Co-located soft data
---------------------
+------------------------
 If soft information is scattered, and located relatively far away from each other, then using only co-located soft data my work well. But, when soft information is more densely available, using only co-located soft data results in disregarding available information.
 
 `mps_genesim` can handle non-colocated soft information running both in ENESIM mode (using >1 match in the training image) and Direct Sampling mode  (using only 1 match in the training image). In both cases one samples from the following conditional distribution during sequential simulation:

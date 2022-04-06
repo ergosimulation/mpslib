@@ -49,7 +49,7 @@ The path to the folder containing all output. Use forward slash '/' to
 separate folders.
 
 Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential) # 2
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  [0] sequential path through simulation grid (possibly a multiple
    grid)
@@ -76,7 +76,7 @@ HardData filename
 EAS filename with 4 columns: X, Y, Z, and D
 
 HardData search radius
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
 
 (world units)
 

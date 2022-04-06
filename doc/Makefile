@@ -31,4 +31,4 @@ nb:
 	rm -f Notebooks/*.ipynb
 	ln ../scikit-mps/examples/*.ipynb Notebooks/.
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	nb
+	
