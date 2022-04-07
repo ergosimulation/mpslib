@@ -122,8 +122,32 @@ class mpslib:
             print("Using %s installed in %s (scikit-mps in %s)" % (method,self.mpslib_exe_folder,__file__))
         
 
-            
-            
+    def compile_mpslib(self):
+        print("Recompiling mpslib")    
+         # Recompile from src on Colab
+        import pathlib
+        import mpslib as mps
+        script_name='mpslib_download_and_install.sh'
+        scikit_mps_path = pathlib.Path(mps.__file__).parent.absolute()
+        src_path = pathlib.Path.home().joinpath(scikit_mps_path, 'bin')
+        sh = 'cd %s\n./install_latest_mpslib.sh' % (src_path)
+        print("===============================================================")
+        print("=== Trying to download and compile MPSlib ")
+        print("=== For this wo work you need")
+        print("=== a) git")
+        print("=== b) Make")
+        print("=== c) gcc")
+        print("----------------------------------------------------------------")
+        
+        script = pathlib.Path.home().joinpath(pathlib.Path.cwd(), script_name)
+        
+        print("=== Trying to write the script: (%s) " % (script))
+        with open(script_name, 'w') as file:
+          file.write(sh)
+        print("----------------------------------------------------------------")
+        print("=== Trying to run the script: (%s) " % (script))
+        os.system(script)
+        
     def which(self, program, verb=1):
         '''
         self.which: Locate executable in the following order:
