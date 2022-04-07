@@ -24,9 +24,9 @@ copyright = '2022, Thomas Mejer Hansen'
 author = 'Thomas Mejer Hansen'
 
 # The short X.Y version
-version = '1.4'
+version = '1.5'
 # The full version, including alpha/beta/rc tags
-release = '1.4'
+release = '1.5'
 
 
 # -- General configuration ---------------------------------------------------
@@ -76,7 +76,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'README.md']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -205,3 +205,31 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# -- Options for MyST-NB -----------------------------------------------------
+nb_render_priority = {
+  "html": (
+            "application/vnd.jupyter.widget-view+json",
+            "application/javascript",
+            "text/html",
+            "image/svg+xml",
+            "image/png",
+            "image/jpeg",
+            "text/markdown",
+            "text/latex",
+            "text/plain",
+        ),
+  "doctest": (
+            "application/vnd.jupyter.widget-view+json",
+            "application/javascript",
+            "text/html",
+            "image/svg+xml",
+            "image/png",
+            "image/jpeg",
+            "text/markdown",
+            "text/latex",
+            "text/plain",
+        )
+}
+
+

@@ -903,42 +903,13 @@ class mpslib:
                 
     # plot realizations using pyvista 2D/3D
     def plot_reals_3d(self, nshow=9):
-        plot.plot_3d_reals_pyvista(self, nshow=nshow)
+        plot.plot_3d_reals(self, nshow=nshow)
         
     # plot realizations using matplotlib in 2D
-    def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals', nanval=-997799, filternan=1):
-        import matplotlib.pyplot as plt
-        import matplotlib.gridspec as gridspec
-        import numpy as np
-        from numpy import squeeze
+    def plot_reals(self, nshow=25, **kwargs):
         
+        plot.plot_reals(self, nshow=nshow, **kwargs)
         
-        nx, ny, nz = self.par['simulation_grid_size']
-        
-        nr = np.min((self.par['n_real'], nr))
-        nsp = int(np.ceil(np.sqrt(nr)))
-
-        fig = plt.gcf()
-        sp = gridspec.GridSpec(nsp, nsp, wspace=0.1, hspace=0.1)
-        plt.set_cmap('hot')
-        for i in range(0, nr):
-            ax1 = plt.Subplot(fig, sp[i])
-            fig.add_subplot(ax1)
-            if filternan == 1:
-                self.sim[i][self.sim[i]==nanval] = np.nan
-                
-            D=squeeze(np.transpose(self.sim[i]))
-            plt.imshow(D, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]], interpolation='none')
-            plt.title("Real %d" % (i + 1))
-
-        fig.suptitle(self.method + ' - ' + self.parameter_filename, fontsize=16)
-        if (hardcopy):
-            plt.savefig(hardcopy_filename)
-
-        plt.show(block=False)
-
-    # plot etypes (only in 2D so far)
-    
     def etype(self):
         '''
         Compute Etype
@@ -952,9 +923,13 @@ class mpslib:
         estd = squeeze(np.std(self.sim, axis=0))
         emode,dummy = squeeze(stats.mode(self.sim, axis=0))
         emode = squeeze(emode)
+        
+        self.etype_mean = emean
+        self.etype_std = estd
+        self.etype_mode = emode
+        
         return emean, estd, emode
-        
-        
+                
     
     def plot_etype(self, title='', hardcopy=0, hardcopy_filename='etype'):
         '''
@@ -967,88 +942,27 @@ class mpslib:
         from scipy import stats
         from numpy import squeeze
    
-        # read soft data ('check if it exist')
-        use_soft = 0
-        if (hasattr(self, 'd_soft')):
-            use_soft = 1
-        elif (os.path.isfile(self.par['soft_data_fnam'])):
-            D = eas.read(self.par['soft_data_fnam'])
-            self.d_soft = D['D'];
-            use_soft = 1
-
-        # read hard data ('check if it exist')
-        use_hard = 0
-        if (hasattr(self, 'd_hard')):
-            use_hard = 1
-        elif (os.path.isfile(self.par['hard_data_fnam'])):
-            D = eas.read(self.par['hard_data_fnam'])
-            self.d_hard = D['D'];
-            use_hard = 1
-
-        # compute Etype
-        emean = np.transpose(squeeze(np.mean(self.sim, axis=0)))
-        estd = np.transpose(squeeze(np.std(self.sim, axis=0)))
+        if self.sim is not None:
         
-        emean, estd, emode = self.etype()
-        
-        #emode = squeeze(stats.mode(self.sim, axis=0))
-        #emode = squeeze(emode[0][0])
+            # compute Etype
+            emean, estd, emode = self.etype()
 
-        vmin=0
-        vmax=1
-        if (hasattr(self, 'ti')):    
-            vmin = np.min(self.ti)
-            vmax = np.max(self.ti)
-        # plot the Etypes
-        fig = plt.figure(2)
-        fig.clf()
-        plt.set_cmap('hot')
-        plt.subplot(1, 2, 1)
-        dx=self.par['grid_cell_size'][1]
-        dy=self.par['grid_cell_size'][1]
-        im = plt.imshow(emean.T, 
-                        extent=[self.x[0]-dx/2, self.x[-1]+dx/2, self.y[-1]-dy/2, self.y[0]+dy/2], 
-                        zorder=-1,
-                        vmin=vmin,
-                        vmax=vmax)
-        plt.colorbar(im, fraction=0.046, pad=0.04)
-        if (use_hard):
-            plt.plot(self.d_hard[:, 0], self.d_hard[:, 1], "k.", zorder=0)
-            plt.scatter(self.d_hard[:, 0], self.d_hard[:, 1], c=self.d_hard[:, 3], s=25, zorder=1)
-        if (use_soft):
-            #plt.plot(self.d_soft[:, 0], self.d_soft[:, 1], "o", color=((.4, .4, .4)), MarkerSize=10, zorder=0)
-            s = 150*np.max(self.d_soft[:,3:], axis=1)
-            plt.scatter(self.d_soft[:, 0], self.d_soft[:, 1], facecolors='None', edgecolors=((.4, .4, .4)), s=s, zorder=0)
-            #plt.scatter(self.d_soft[:, 0], self.d_soft[:, 1], c=self.d_soft[:, 3], s=25, zorder=2)
-        plt.title('Etype Mean')
+            vmin=0
+            vmax=1
+            if (hasattr(self, 'ti')):    
+                vmin = np.min(self.ti)
+                vmax = np.max(self.ti)
 
-        plt.subplot(1, 2, 2)
-        im = plt.imshow(estd.T, 
-                        extent=[self.x[0]-dx/2, self.x[-1]+dx/2, self.y[-1]-dy/2, self.y[0]+dy/2],
-                        cmap='hot', vmin=0);
-        plt.colorbar(im, fraction=0.046, pad=0.04)
-        plt.title('Etype Std')
+            # plot the Etypes
+            #plt.subplot(1,3,1)
+            plot.plot(emean, origin=self.par['origin'], spacing=self.par['grid_cell_size'],title='Etype mean')
+            #plt.subplot(1,3,2)
+            plot.plot(estd, origin=self.par['origin'], spacing=self.par['grid_cell_size'],title='Etype std')
+            #plt.subplot(1,3,3)
+            plot.plot(emode, origin=self.par['origin'], spacing=self.par['grid_cell_size'],title='Etype mode')
 
-        #plt.subplot(1, 3, 3)
-        #im = plt.imshow(emode, extent=[self.x[0], self.x[-1], self.y[0], self.y[-1]])
-        #plt.colorbar(im, fraction=0.046, pad=0.04)
-        #plt.title('Etype Mode')
-
-        # plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
-        if len(title)==0:
-            title = self.method + ' - ' + self.parameter_filename
-        
-        fig.suptitle(title, fontsize=16)
-
-        if (hardcopy):
-            plt.savefig(hardcopy_filename)
-
-
-        plt.show(block=False)
-    
-        self.etype_mean = emean
-        self.etype_std = estd
-    
+        else:
+            print('No realizations to compute Etypes from')
         return 
     
     # plot TI
@@ -1062,38 +976,139 @@ class mpslib:
                 E=eas.read(self.par['ti_fnam'])
                 self.ti = E['Dmat']
             except:
-                print('Could not load %s, and can then not plot the traiing image' % self.par['ti_fnam'])
+                print('Could not load %s, and can then not plot the training image' % self.par['ti_fnam'])
                 return -1
                     
-        
-        plot.plot_3d(self.ti, header=self.par['ti_fnam'], slice=1   )
-
-    '''
-    def to_file(self):
-        nreal = self.nreal
-        outname = self.ti_fnam + '_all.gslib'
-        f = open(outname, 'w')
-        f.write('%d %d %d\n' % (self.simulation_grid_size[0], self.simulation_grid_size[1], self.simulation_grid_size[2]))
-        if nreal == 1:
-            f.write('%d\n' % nreal)
-            f.write('%s\n' % 'real1')
-            for ii in np.arange(self.simulation_grid_size[0] * self.simulation_grid_size[1] * self.simulation_grid_size[2]):
-                f.write('%d\n' % self.simulations[ii])
-            f.close()
+        if hasattr(self,'ti'):           
+            plot.plot(self.ti, title="Training image - %s" % (self.par['ti_fnam']), slice=1   )
         else:
-            f.write('%d\n' % nreal)
-            for ii in np.arange(nreal):
-                f.write('%s%d\n' % ('real', ii))
+            print('Could not plot TI')
+    
+    def plot_simulation_grid(self):
+        '''
+        plot simulation grid
+        '''
+        import numpy as np
+        if self.sim is None:
+            D=np.zeros(self.par['simulation_grid_size'])
+        else:
+            D=self.sim[0]*0
+        #D=np.squeeze(D)
+        plot.plot(D,  origin=self.par['origin'], 
+                  spacing=self.par['grid_cell_size'],
+                  title='Simulation grid', 
+                  grid_minor=True,
+                  show_edges=True,
+                  add_points=True,
+                  opacity=0.1)
 
-            for ii in np.arange(self.simulation_grid_size[0] * self.simulation_grid_size[1] * self.simulation_grid_size[2]):
-                for jj in np.arange(nreal):
-                    f.write('%d ' % self.simulations[ii, jj])
-                f.write('\n')
-        f.close()
+    def plot_hard(self, **kwargs):
+        
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import pyvista as pv
+        
+        cmap = kwargs.get('cmap',"viridis")
+    
+        vmin=0
+        vmax=1
+        if (hasattr(self, 'ti')):    
+            vmin = np.min(self.ti)
+            vmax = np.max(self.ti)
+        
+        if hasattr(self,'d_hard'):
+            if self.par['simulation_grid_size'][2]==1:
+                # 2D
+                plt.scatter(self.d_hard[:,0],self.d_hard[:,1], c=self.d_hard[:,3], vmin=vmin, vmax=vmax , cmap='jet')
+                plt.xlim([self.x[0],self.x[-1]])
+                plt.ylim([self.y[0],self.y[-1]])
+                plt.colorbar()
+                plt.title('Hard data')
+            else: 
+                # 3D
+                mesh_hard=pv.PolyData(self.d_hard[:,0:3])
+                mesh_hard["Pv"]=self.d_hard[:,3]
+                    
+                pl = pv.Plotter()
+                pl.add_mesh(mesh_hard, point_size=5, render_points_as_spheres=True, style='points', cmap=cmap, clim=[vmin, vmax])
+                pl.show_axes()
+                pl.show_grid()
+                pl.add_txt('Hard data')
+                pl.show()
 
-    '''
 
+    def plot_soft(self, **kwargs):
+        
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import pyvista as pv
+        
+        cmap = kwargs.get('cmap',"viridis")
+    
+        vmin=0
+        vmax=1
+        if (hasattr(self, 'ti')):    
+            vmin = np.min(self.ti)
+            vmax = np.max(self.ti)
+        
+        if hasattr(self,'d_soft'):
+            if self.par['simulation_grid_size'][2]==1:
+                # 2D
+                
+                n_classes = self.d_soft.shape[1]-3
+                for i_class in range(n_classes):
+                    plt.subplot(1,2,i_class+1)
+                    plt.scatter(self.d_soft[:,0],self.d_soft[:,1], c=self.d_soft[:,3+i_class], vmin=0, vmax=1 , cmap=cmap)
+                    plt.xlim([self.x[0],self.x[-1]])
+                    plt.ylim([self.y[0],self.y[-1]])
+                    plt.colorbar()
+                    plt.axis('image')
+                    plt.title('Soft probability, Class %d' % (i_class))
+            else: 
+                # 3D
+                n_classes = self.d_soft.shape[1]-3
+                pl = pv.Plotter(shape=(1,n_classes))
+                for i_class in range(n_classes):
+                
+                    pl.subplot(0,i_class)
+                    pl.add_text('P(m==%d) % ', font_size=2) 
+                    
+                    mesh=pv.PolyData(self.d_soft[:,0:3])
+                    mesh["Pv"]=self.d_soft[:,3]
+                    
+                    pl.add_mesh(mesh, point_size=7, render_points_as_spheres=True, style='points', show_scalar_bar=True, cmap=cmap, clim=[0, 1])
+                    #pl.add_txt('Soft probability, Class %d' % (i_class))
+                    pl.add_text('Soft probability, Class %d' % (i_class))
+                    pl.show_axes()
+                    pl.show_grid()
+                pl.show()
 
+                
+        else:
+            print('No soft data to plot')
+                
+                
+                
+    
+    def plot(self):
+        self.plot_simulation_grid()
+        
+        if hasattr(self,'ti'):
+            self.plot_ti()
+        
+        self.plot_hard()
+        
+        self.plot_soft()
+        
+        if self.sim is not None:
+            self.plot_reals()
+            self.plot_etype()
+
+            
+           
+                
+    
+         
     def xxx(self, plot=0):
         
         

@@ -53,44 +53,85 @@ def numpy_to_pvgrid(Data, origin=(0,0,0), spacing=(1,1,1)):
 
 ### 2D/3D grid plotting
 
-def plot(D, force_3d=0, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,1,1), cmap='viridis', filename='', header=''):
+def plot(D, force_3d=0, slice=0, threshold=(), origin=(0,0,0), spacing=(1,1,1) ,**kwargs):
     '''Plot matrix in 2D (matplotlib) or 3D (pyvista)
 
     Parameters
     ----------
     
     '''
+    plotgrid = kwargs.get('use_plotgrid',True)
+    use_colorbar = kwargs.get('use_colorbar',True)
+    title = kwargs.get('title',"")
+    filename = kwargs.get('filename',"")
+    cmap = kwargs.get('cmap',"viridis")
+    
     if (D.ndim == 3)|(force_3d==1):
-        plot_3d(D, plotgrid=plotgrid, slice=slice, threshold=threshold, origin=origin, spacing=spacing, cmap=cmap, filename=filename, header=header )
+        plot_3d(D, origin=origin, spacing=spacing, **kwargs)
     else:
-        plot_2d(D, origin=origin, spacing=spacing, cmap=cmap, filename=filename, header=header)
+        plot_2d(D, origin=origin, spacing=spacing, **kwargs)
         
 
-def plot_2d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,1,1), cmap='viridis', filename='', header='' ):
+def plot_2d(Data, origin=(0,0,0), spacing=(1,1,1), **kwargs ):
+    
+    plotgrid = kwargs.get('use_plotgrid',True)
+    use_colorbar = kwargs.get('use_colorbar',True)
+    title = kwargs.get('title',"")
+    filename = kwargs.get('filename',"")
+    cmap = kwargs.get('cmap',"viridis")
+    show = kwargs.get('show',True)
+    grid_minor = kwargs.get('grid_minor',False)
+    #print("Title=%s" % (title))
+    
     Data=np.squeeze(Data)
     nx, ny = Data.shape
     
     extent = [ origin[0]+-0.5*spacing[0] ,  origin[0]+nx*spacing[0]+0.5*spacing[0] , origin[1]-0.5*spacing[1] ,  ny*spacing[1]+origin[1]+0.5*spacing[1] ]
     #print(extent)
     
-    plt.imshow(np.transpose(Data), cmap=cmap, extent=extent)
+    im=plt.imshow(np.transpose(Data), cmap=cmap, extent=extent, interpolation='None')
     if len(filename)>0:
         plt.savefig(filename)
     
-    plt.grid()
-    if len(header)>0:
-        plt.title(header)
-    plt.show()
+    if (use_colorbar):
+        plt.colorbar(im, fraction=0.046, pad=0.04)
+    if (plotgrid):
+        if (grid_minor):
+            ax=plt.gca()
+            ax.set_xticks(np.arange(extent[0], extent[1], spacing[0]), minor=True)
+            ax.set_yticks(np.arange(extent[2], extent[3], spacing[1]), minor=True)
+            plt.grid(which='minor', color='w', linestyle='-', linewidth=1)
+        else:
+            plt.grid
+    if len(title)>0:
+        plt.title(title)
+    if (show):
+        plt.show()
     
     
 
-def plot_3d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,1,1), cmap='viridis', filename='', header='' ):
+def plot_3d(Data, origin=(0,0,0), spacing=(1,1,1), **kwargs ):
     '''
     plot 3D cube using 'pyvista' 
     '''
     #import numpy as np 
     #from pyvistaqt import BackgroundPlotter as Plotter    
     from pyvista import Plotter as Plotter    
+    
+    title = kwargs.get('title',"")
+    show_edges = kwargs.get('show_edges',False)
+    opacity = kwargs.get('opacity',1)
+    #plotgrid = kwargs.get('use_plotgrid',True)
+    use_colorbar = kwargs.get('use_colorbar',True)
+    filename = kwargs.get('filename',"")
+    cmap = kwargs.get('cmap',"viridis")
+    slice = kwargs.get('slice',0)
+    plotgrid = kwargs.get('plotgrid',1)
+    threshold = kwargs.get('threshold',())
+    add_points = kwargs.get('add_points','False')
+    show_bounds = kwargs.get('show_bounds','True')
+    show_axes = kwargs.get('show_axes','True')
+    show_grid = kwargs.get('show_grid','True')
     
     
     plot = Plotter() # interactive
@@ -99,8 +140,8 @@ def plot_3d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,
     if (plotgrid==1)|(slice==1):
         grid = numpy_to_pvgrid(Data, origin=origin, spacing=spacing)
     
-    if (plotgrid==1)&(slice==0):
-        plot.add_mesh(grid, cmap=cmap)
+    if (plotgrid==1)&(slice==0):        
+        plot.add_mesh(grid, cmap=cmap, show_edges=show_edges, opacity=opacity)
     
     if (slice==1):
         grid_slice = grid.slice_orthogonal()
@@ -116,9 +157,19 @@ def plot_3d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,
         
     if len(filename)>0:
         plot.screenshot(filename)
+        
+    if (add_points):
+        plot.add_points(grid.points, color='red',
+              point_size=2)    
+    if (show_grid):
+        plot.show_grid()
+    if (show_bounds):
+        plot.show_bounds()
+    if (show_axes):
+        plot.show_axes()
+    if (len(title)>0):
+        plot.add_text(title)
     
-    plot.add_text(header)
-    plot.show_grid()
     plot.show()
 
 
@@ -127,18 +178,44 @@ def plot_3d(Data, plotgrid=1, slice=0, threshold=(), origin=(0,0,0), spacing=(1,
 
 
 
-def plot_reals(O, nshow=4, slice=0, force_3d=0):
+def plot_reals(O, nshow=4, **kwargs):
     '''Plot realizations in 2D (matplotlib) or 3D (pyvista)
 
     Parameters
     ----------
     '''
-    D=np.squeeze(O.sim[0])
-    if (D.ndim == 3)|(force_3d==1):
-        plot_3d_reals(O, nshow=nshow,  slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
+    
+    if O.sim is not None:
+    
+        force_3d = kwargs.get('force_3d',0)
+        slice = kwargs.get('slice',0)
+        #nshow = kwargs.get('nshow',4)
+
+
+        D=np.squeeze(O.sim[0])
+        if (D.ndim == 3)|(force_3d==1):
+            plot_3d_reals(O, nshow=nshow,  slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
+        else:
+            plot_2d_reals(O, nshow=nshow)
+
     else:
-        plot_2d_reals(O, nshow=nshow)
-        
+        print('No realizations to plot')
+
+def plot_2d_reals(O, nshow=4, **kwargs):
+
+    nshow=np.min([len(O.sim),nshow])
+
+    nsp=np.int8(np.ceil(np.sqrt(nshow)))    
+
+    for i in range(nshow):
+        plt.subplot(nsp,nsp,i+1)
+
+        D=np.squeeze(O.sim[i])
+        plot_2d(D,  origin=O.par['origin'], spacing=O.par['grid_cell_size'], show=False, title='Real #%d' % (i+1), use_colorbar=False)
+
+    plt.show()
+
+
 
 def plot_3d_reals(O, nshow=4):
     '''Plot realizations in in O.sim in 3D using pyvista
@@ -188,21 +265,6 @@ def plot_3d_reals(O, nshow=4):
 
         
     plotter.show()
-
-
-def plot_2d_reals(O, nshow=4):
-    
-    nshow=np.min([len(O.sim),nshow])
-    
-    nsp=np.int8(np.ceil(np.sqrt(nshow)))
-    print(nsp)
-    
-    for i in range(nshow):
-        plt.subplot(nsp,nsp,i+1)
-        D=np.transpose(np.squeeze(O.sim[i]))
-        plt.imshow(D)
-        plt.title('#%d' % (i+1))
-    
 
 
 
