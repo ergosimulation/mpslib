@@ -146,7 +146,21 @@ class mpslib:
           file.write(sh)
         print("----------------------------------------------------------------")
         print("=== Trying to run the script: (%s) " % (script))
-        os.system(script)
+    
+        import sys
+        is_colab = 'google.colab' in sys.modules
+        if (is_colab):
+            print("=== WE ARE ON GOOGLE COLAB ")
+            print("=== please run manually -->")
+            print("=== please run manually -->")
+            print("")
+            print("!bash mpslib_download_and_install.sh")
+            print("")
+            
+        else:
+            os.system(script)
+        
+        print("----------------------------------------------------------------")
         
         return True
 
