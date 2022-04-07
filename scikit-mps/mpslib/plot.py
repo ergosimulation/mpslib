@@ -81,6 +81,7 @@ def plot_2d(Data, origin=(0,0,0), spacing=(1,1,1), **kwargs ):
     cmap = kwargs.get('cmap',"viridis")
     show = kwargs.get('show',True)
     grid_minor = kwargs.get('grid_minor',False)
+    plot_origin = kwargs.get('plot_origin','lower')
     #print("Title=%s" % (title))
     
     Data=np.squeeze(Data)
@@ -89,7 +90,7 @@ def plot_2d(Data, origin=(0,0,0), spacing=(1,1,1), **kwargs ):
     extent = [ origin[0]+-0.5*spacing[0] ,  origin[0]+nx*spacing[0]+0.5*spacing[0] , origin[1]-0.5*spacing[1] ,  ny*spacing[1]+origin[1]+0.5*spacing[1] ]
     #print(extent)
     
-    im=plt.imshow(np.transpose(Data), cmap=cmap, extent=extent, interpolation='None')
+    im=plt.imshow(np.transpose(Data), cmap=cmap, extent=extent, interpolation='None', origin=plot_origin)
     if len(filename)>0:
         plt.savefig(filename)
     

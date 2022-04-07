@@ -1036,10 +1036,12 @@ class mpslib:
             if self.par['simulation_grid_size'][2]==1:
                 # 2D
                 plt.scatter(self.d_hard[:,0],self.d_hard[:,1], c=self.d_hard[:,3], vmin=vmin, vmax=vmax , cmap='jet')
+                plt.axis('image')
                 plt.xlim([self.x[0],self.x[-1]])
                 plt.ylim([self.y[0],self.y[-1]])
                 plt.colorbar()
                 plt.title('Hard data')
+                plt.show()
             else: 
                 # 3D
                 mesh_hard=pv.PolyData(self.d_hard[:,0:3])
@@ -1075,11 +1077,12 @@ class mpslib:
                 for i_class in range(n_classes):
                     plt.subplot(1,2,i_class+1)
                     plt.scatter(self.d_soft[:,0],self.d_soft[:,1], c=self.d_soft[:,3+i_class], vmin=0, vmax=1 , cmap=cmap)
+                    plt.axis('image')
                     plt.xlim([self.x[0],self.x[-1]])
                     plt.ylim([self.y[0],self.y[-1]])
                     plt.colorbar()
-                    plt.axis('image')
                     plt.title('Soft probability, Class %d' % (i_class))
+                    plt.show()
             else: 
                 # 3D
                 n_classes = self.d_soft.shape[1]-3
