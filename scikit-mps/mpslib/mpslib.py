@@ -25,7 +25,7 @@ class mpslib:
                  shuffle_simulation_grid=2, entropyfactor_simulation_grid=4, shuffle_ti_grid=1,
                  hard_data_search_radius=1,
                  soft_data_categories=np.arange(2), soft_data_fnam='soft.dat', n_threads=-1, verbose_level=0,
-                 template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_cond_soft=1, n_min_node_count=0,
+                 template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=16, n_cond_soft=1, n_min_node_count=0,
                  n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_max=0, distance_pow=1,
                  max_search_radius=10000000, max_search_radius_soft=10000000,                  
                  remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0), 
@@ -148,6 +148,8 @@ class mpslib:
         print("=== Trying to run the script: (%s) " % (script))
         os.system(script)
         
+        return True
+
     def which(self, program, verb=1):
         '''
         self.which: Locate executable in the following order:
@@ -511,7 +513,7 @@ class mpslib:
         if (not os.path.isfile(self.par['ti_fnam'])) and (not hasattr(self, 'ti')):
             if self.verbose_level>-1:
                 print('mpslib: Training image "%s" not found - USING DEFAULT!' % (self.par['ti_fnam']))
-            self.ti = trainingimages.strebelle()[0]
+            self.ti = trainingimages.strebelle(di=2)[0]
 
         # write training image if set
         if hasattr(self, 'ti'):
