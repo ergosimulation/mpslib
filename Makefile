@@ -1,7 +1,7 @@
 #export CXX=clang++-8 # clang seems to perform better than g++-7
 #export CXX=g++-8 # clang seems to perform better than g++-7
 # use next for maximum optimization to local hardware
-export CPPFLAGS+= -O3 -march=native -std=c++11
+export CPPFLAGS+= -static -O3 -march=native -std=c++11
 # USe next for compilation of static binary
 # export CPPFLAGS+= -O3 -std=c++11
 
