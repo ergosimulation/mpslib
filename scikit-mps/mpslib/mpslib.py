@@ -105,20 +105,23 @@ class mpslib:
             self.iswin = 1
 
         # Find folder with executable files
+        # Fiest check the root folder of mpslib, then mslib/scikit-mps/mpslib/bin
         mpslib_py_path, fn = os.path.split(__file__)
         if len(mpslib_exe_folder)==0:
             
             mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, 'bin'))
-            #print("B: %s" % (mpslib_exe_folder) )
+            if (self.verbose_level>0):
+                print("Testing if EXEcutables in  %s" % (mpslib_exe_folder) )
             self.mpslib_exe_folder = mpslib_exe_folder
             if self.which(method,0) is None:
                 mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
                 self.mpslib_exe_folder = mpslib_exe_folder
+                if (self.verbose_level>0):
+                    print("Testing if EXEcutables in  %s" % (mpslib_exe_folder) )
                 
             self.which(method,0)
             
-        
-        if self.verbose_level>0:
+        if self.verbose_level>-1:
             print("Using %s installed in %s (scikit-mps in %s)" % (method,self.mpslib_exe_folder,__file__))
         
 
@@ -180,7 +183,6 @@ class mpslib:
             if is_exe(program_path_mpslib):
                 return program_path_mpslib
             else:
-                print("File not found in: %s" % (program_path_mpslib) )
                 # Check of executable is located in system path
                 for path in os.environ["PATH"].split(os.pathsep):
                     path = path.strip('"')

@@ -278,7 +278,6 @@ def plot_eas(Deas):
     '''
     import matplotlib.pyplot as plt
     import numpy as np
-    from scipy import squeeze
     
     # check for matrix/cube
     if 'Dmat' in Deas:
@@ -299,7 +298,7 @@ def plot_eas(Deas):
                 plt.plot(np.arange(Deas['dim']['nz']),Deas['Dmat'])
             else:
                 # X-Z
-                plt.imshow(squeeze(Deas['Dmat'][:,0,:]))
+                plt.imshow(np.squeeze(Deas['Dmat'][:,0,:]))
                 plt.xlabel('X')
                 plt.xlabel('Z')
         elif (Deas['dim']['nx']==1):
@@ -309,7 +308,7 @@ def plot_eas(Deas):
                 plt.plot(np.arange(Deas['dim']['ny']),Deas['Dmat'])
             else:
                 # Y-Z
-                plt.imshow(squeeze(Deas['Dmat'][0,:,:]))
+                plt.imshow(np.squeeze(Deas['Dmat'][0,:,:]))
                 plt.xlabel('Y')
                 plt.xlabel('Z')
         else:

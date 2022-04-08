@@ -4,7 +4,7 @@ SRC_DIR = .
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 
 %.o : $(SRC_DIR)/%.cpp
-	$(CXX) -o $@ $(INCLUDES) $(CPPFLAGS) -static -c $^
+	$(CXX) -o $@ $(INCLUDES) $(CPPFLAGS) -c $^
 
 all : mpslib.a
 

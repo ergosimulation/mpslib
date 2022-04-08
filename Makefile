@@ -8,7 +8,7 @@ export CPPFLAGS+= -static -O3 -march=native -std=c++11
 UNAME_S := $(shell uname -s)
 UNAME_P := $(shell uname -p)
 ifeq ($(OS),Windows_NT)
-	export CPPFLAGS += -static -Wl,--no-as-needed
+	export CPPFLAGS += -Wl,--no-as-needed
 else
     #UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
@@ -64,3 +64,10 @@ cleanexe:
 .PHONY: cleano
 cleano:
 	rm -f *.o mpslib/*.o $(MPSLIB)
+
+copy:
+	cp mps_genesim scikit-mps/mpslib/bin/.
+	cp mps_snesim_tree scikit-mps/mpslib/bin/.
+	cp mps_snesim_list scikit-mps/mpslib/bin/.
+
+    

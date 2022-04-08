@@ -52,8 +52,7 @@ def coarsen_2d_ti(Dmat,di=2):
     Takes a 2D trainin image and makes it coarser, by constructing a 3D TI 
     based on all coarsened 2D images
     '''
-    from scipy import squeeze
-
+    
     nx, ny, nz = Dmat.shape
     ndim3 = di * di    
     x = np.arange(nx)
@@ -71,7 +70,7 @@ def coarsen_2d_ti(Dmat,di=2):
             TI_small = Dmat[(0 + j)::di, (0 + k)::di, 0]
             TI[:, :, 0,l] = TI_small[0:nx2, 0:ny2]
             
-    TI=squeeze(TI)
+    TI=np.squeeze(TI)
     return TI
 
 

@@ -44,18 +44,33 @@ Requirements
 * MPSlib needs to be downloaded, installed, and in the system path (https://github.com/ergosimulation/mpslib/)
   [Any 11 C++11 compiler should work, such as gcc, MinGW, MSVC]
 
+
+
 Installing
 ~~~~~~~~~~~~~~
-* Via pip: pip3 install scikit-mps
+* Via pip:: 
+
+    pip install scikit-mps
+
+optionally download and reinstall:: 
+
+    import mpslib as mps
+    O=mps.mpslib
+    O.compile_mpslib()
+
+* From source code 
 
 .. code::
 
    cd ROOT_OF_MPSLIB/python   
-   pip3 install .
+   pip install .
+   cd ROOT_OF_MPSLIB
+   make clean
+   make   
 
 If you wish to develop the scikit-mps package, then install it in editable developer mode using
 
 .. code::
 
-    pip3 install -e .
+    pip install -e .
 
