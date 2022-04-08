@@ -124,7 +124,16 @@ class mpslib:
         if self.verbose_level>-1:
             print("Using %s installed in %s (scikit-mps in %s)" % (method,self.mpslib_exe_folder,__file__))
         
-
+    def update_xyz(self):    
+        # update self.x, self.y, self.z
+        if (hasattr(self, 'x') == 0):
+            self.x = np.arange(self.par['simulation_grid_size'][0]) * self.par['grid_cell_size'][0] + self.par['origin'][0]
+        if (hasattr(self, 'y') == 0):
+            self.y = np.arange(self.par['simulation_grid_size'][1]) * self.par['grid_cell_size'][1] + self.par['origin'][1]
+        if (hasattr(self, 'z') == 0):
+            self.z = np.arange(self.par['simulation_grid_size'][2]) * self.par['grid_cell_size'][2] + self.par['origin'][2]
+        return True    
+    
     def compile_mpslib(self):
         print("Recompiling mpslib")    
          # Recompile from src on Colab
@@ -514,7 +523,6 @@ class mpslib:
         import time
         success = False
 
-        
         # update self.x, self.y, self.z
         if (hasattr(self, 'x') == 0):
             self.x = np.arange(self.par['simulation_grid_size'][0]) * self.par['grid_cell_size'][0] + self.par['origin'][0]
@@ -1026,6 +1034,8 @@ class mpslib:
         import numpy as np
         import pyvista as pv
         
+        update_xyz()
+
         cmap = kwargs.get('cmap',"viridis")
     
         vmin=0
@@ -1062,7 +1072,9 @@ class mpslib:
         import matplotlib.pyplot as plt
         import numpy as np
         import pyvista as pv
-        
+
+        update_xyz()    
+
         cmap = kwargs.get('cmap',"viridis")
     
         vmin=0
@@ -1107,7 +1119,6 @@ class mpslib:
                 
         else:
             print('No soft data to plot')
-                
                 
                 
     

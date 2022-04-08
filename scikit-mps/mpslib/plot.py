@@ -132,7 +132,7 @@ def plot_3d(Data, origin=(0,0,0), spacing=(1,1,1), **kwargs ):
     add_points = kwargs.get('add_points','False')
     show_bounds = kwargs.get('show_bounds','True')
     show_axes = kwargs.get('show_axes','True')
-    show_grid = kwargs.get('show_grid','True')
+    show_grid = kwargs.get('show_grid','False')
     
     
     plot = Plotter() # interactive
