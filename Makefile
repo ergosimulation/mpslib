@@ -69,5 +69,7 @@ copy:
 	cp mps_genesim scikit-mps/mpslib/bin/.
 	cp mps_snesim_tree scikit-mps/mpslib/bin/.
 	cp mps_snesim_list scikit-mps/mpslib/bin/.
+	cp mps_*.exe scikit-mps/mpslib/bin/.
+
 
     
