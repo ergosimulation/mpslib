@@ -1,7 +1,6 @@
 scikit-mps: A python interface to MPSlib 
 ========================================================================================
 
-
 .. image:: https://img.shields.io/pypi/v/scikit-mps.svg?style=flat-square
     :target: https://pypi.org/project/scikit-mps
 
@@ -11,10 +10,8 @@ scikit-mps: A python interface to MPSlib
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
     :target: https://en.wikipedia.org/wiki/MIT_License
 
-
 .. image:: https://colab.research.google.com/assets/colab-badge.svg
     :target: https://colab.research.google.com/github/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb
-
 
 `scikit-mps` is a Python interface to MPSlib, https://github.com/ergosimulation/mpslib/,
 which is a C++ library for geostatistical multiple point simulation, with implementations
