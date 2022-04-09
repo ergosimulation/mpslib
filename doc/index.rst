@@ -127,8 +127,8 @@ The manual
    chapInstall
    Algorithms/index
    training-image-format
-   matlab-interface
    Examples/index
+   matlab-interface
    python-interface
    Notebooks/index
    implementation
