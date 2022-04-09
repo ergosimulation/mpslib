@@ -3,10 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-======================================
-MPSlib: A C++ class for MPS simulation
-======================================
 
+MPSlib: A C++ class for MPS simulation
+--------------------------------------
 
 MPSlib provides a C++ class, and a set of algorithms for simulation of
 models based on a multiple point statistical (MPS) models inferred from
@@ -18,8 +17,7 @@ a training image:
 - **SNESIM using tree structures** [STREBELLE2002]_.
 - **SNESIM using list structures** [STRAUBHAAR2011]_.
 
-The algorithms
---------------
+
 The above list of algorithms are implemented in two types of algorithms that differ in the way information is inferred from the training image. ENESIM type algorithms samples directly from the training image during simulation, while SNESIM type algorithms scan the training image prior to simulation, and stores the statistics in memory. 
 
 - GENESIM:: :doc:`mps_genesim <Algorithms/chapGenesim/mps_genesim>`
