@@ -19,7 +19,7 @@ a training image:
 - **SNESIM using list structures** [STRAUBHAAR2011]_.
 
 The algorithms
-==============
+--------------
 The above list of algorithms are implemented in two types of algorithms that differ in the way information is inferred from the training image. ENESIM type algorithms samples directly from the training image during simulation, while SNESIM type algorithms scan the training image prior to simulation, and stores the statistics in memory. 
 
 - GENESIM:: :doc:`mps_genesim <Algorithms/chapGenesim/mps_genesim>`
@@ -37,29 +37,30 @@ Two types of SNESIM type simulation methods are implemented.
 `mps_snesim_tree`and `mps_snesim_list` differ only in how the information from the training image is store in memory. 
 
 Conditional data
-----------------
+================
+
 All algorithms can handle hard and co-loccated soft data. ``mps_genesim`` can also handle non-colocated soft data  [HANSEN2018]_.
 
 Entropy
--------
+=======
+
 The entropy of the (unknown) probability distribution related to a specific choice of 1) training image, 2) simulation algorithm, and 3) options for running the simulation algorithm, can optionally be computed as part of simulation. [HANSEN2020]_.
 
 Estimation
-----------
+==========
 All algorithms can optionally be run in *estimation* mode in which the 1D marginal conditional distribution is directly computed (similar to Etype statistics from a number of realizations) [JOHANNSSON2021]_.
-
-
 
 .. see :ref:`ref-snesim`.
 
 PYTHON and MATLAB interface
----------------------------
-Interfaces to :doc:`Matlab/Octave interface <../matlab-interface>` and :doc:`Python <../python-interface>` are available.
+===========================
+Interfaces to :doc:`Python <../python-interface>` and :doc:`Matlab/Octave interface <../matlab-interface>` are available.
 
-:doc:`Python notebooks <Notebooks/index>` is a good starting point for using MPSlib with Python.
+:doc:`Python notebooks <Notebooks/index>` are a good starting point for using MPSlib with Python.
 
-Code
-====
+
+Source Code
+===========
 
 The latest stable code can be downloaded from
 http://ergosimulation.github.io/mpslib/.
@@ -80,23 +81,12 @@ MPSlib (version 1.0) has been developed by
 `I-GIS <http://www.i-gis.dk/>`__ and `Solid Earth Physics, Niels Bohr
 Institute <http://imgp.nbi.ku.dk/>`__.
 
-Development has been funded by the Danish National Hightech Foundation
+Development was initially funded by the Danish National Hightech Foundation
 (now: the Innovation fund) through the ERGO (Effective high-resolution
 Geological Modeling) project, a collaboration between
 `IGIS <http://i-gis.dk/>`__, `GEUS <http://geus.dk/>`__, and `Niels Bohr
 Institute <http://nbi.ku.dk/>`__.
 
-
-Design
-======
-Details about the design of the mpslib C++ class can be found in [HANSEN2016]_. (`link <http://www.sciencedirect.com/science/article/pii/S2352711016300164>`_).
-
-Briefly described, the main class is the ``MPSalgorithm`` class, which implements the sequential simulation algorithm (using multiple girds), methods for reading and writing 3D gridded data, methods for reading known data values (known as hard and soft data), and methods for establishing a data neighborhood, and controlling the simulation path.
-
-Two subclasses, ``ENESIM`` and ``SNESIM`` extends ``MPSalgorithm`` to allow ENESIM and SNESIM type simulation. Finally, the three core algorithms are implemented based on these classes.
-
-.. image:: https://ars.els-cdn.com/content/image/1-s2.0-S2352711016300164-gr1.jpg
-    :alt: mpslib-design
 
 Referencing
 ===========
@@ -109,6 +99,11 @@ SoftwareX. Please use this for referencing MPSlib:
 To cite the use of soft data and the preferential path, please use:
 
 	Hansen, T. M., Mosegaard, K., & Cordua, K. S. (2018). Multiple point statistical simulation using uncertain (soft) conditional data. *Computers & geosciences*, 114, 1-10. doi:`10.1016/j.cageo.2018.01.017 <https://doi.org/10.1016/j.cageo.2018.01.017>`_.
+
+To cite the use of MPS based simulation, please use:
+
+   Jóhannsson, Óli D., and Thomas Mejer Hansen (2021). Estimation using multiple-point statistics. *Computers & Geosciences* 156 (2021): 104894. doi:`10.1016/j.cageo.2021.104894 <https://doi.org/10.1016/j.cageo.2021.104894>`
+
 
 
 License (LGPL)
@@ -125,19 +120,20 @@ have received a copy of the GNU Lesser General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59
 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-How is it organized?
---------------------
+The manual
+----------
+
 .. toctree::
    :maxdepth: 3
 	      
    chapInstall
-   implementation
    Algorithms/index
    training-image-format
    matlab-interface
-   python-interface
    Examples/index
+   python-interface
    Notebooks/index
+   implementation
    contributions
    references
 

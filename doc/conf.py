@@ -47,9 +47,9 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'myst_nb',
+    'nbsphinx',
 ]
-#    'nbsphinx',
+#    'myst_nb',
 
  # myst-nb setting
 jupyter_execute_notebooks = "off"

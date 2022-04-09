@@ -2,7 +2,48 @@
 scikit-mps: a Python interface to MPSlib
 ########################################
 
-scikit-mps is a Python module that interfaces to MPSlib. It is located in ``mpslib/scikit-mps`` folder. It includes 4 submodules
+
+.. image:: https://img.shields.io/pypi/v/scikit-mps.svg?style=flat-square
+    :target: https://pypi.org/project/scikit-mps
+
+.. image:: https://img.shields.io/pypi/pyversions/scikit-mps.svg?style=flat-square
+    :target: https://pypi.org/project/scikit-mps
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+    :target: https://en.wikipedia.org/wiki/MIT_License
+
+.. image:: https://colab.research.google.com/assets/colab-badge.svg
+    :target: https://colab.research.google.com/github/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb
+
+
+
+`scikit-mps <https://pypi.org/project/scikit-mps/>`_
+
+``scikit-mps`` [https://pypi.org/project/scikit-mps/] is a Python module that interfaces to MPSlib. 
+
+
+It can be installe using pip by (see details at https://pypi.org/project/scikit-mps/)::
+
+      pip install scikit-mps
+
+Or from the source code located in the ``mpslib/scikit-mps`` folder, using 
+::
+
+   cd mpslib/scikit-mps
+   pip install .
+
+To allow editing scikit-mps locally after install use
+::
+
+   cd mpslib/scikit-mps
+   pip install -e .
+
+Several Python notebooks examples are located in ``mpslib/scikit-mps/examples`` whic can be browsed here:  
+:doc:`Python notebooks <Notebooks/index>`.
+
+
+
+It includes 4 submodules
 ::
 
    mps.mpslib
@@ -61,27 +102,11 @@ and
    :scale: 50%
 
    Etype mean and variance from the simulation.
-      
-************************************************
-Installation
-************************************************
-scikit-mps can be installed using pip using 
-::
-
-   cd mpslib/scikit-mps
-   pip install .
-
-To allow editing scikit-mps locally after install use
-::
-
-   cd mpslib/scikit-mps
-   pip install -e .
-
-Several examples are located in ``mpslib/scikit-mps/examples`` 
+ 
    
-****************************************
 mps.mpslib: The main interface to MPSlib
-****************************************
+----------------------------------------
+
 ``mps.mpslib`` provide a class to allow running MPSlib algorithms.
 An instance ``O`` of the class is class can be created using::
 
@@ -142,19 +167,26 @@ This can be done using e.g.
        n_cond = 49
        n_real = 1)
 
+To run the MPSlib algorithms using a single thread use::
+
+   O.run()
+
+To run the MPSlib algorithms using a multiple threads use::
+
+   O.run_parallel()
+
 
 
    
 
    
-************************************************
 mps.eas: reading and writing EAS formatted files
-************************************************
+------------------------------------------------
 
 mps.eas contains several functions for reading and writing EAS formatted data.
 
 Read EAS point set
-__________________
+==================
 
 To read a point data set, use 
 ::
@@ -167,7 +199,7 @@ To read a point data set, use
 ``EAS['title']`` contains the title [string] for the eas file.
 
 Write EAS point set
-___________________
+===================
 
 To write a matrix as an EAS formatted point set 
 ::
@@ -183,7 +215,7 @@ Optionally ``header`` [list of strings] and ``title`` [string] can be set.
 
 
 Read EAS volume set
-___________________
+===================
 
 An EAS volume data set, is a special version of the EAS file format that allow describing a 1D-3D volume.
 The first line (the title) must contain the dimensions of the data in the eas file formatted as e.g.
@@ -202,7 +234,7 @@ It is read as for the points data set
 
 
 Write EAS volume set
-____________________
+====================
 A 3D numpy array can be written as an EAS volume set using
 ::
 
@@ -211,9 +243,9 @@ A 3D numpy array can be written as an EAS volume set using
    D = np.zeros((20,10,30))
    mps.eas.write_mat(D,filename='D,dat') 
 
-***************************************************
 mps.trainingimages: Easy access to training images.
-***************************************************
+---------------------------------------------------
+
 mps.traningimages contain easy access to a large number of training images.
 To see a list of the available training images call
 ::
@@ -254,9 +286,8 @@ To load and plot the 3D fluvsim  training image, use e.g
    mps.plot.plot_3d(ti)   
 
    
-****************************
 mps.plot: Plotting utilities
-****************************
+----------------------------
 ''mps.plot'' contains a number of functions for plotting mpslib data and realizations in 2D (using `matplotlib <https://matplotlib.org/>`_) and 3D (using `pyvista <https://pyvista.org/>`_).
 
                 
