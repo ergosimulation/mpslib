@@ -1,4 +1,9 @@
 # MPSlib: a C++ class for Multiple-Point based sequential Simulation
+
+![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/tag/badge/?version=latest)](https://tag.readthedocs.io/en/stable/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/scikit-mps.svg)](https://badge.fury.io/py/scikit-mps)
+
 MPSlib provides a set of algorithms for simulation of models based on a multiple point
 statistical model inferred from a training image.
 
@@ -23,6 +28,27 @@ Development has been funded by the Danish National Hightech Foundation (now: the
 ## Try in Google Colab [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb)
 Try out MPSlib using the Python interface (scikit-mps) through Google Colab.
 <br><br>
+
+### Python package  [![PyPI version](https://badge.fury.io/py/scikit-mps.svg)](https://badge.fury.io/py/scikit-mps)
+
+Perhaps the easiest way to get started is to install the scikit-mps packages that provides access to MPSlib through Python. Install scikit-mps using
+
+    pip install scikit-mps
+
+Get started using 
+
+    import mpslib as mps
+    O=mps.mpslib()
+    O.run()
+    O.plot()
+    
+Check the documentaion for a number of [Python Notebook examples](https://mpslib.readthedocs.io/en/develop/Notebooks/index.html). These are also available at [Github](scikit-mps/examples/).
+
+## Documentation [![Documentation Status](https://readthedocs.org/projects/tag/badge/?version=latest)](https://tag.readthedocs.io/en/stable/?badge=latest)
+
+Documentation is available through [https://mpslib.readthedocs.io/en/latest/](https://mpslib.readthedocs.io/en/latest/).
+
+
 ## Download
 The latest releases, containing statically compiled binaries for Windows and Linux, can be found here:
 [https://github.com/ergosimulation/mpslib/releases/latest](https://github.com/ergosimulation/mpslib/releases/latest).
@@ -35,8 +61,6 @@ git clone https://github.com/ergosimulation/mpslib.git MPSlib
 cd MPSlib
 make
 ```
-## Documentation
-Documentation is available through [https://mpslib.readthedocs.io/en/latest/](https://mpslib.readthedocs.io/en/latest/).
 
 ## Compilation
 The MPSlib codes are written in standard [C++11](https://www.wikiwand.com/en/C%2B%2B11).
