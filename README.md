@@ -88,7 +88,7 @@ pacman -S make
 
 ## Release history
 
-### v1.5 []XX-XX-2022]
+### v1.5 [26-02-2022]
 Python interface (scikit-mps) updated. scikit-mps can now be installed using 
 
     pip install scikit-mps
