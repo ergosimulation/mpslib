@@ -21,6 +21,6 @@ jobs:
       run: ./mps_genesim.exe mps_genesim.txt
     - name: run mps_snesim_tree
       run: ./mps_snesim_tree.exe mps_snesim.txt
-    -name: run mps_snesim_list
+    - name: run mps_snesim_list
       run: ./mps_snesim_list.exe mps_snesim.txt
       
