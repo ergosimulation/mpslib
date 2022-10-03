@@ -18,9 +18,9 @@ jobs:
     - name: make
       run: make
     - name: run mps_genesim
-      run: ./mps_genesim.exe mps_genesim.txt
+      run: ./mps_genesim mps_genesim.txt
     - name: run mps_snesim_tree
-      run: ./mps_snesim_tree.exe mps_snesim.txt
+      run: ./mps_snesim_tree mps_snesim.txt
     - name: run mps_snesim_list
-      run: ./mps_snesim_list.exe mps_snesim.txt
+      run: ./mps_snesim_list mps_snesim.txt
       
