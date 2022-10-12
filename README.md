@@ -1,7 +1,7 @@
 # MPSlib: a C++ class for Multiple-Point based sequential Simulation
 
-![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)
-[![Documentation Status](https://readthedocs.org/projects/tag/badge/?version=latest)](https://tag.readthedocs.io/en/stable/?badge=latest)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ergosimulation/mpslib/blob/master/scikit-mps/examples/mpslib_in_google_colab.ipynb)
+[![Documentation Status](https://readthedocs.org/projects/tag/badge/?version=latest)](https://mpslib.readthedocs.io/en/latest/)
 [![PyPI version](https://badge.fury.io/py/scikit-mps.svg)](https://badge.fury.io/py/scikit-mps)
 
 MPSlib provides a set of algorithms for simulation of models based on a multiple point
@@ -44,7 +44,7 @@ Get started using
     
 Check the documentaion for a number of [Python Notebook examples](https://mpslib.readthedocs.io/en/develop/Notebooks/index.html). These are also available at [Github](scikit-mps/examples/).
 
-## Documentation [![Documentation Status](https://readthedocs.org/projects/tag/badge/?version=latest)](https://tag.readthedocs.io/en/stable/?badge=latest)
+## Documentation [![Documentation Status](https://readthedocs.org/projects/tag/badge/?version=latest)](https://mpslib.readthedocs.io/en/latest/)
 
 Documentation is available through [https://mpslib.readthedocs.io/en/latest/](https://mpslib.readthedocs.io/en/latest/).
 
@@ -88,7 +88,7 @@ pacman -S make
 
 ## Release history
 
-### v1.5 []XX-XX-2022]
+### v1.5 [26-02-2022]
 Python interface (scikit-mps) updated. scikit-mps can now be installed using 
 
     pip install scikit-mps

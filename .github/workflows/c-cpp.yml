@@ -1,0 +1,26 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: configure
+      run: ./configure.sh
+    - name: make
+      run: make
+    - name: run mps_genesim
+      run: ./mps_genesim mps_genesim.txt
+    - name: run mps_snesim_tree
+      run: ./mps_snesim_tree mps_snesim.txt
+    - name: run mps_snesim_list
+      run: ./mps_snesim_list mps_snesim.txt
+      

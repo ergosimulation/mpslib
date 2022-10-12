@@ -1,4 +1,4 @@
-Number of realizations # 4
+Number of realizations # 2
 Random Seed (0 `random` seed) # 1 
 Number of mulitple grids (start from 0) # 3
 Min Node count (0 if not set any limit)# 0
@@ -15,7 +15,7 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # ti_bangladesh.dat
+Training image file (spaces not allowed) # data/ti/ti_strebelle_125_125_1.dat
 Output folder (spaces in name not allowed) # .
 Shuffle Simulation Grid path (0: sequential, 1: random, 2: preferential, EF) # 2 4
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
@@ -24,7 +24,7 @@ HardData seach radius (world units) # 1
 Softdata categories (separated by ;) # 0;1
 Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft.dat
 Number of threads (not currently used) # -1
-Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # -1
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1
 Mask grid filename (same size as the simulation grid)# mask.dat
 do Entropy # 0
 do Estimation# 0
