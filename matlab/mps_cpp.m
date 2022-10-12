@@ -222,7 +222,7 @@ elseif (strcmp(O.method,'mps_genesim'))||(strcmp(O.method,'mps_enesim_general'))
     O.method='mps_genesim';
     if ~isfield(O,'parameter_filename');O.parameter_filename='mps_genesim.txt';end
     O=mps_genesim_write_par(O);
-elseif strcmp(O.method,'mps_dsam'|O.method,'mps_ds');
+elseif strcmp(O.method,'mps_dsam')|strcmp(O.method,'mps_ds');
     O.method='mps_genesim';
     O.n_max_cpdf_count=1;
     if ~isfield(O,'parameter_filename');O.parameter_filename='ds.txt';end
