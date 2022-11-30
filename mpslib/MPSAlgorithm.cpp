@@ -519,7 +519,7 @@ void MPS::MPSAlgorithm::_getCategories(void) {
 		for (int y=0; y<_tiDimY; y+=1) {
 			for (int x=0; x<_tiDimX; x+=1) {
 				//For each pixel
-				float val = _TI[z][y][z];
+				float val = _TI[z][y][x];
 				if ((MPS::utility::is_nan(val))||(std::find(_dataCategories.begin(), _dataCategories.end(), val) != _dataCategories.end())) {
 					//
 				} else {					
