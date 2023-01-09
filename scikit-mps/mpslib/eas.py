@@ -60,11 +60,11 @@ def read(filename='eas.dat', nanval=-997799):
     dim_arr = eas['title'].split()
     if len(dim_arr) == 3:
         eas['dim'] = {}
-        eas['dim']['nx'] = np.int(dim_arr[0])
-        eas['dim']['ny'] = np.int(dim_arr[1])
-        eas['dim']['nz'] = np.int(dim_arr[2])
+        eas['dim']['nx'] = np.int16(dim_arr[0])
+        eas['dim']['ny'] = np.int16(dim_arr[1])
+        eas['dim']['nz'] = np.int16(dim_arr[2])
 
-    eas['n_cols'] = np.int(file.readline())
+    eas['n_cols'] = np.int16(file.readline())
     
     eas['header'] = []
     for i in range(0, eas['n_cols']):

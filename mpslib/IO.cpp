@@ -54,11 +54,15 @@ namespace MPS {
 		*/
 		bool readTIFromGSLIBFile(const std::string& fileName, std::vector<std::vector<std::vector<float>>>& ti, const int& channelIdx, const float& meanFactor) {
 			int nanValGslib = -997799;
+			
+			//std::cout << "nanValGslib " << nanValGslib << " ..." << std::endl;
 			std::ifstream file;
 			file.open(fileName, std::ios::in);
+			
+
 			if (!file.is_open()) {
-				// debig information should be written from function that calls readTI..
-				// std::cerr << "Can't open " << fileName << " !\n";
+				// debug information should be written from function that calls readTI..
+				std::cerr << "Can't open " << fileName << " !\n" << std::endl;
 				return false;
 			}
 
@@ -74,7 +78,7 @@ namespace MPS {
 					dimensions.push_back(stoi(s));
 				}
 			}
-			//std::cout << dimensions[0] << " " << dimensions[1] << " " << dimensions[2] << std::endl;
+			std::cout << dimensions[0] << " " << dimensions[1] << " " << dimensions[2] << std::endl;
 
 			//Number of channel
 			getline(file, str);
