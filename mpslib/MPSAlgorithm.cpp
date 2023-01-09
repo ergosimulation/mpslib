@@ -451,10 +451,11 @@ void MPS::MPSAlgorithm::_readSoftDataFromFiles(void) {
 void MPS::MPSAlgorithm::_readTIFromFiles(void) {
 	bool readSucessfull = false;
 	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
-
+	
 	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_tiFilename, _TI);
-	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_tiFilename, _TI);
+	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
+	else readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
 	if (!readSucessfull) {
 		std::cerr << "Error reading TI " << _tiFilename << std::endl;
 		exit(-1);
