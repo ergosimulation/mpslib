@@ -57,12 +57,11 @@ namespace MPS {
 			
 			//std::cout << "nanValGslib " << nanValGslib << " ..." << std::endl;
 			std::ifstream file;
-			file.open(fileName, std::ios::in);
-			
+			file.open(fileName, std::ios::in);			
 
 			if (!file.is_open()) {
 				// debug information should be written from function that calls readTI..
-				std::cerr << "Can't open " << fileName << " !\n" << std::endl;
+				//std::cerr << "Can't open " << fileName << " !\n" << std::endl;
 				return false;
 			}
 
@@ -78,7 +77,7 @@ namespace MPS {
 					dimensions.push_back(stoi(s));
 				}
 			}
-			std::cout << dimensions[0] << " " << dimensions[1] << " " << dimensions[2] << std::endl;
+			//std::cout << dimensions[0] << " " << dimensions[1] << " " << dimensions[2] << std::endl;
 
 			//Number of channel
 			getline(file, str);

@@ -1034,20 +1034,25 @@ class mpslib:
         import numpy as np
         import pyvista as pv
         
-        update_xyz()
+        self.update_xyz()
 
         cmap = kwargs.get('cmap',"viridis")
     
         vmin=0
         vmax=1
         if (hasattr(self, 'ti')):    
-            vmin = np.min(self.ti)
-            vmax = np.max(self.ti)
+            vmin = np.nanmin(self.ti)
+            vmax = np.nanmax(self.ti)
         
         if hasattr(self,'d_hard'):
+            nhard=self.d_hard.shape[0]
             if self.par['simulation_grid_size'][2]==1:
                 # 2D
-                plt.scatter(self.d_hard[:,0],self.d_hard[:,1], c=self.d_hard[:,3], vmin=vmin, vmax=vmax , cmap='jet')
+                if nhard<100:
+                    s=10
+                else:   
+                    s=1
+                plt.scatter(self.d_hard[:,0],self.d_hard[:,1], c=self.d_hard[:,3], s=s, vmin=vmin, vmax=vmax , cmap=cmap)
                 plt.axis('image')
                 plt.xlim([self.x[0],self.x[-1]])
                 plt.ylim([self.y[0],self.y[-1]])
@@ -1073,7 +1078,7 @@ class mpslib:
         import numpy as np
         import pyvista as pv
 
-        update_xyz()    
+        self.update_xyz()    
 
         cmap = kwargs.get('cmap',"viridis")
     
