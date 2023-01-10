@@ -186,6 +186,8 @@ def plot_reals(O, nshow=4, **kwargs):
     ----------
     '''
     
+    cmap = kwargs.get('cmap',"viridis")
+
     if O.sim is not None:
     
         force_3d = kwargs.get('force_3d',0)
@@ -195,15 +197,16 @@ def plot_reals(O, nshow=4, **kwargs):
 
         D=np.squeeze(O.sim[0])
         if (D.ndim == 3)|(force_3d==1):
-            plot_3d_reals(O, nshow=nshow,  slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'])
+            plot_3d_reals(O, nshow=nshow,  slice=slice, origin=O.par['origin'], spacing=O.par['grid_cell_size'], cmap=cmap)
         else:
-            plot_2d_reals(O, nshow=nshow)
+            plot_2d_reals(O, nshow=nshow, cmap=cmap)
 
     else:
         print('No realizations to plot')
 
 def plot_2d_reals(O, nshow=4, **kwargs):
 
+    cmap = kwargs.get('cmap',"viridis")
     nshow=np.min([len(O.sim),nshow])
 
     nsp=np.int8(np.ceil(np.sqrt(nshow)))    
@@ -212,7 +215,7 @@ def plot_2d_reals(O, nshow=4, **kwargs):
         plt.subplot(nsp,nsp,i+1)
 
         D=np.squeeze(O.sim[i])
-        plot_2d(D,  origin=O.par['origin'], spacing=O.par['grid_cell_size'], show=False, title='Real #%d' % (i+1), use_colorbar=False)
+        plot_2d(D,  origin=O.par['origin'], spacing=O.par['grid_cell_size'], show=False, title='Real #%d' % (i+1), use_colorbar=False, cmap=cmap)
 
     plt.show()
 
