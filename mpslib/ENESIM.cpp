@@ -414,7 +414,7 @@ bool MPS::ENESIM::_getCpdEnesim(const int& sgIdxX, const int& sgIdxY, const int&
 			ti_shift = 0;
 		}
 		i_ti_path = i_ti_p + ti_shift;
-		if (i_ti_path>_tiPath.size()) {
+		if (i_ti_path>=_tiPath.size()) {
 			i_ti_path = i_ti_path - _tiPath.size();
 		}
 		
