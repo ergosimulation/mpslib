@@ -33,7 +33,7 @@ nmul_arr=[1,2,4,8];
 %nmul_arr=[1:8];
 nk=length(nmul_arr);
 for k=1:nk
-    nmul=nmul_arr(k)
+    nmul=nmul_arr(k);
     
     %% TI: CHECKERBOARD
     w=nmul_arr(k);
@@ -56,7 +56,7 @@ for k=1:nk
         O.rseed=10000+i;
         [reals,O]=mps_cpp(TI.D,SIM.D,O);
     
-        %[sim,opt]=mps_enesim(TI.D,SIM.D,options);
+     
         cb{k}.sim(:,:,i)=reals;
         cb{k}.cSI(:,:,i)=O.E;
         cb{k}.SI(i)=O.SI;
@@ -85,7 +85,7 @@ for k=1:nk
         end
     end
     
-    %profile report;
+
     
     
 end
@@ -102,11 +102,11 @@ for k=1:nk;
     plot(1:Nr,cb{k}.SI,'.','MarkerSize',max([13-2*k,4]),'color',col(k,:)),
     hold on
     plot(1:Nr,ones(1,Nr).*cb{k}.H_ex,':','MarkerSize',22,'color',col(k,:),'LineWidth',2),
-    %plot(1:Nr,cb{k}.H.*ones(1,Nr),'-','color',col(k,:))
+
     hand(k)=plot(1:Nr,cumsum(cb{k}.SI)./[1:Nr],'-','color',col(k,:),'LineWidth',2);
     H(k)=mean(cb{k}.SI);
     text(Nr+Nr*.01,H(k),sprintf('H(f_{%d}(m))=%3.1f b',w,H(k)),'color',col(k,:))
-%    text(Nr+Nr*.01,H(k),sprintf('H_{%d}=%3.1f/%3.1f b',w,H(k),cb{k}.H_ex),'color',col(k,:))
+
 end
 hold off
 xlabel('Realization number')
@@ -115,8 +115,7 @@ ylabel('Self Information / Entropy (bits)')
 grid on
 ppp(10,6,10,2,2)
 print_mul(sprintf('cb_checkerboard_rp%d_nw%d_Nr%d',O.shuffle_simulation_grid,nk,Nr))
-%set(gca, 'XScale', 'log')
-%print_mul(sprintf('cb_checkerboard_rp%d_nw%d_Nr%d_log',O.shuffle_simulation_grid,nk,Nr))
+
 
 %%
 FS=8;
@@ -205,8 +204,7 @@ set(gca, 'XScale', 'log')
 axis([1 Nr*1 0 12])
 
 print_mul(sprintf('cb_checkerboard_rp%d_nw%d_Nr%d_log_onefig',O.shuffle_simulation_grid,nk,Nr))
-%print_mul(sprintf('cb_checkerboard_rp%d_nw%d_Nr%d_log',O.shuffle_simulation_grid,nk,Nr))
-%print_mul(sprintf('cb_checkerboard_rp%d_nw%d_Nr%d_real',O.shuffle_simulation_grid,nk,Nr))
+
 
 
 %% histogram
@@ -216,7 +214,7 @@ figure(21);clf
 clear h
 for i=1:length(cb);
     %subplot(2,2,i)
-    h(i)=histogram(cb{i}.SI,bins,'FaceColor',col(i,:))    
+    h(i)=histogram(cb{i}.SI,bins,'FaceColor',col(i,:));    
     hold on    
     Hest=mean(cb{i}.SI);
     plot([1 1].*Hest,ylim,'k--')    
