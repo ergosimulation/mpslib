@@ -63,31 +63,8 @@ void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 		std::random_shuffle ( _tiPath.begin(), _tiPath.end() );
 	}
 
-	
 	//Define multi threading parameters
-	//_threads.resize(_numberOfThreads - 1);
 	_jobDone = false;
-
-	
-	if(_debugMode > 0 ) {
-		std::cout << "______________________________________" << std::endl;
-		std::cout << "____________ENESIM____________________" << std::endl;
-		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
-		std::cout << "Conditional points: " << _maxNeighbours << std::endl;
-		std::cout << "Max iterations: " << _maxIterations << std::endl;
-		if (_shuffleSgPath==0) {
-			std::cout << "Path type: unilateral"<< std::endl;
-		} else if (_shuffleSgPath==1) {
-			std::cout << "Path type: random"<< std::endl;
-		} else if (_shuffleSgPath==2) {
-			std::cout << "Path type: Preferential, Entropy Factor: " << _shuffleEntropyFactor << std::endl;
-		}
-		std::cout << "Distance measure: " << _distance_measure;
-		std::cout << ", threshold:" << _distance_threshold;
-		std::cout << ", power order: " << _distance_power_order  << std::endl;
-		std::cout << "SG: " << _sgDimX << " " << _sgDimY << " " << _sgDimZ << std::endl;
-		std::cout << "TI: " << _tiFilename << " " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << " " << _TI[0][0][0]<< std::endl;
-	}
 }
 
 /**
@@ -128,3 +105,6 @@ void MPS::ENESIM_GENERAL::_InitStartSimulationEachMultipleGrid(const int& level)
 	}
 	_readSoftDataFromFiles();
 }
+
+
+
